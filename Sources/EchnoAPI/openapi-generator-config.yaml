@@ -1,0 +1,21 @@
+# swift-openapi-generator configuration.
+#
+# `filter` is what keeps this tractable. The document carries 737 operations;
+# generating all of them produces well over a hundred thousand lines of Swift
+# and a build to match. Each module wave adds its tags here instead, so the
+# generated surface grows with the app.
+#
+# Caveat while backend ask #16 is open: six tags are shared by a mobile and a
+# web controller, so filtering on `Employees`, `Issues`, `Issue Comments`,
+# `Projects`, `Tasks` or `Users` pulls in both families.
+
+generate:
+  - types
+  - client
+
+accessModifier: public
+
+filter:
+  tags:
+    # Phase 0.5 — registration, so the register screen can stop being a stub.
+    - Auth

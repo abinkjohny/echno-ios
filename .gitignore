@@ -5,3 +5,4 @@ xcuserdata/
 *.xcuserstate
 .swiftpm/
 .build/
+Package.resolved
