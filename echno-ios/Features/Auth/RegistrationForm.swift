@@ -104,6 +104,13 @@ final class RegistrationForm {
         return errors.isEmpty
     }
 
+    /// Adopts validation messages produced elsewhere — the registration service
+    /// validates the draft again before sending, and if it disagrees with the
+    /// form, its findings are what the user needs to see.
+    func apply(_ fieldErrors: [RegistrationField: String]) {
+        errors = fieldErrors
+    }
+
     /// The topmost invalid field, in screen order.
     func firstInvalidField() -> RegistrationField? { draft.firstInvalidField() }
 

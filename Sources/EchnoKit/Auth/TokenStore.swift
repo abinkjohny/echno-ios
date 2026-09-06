@@ -1,7 +1,7 @@
 import Foundation
 
 /// A set of OAuth tokens plus the moment the access token stops being valid.
-public struct TokenSet: Sendable, Equatable {
+public struct TokenSet: Sendable, Equatable, Codable {
     public let accessToken: String
     public let refreshToken: String?
     public let idToken: String?
@@ -26,13 +26,10 @@ public struct TokenSet: Sendable, Equatable {
     }
 }
 
-/// Persists the token set in the Keychain across cold launches.
+/// Persists the token set across cold launches.
 ///
-/// - Note: **Phase 1 implements this.** The protocol is fixed now because
-///   ``APICredentialProvider`` and the auth flow are both written against it.
-///   The intended implementation is a `kSecClassGenericPassword` item with
-///   `kSecAttrAccessibleAfterFirstUnlock` — the app refreshes in the
-///   background, so the stricter `WhenUnlocked` would break silent refresh.
+/// ``KeychainTokenStore`` is the real implementation; ``EphemeralTokenStore``
+/// exists for tests and previews.
 public protocol TokenStoring: Sendable {
     func load() async throws -> TokenSet?
     func save(_ tokens: TokenSet) async throws

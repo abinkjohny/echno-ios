@@ -43,6 +43,26 @@ public struct KeycloakConfiguration: Sendable, Equatable {
     public var endSessionEndpoint: URL {
         issuer.appending(path: "protocol/openid-connect/logout")
     }
+
+    /// The URL to open in the browser to begin sign-in.
+    ///
+    /// - Parameters:
+    ///   - pkce: The pair for this attempt. Only its challenge is sent.
+    ///   - state: An unguessable value echoed back in the callback, checked by
+    ///     ``AuthorizationCallback`` to prove the redirect answers this request.
+    public func authorizationURL(pkce: PKCE, state: String) -> URL {
+        var components = URLComponents(url: authorizationEndpoint, resolvingAgainstBaseURL: false)!
+        components.queryItems = [
+            URLQueryItem(name: "client_id", value: clientID),
+            URLQueryItem(name: "redirect_uri", value: redirectURI.absoluteString),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "scope", value: scopes.joined(separator: " ")),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "code_challenge", value: pkce.challenge),
+            URLQueryItem(name: "code_challenge_method", value: PKCE.method)
+        ]
+        return components.url!
+    }
 }
 
 /// The sign-in / refresh / sign-out surface the app talks to.
@@ -83,4 +103,28 @@ public enum AuthError: Error, Sendable, Equatable {
     case provider(String)
     /// The Keychain refused a read or write.
     case keychain(OSStatus)
+    /// The callback's `state` was absent or did not match the one we issued.
+    /// Treated as hostile, not as a glitch.
+    case stateMismatch
+    /// The callback carried neither an authorization code nor an error.
+    case missingAuthorizationCode
+    /// A PKCE verifier outside the length RFC 7636 permits.
+    case invalidVerifier
+    /// The token endpoint returned something that is not a token response.
+    case malformedTokenResponse
+}
+
+extension AuthError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .cancelled: "Sign-in was cancelled."
+        case .sessionExpired: "Your session has ended. Please sign in again."
+        case .provider(let message): message
+        case .keychain: "The device could not store your session securely."
+        case .stateMismatch: "The sign-in response could not be verified."
+        case .missingAuthorizationCode: "The sign-in response was incomplete."
+        case .invalidVerifier: "The sign-in request could not be prepared."
+        case .malformedTokenResponse: "The sign-in service returned an unexpected response."
+        }
+    }
 }

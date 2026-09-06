@@ -16,7 +16,9 @@ struct RegisterView: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.dismiss) private var dismiss
+    @Environment(AuthSession.self) private var session
     @State private var form = RegistrationForm()
+    @State private var failure: String?
     @FocusState private var focused: RegistrationField?
 
     private var isWide: Bool { sizeClass == .regular }
@@ -53,6 +55,14 @@ struct RegisterView: View {
             }
             .navigationTitle("Create Account")
             .navigationBarTitleDisplayMode(.inline)
+            .alert(
+                "Registration Failed",
+                isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })
+            ) {
+                Button("OK", role: .cancel) { failure = nil }
+            } message: {
+                Text(failure ?? "")
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -232,13 +242,29 @@ struct RegisterView: View {
         register()
     }
 
-    /// Phase 1 replaces this with the generated `registerUser` operation
-    /// followed by the hosted sign-in, which is the sequence echno-web uses.
     private func register() {
         form.isSubmitting = true
         Task {
-            try? await Task.sleep(for: .seconds(1.2))
-            form.isSubmitting = false
+            defer { form.isSubmitting = false }
+            do {
+                try await session.register(form.draft)
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                // Registration creates the identity but not a session. Hand
+                // straight to the hosted sign-in, as echno-web does, so a new
+                // user is not left at a form wondering whether it worked.
+                dismiss()
+                await session.signIn()
+            } catch RegistrationError.invalidDraft(let fieldErrors) {
+                // The service validated too and disagreed with the form. Show
+                // what it found rather than a generic failure.
+                form.apply(fieldErrors)
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
+                form.scrollTarget = form.firstInvalidField()
+            } catch {
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
+                failure = (error as? LocalizedError)?.errorDescription
+                    ?? "Registration could not be completed."
+            }
         }
     }
 
@@ -326,13 +352,16 @@ private struct PasswordStrengthMeter: View {
 }
 
 #Preview("iPhone") {
-    RegisterView().preferredColorScheme(.dark)
+    RegisterView()
+        .environment(AuthSession())
+        .preferredColorScheme(.dark)
 }
 
 // Forces the regular-width layout so the two-up rows are reviewable without an
 // iPad in the canvas. For a true iPad rendering, pick one in the device picker.
 #Preview("Regular width") {
     RegisterView()
+        .environment(AuthSession())
         .environment(\.horizontalSizeClass, .regular)
         .preferredColorScheme(.dark)
 }

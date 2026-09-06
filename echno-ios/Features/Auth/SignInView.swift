@@ -8,10 +8,48 @@ import SwiftUI
 /// and committing to it also keeps the status bar legible over the artwork.
 /// Everything past sign-in follows the system appearance.
 struct AuthFlowView: View {
+    @State private var session = AuthSession()
+
     var body: some View {
-        SignInView()
-            .preferredColorScheme(.dark)
-            .tint(Echno.primary)
+        Group {
+            switch session.state {
+            case .signedOut, .signingIn:
+                SignInView()
+            case .signedIn:
+                SignedInPlaceholderView()
+            }
+        }
+        .environment(session)
+        .preferredColorScheme(.dark)
+        .tint(Echno.primary)
+        .task { await session.restore() }
+    }
+}
+
+/// Stands in for the app shell until Phase 3 builds it.
+struct SignedInPlaceholderView: View {
+    @Environment(AuthSession.self) private var session
+
+    var body: some View {
+        ZStack {
+            BrandBackground()
+            VStack(spacing: 20) {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 44))
+                    .foregroundStyle(Echno.brand)
+                Text("Signed In")
+                    .font(.title.weight(.black))
+                    .foregroundStyle(Echno.foreground)
+                Text("The app shell arrives in Phase 3.")
+                    .font(.subheadline)
+                    .foregroundStyle(Echno.mutedForeground)
+                EchnoSecondaryButton(title: "Sign Out", systemImage: "rectangle.portrait.and.arrow.right") {
+                    Task { await session.signOut() }
+                }
+                .frame(maxWidth: 320)
+            }
+            .padding(24)
+        }
     }
 }
 
@@ -28,8 +66,10 @@ struct AuthFlowView: View {
 struct SignInView: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @State private var isAuthenticating = false
+    @Environment(AuthSession.self) private var session
     @State private var showRegister = false
+
+    private var isAuthenticating: Bool { session.state == .signingIn }
 
     private var isWide: Bool { sizeClass == .regular }
 
@@ -49,8 +89,20 @@ struct SignInView: View {
         }
         .sheet(isPresented: $showRegister) {
             RegisterView()
+                .environment(session)
                 .preferredColorScheme(.dark)
                 .tint(Echno.primary)
+        }
+        .alert(
+            "Sign-In Failed",
+            isPresented: Binding(
+                get: { session.error != nil },
+                set: { if !$0 { session.error = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { session.error = nil }
+        } message: {
+            Text(session.error ?? "")
         }
     }
 
@@ -160,13 +212,8 @@ struct SignInView: View {
         .accessibilityElement(children: .combine)
     }
 
-    /// Phase 1 replaces this with `ASWebAuthenticationSession` + PKCE.
     private func signIn() {
-        isAuthenticating = true
-        Task {
-            try? await Task.sleep(for: .seconds(1.2))
-            isAuthenticating = false
-        }
+        Task { await session.signIn() }
     }
 }
 

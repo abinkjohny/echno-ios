@@ -200,10 +200,51 @@ committed client is stale; run it in CI.
 The generator emits `public import` warnings by the hundred; they are suppressed for the
 `EchnoAPI` target only, so warnings from our own code stay visible.
 
-### Phase 1 — Auth (2–3 days) — unchanged from v1
+### Phase 1 — Auth ✅ done
 
-Keycloak public client + PKCE via `ASWebAuthenticationSession`, Keychain token store,
-single-flight refresh. `AuthenticationService` and `TokenStoring` already exist as protocols.
+Authorization code + PKCE against Keycloak's hosted login, Keychain-backed session,
+single-flight refresh, and registration wired to the generated `registerUser` operation.
+
+**In `EchnoKit`** — no UI framework, so all of it is testable without a simulator:
+
+| | |
+|---|---|
+| `PKCE` | RFC 7636 verifier/challenge, S256. Pinned to the RFC's own test vector |
+| `KeycloakConfiguration` | authorization URL, token/refresh/logout form bodies |
+| `AuthorizationCallback` | callback parsing, with `state` checked before anything else is read |
+| `TokenResponse` / `TokenErrorResponse` | `expires_in` → absolute expiry; `invalid_grant` classified as terminal |
+| `URLSessionTokenEndpoint` | the transport, behind the `TokenEndpoint` protocol |
+| `KeychainTokenStore` | `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` |
+| `KeycloakAuthenticator` | an `actor`; sign in, refresh, sign out |
+| `SessionCredentials` | feeds the generated client its token and `X-Organization-Id` |
+| `RegistrationService` | `RegistrationDraft` → `UserRegistrationDto` → `registerUser` |
+
+**In the app target** — the only places that touch UIKit/AuthenticationServices:
+`WebAuthenticationSessionPresenter` (`ASWebAuthenticationSession`), `AuthSession`
+(`@Observable` state), `EchnoConfiguration` (build-settings-driven endpoints).
+
+**Why the authenticator is an actor.** Keycloak rotates refresh tokens. Two concurrent
+refreshes mean the second presents one the first already spent, Keycloak answers
+`invalid_grant`, and the user is signed out mid-session. Callers arriving during a refresh
+join the in-flight one instead of starting another; a test fires ten concurrent requests and
+asserts exactly one refresh.
+
+**Configuration.** Endpoints come from `Config/Info.plist`, whose values resolve from build
+settings, so a build can point at a local Keycloak without editing source. Xcode's
+`INFOPLIST_KEY_*` settings inject Apple's known keys only and drop custom ones silently —
+hence the real plist. It lives outside `echno-ios/` because that folder is a file-system
+synchronized group, and a target's own Info.plist being copied as a resource fails the build.
+
+**131 tests**, up from 80.
+
+> ⛔ **Blocked for live use: the `echno-ios` Keycloak client does not exist yet.** Everything
+> above is built and tested, but a real sign-in cannot succeed until the client is registered
+> — public, PKCE (S256) required, redirect URI `com.tornotron.echno-ios://oauth/callback`,
+> refresh tokens enabled. See `backend-mobile-api-gaps.md` §7. Registration is not blocked by
+> this: `POST /api/v1/auth/register` is `permitAll`.
+
+**Not done, deliberately deferred:** organization selection after sign-in (needs the
+`user` module, Wave 1), biometric app lock, and idle-timeout handling.
 
 ### Phase 2 — Domain + mapping conventions (2 days)
 

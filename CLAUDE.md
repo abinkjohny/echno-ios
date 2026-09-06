@@ -180,6 +180,26 @@ Every `public` declaration carries a doc comment. Beyond that:
 
 ---
 
+## Build configuration
+
+Endpoints live in `Config/Info.plist`, whose values resolve from build settings
+(`ECHNO_KEYCLOAK_ISSUER`, `ECHNO_KEYCLOAK_CLIENT_ID`, `ECHNO_OAUTH_REDIRECT_URI`,
+`ECHNO_API_BASE_URL`). Empty values fall back to the production defaults in
+`EchnoConfiguration`. None is a secret — the iOS Keycloak client is public and
+uses PKCE.
+
+Two traps, both hit once already:
+
+- **`INFOPLIST_KEY_*` build settings inject Apple's known keys only.** Custom
+  keys are dropped without a warning, which is why a real (partial) plist exists
+  alongside `GENERATE_INFOPLIST_FILE = YES`.
+- **`Config/` sits outside `echno-ios/`** because that folder is a file-system
+  synchronized group: anything inside it joins Copy Bundle Resources
+  automatically, and a target's own Info.plist being copied as a resource is a
+  "Multiple commands produce" failure.
+
+---
+
 ## Commits
 
 - One logical change per commit; do not bundle refactors with features.
