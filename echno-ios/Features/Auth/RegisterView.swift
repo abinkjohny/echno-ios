@@ -1,4 +1,5 @@
 import SwiftUI
+import EchnoCore
 
 /// The registration screen.
 ///
@@ -67,14 +68,12 @@ struct RegisterView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .focused($focused, equals: .userName)
-                        .onChange(of: form.userName) { form.clearError(.userName) }
                 }
             } second: {
                 EchnoField(title: "Full name", isRequired: true, error: form.error(for: .name)) {
                     TextField("", text: $form.name, prompt: Self.hint("John Doe"))
                         .textContentType(.name)
                         .focused($focused, equals: .name)
-                        .onChange(of: form.name) { form.clearError(.name) }
                 }
             }
 
@@ -85,14 +84,12 @@ struct RegisterView: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .focused($focused, equals: .email)
-                    .onChange(of: form.email) { form.clearError(.email) }
             }
 
             VStack(alignment: .leading, spacing: 8) {
                 EchnoField(title: "Password", isRequired: true, error: form.error(for: .password)) {
                     EchnoSecureField(placeholder: "At least 8 characters", text: $form.password)
                         .focused($focused, equals: .password)
-                        .onChange(of: form.password) { form.clearError(.password) }
                 }
                 if !form.password.isEmpty {
                     PasswordStrengthMeter(score: form.passwordStrength)
@@ -106,7 +103,6 @@ struct RegisterView: View {
             ) {
                 EchnoSecureField(placeholder: "Re-enter password", text: $form.confirmPassword)
                     .focused($focused, equals: .confirmPassword)
-                    .onChange(of: form.confirmPassword) { form.clearError(.confirmPassword) }
             }
 
             pair {
@@ -115,7 +111,6 @@ struct RegisterView: View {
                         .textContentType(.telephoneNumber)
                         .keyboardType(.phonePad)
                         .focused($focused, equals: .phone)
-                        .onChange(of: form.phone) { form.clearError(.phone) }
                 }
             } second: {
                 EchnoField(title: "Gender", isRequired: true) {
@@ -138,7 +133,7 @@ struct RegisterView: View {
                     "Date of birth",
                     selection: Binding(
                         get: { form.dateOfBirth ?? form.dateOfBirthRange.upperBound },
-                        set: { form.dateOfBirth = $0; form.clearError(.dateOfBirth) }
+                        set: { form.dateOfBirth = $0 }
                     ),
                     in: form.dateOfBirthRange,
                     displayedComponents: .date
@@ -156,7 +151,6 @@ struct RegisterView: View {
                 .tint(form.role == nil ? Echno.mutedForeground : Echno.foreground)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .labelsHidden()
-                .onChange(of: form.role) { form.clearError(.role) }
             }
 
             terms

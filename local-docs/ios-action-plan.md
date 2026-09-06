@@ -315,6 +315,20 @@ Items 3–6 are detailed in [`backend-mobile-api-gaps.md`](./backend-mobile-api-
 
 ---
 
+## 5b. Working practices
+
+From 2026-09-06 this repo follows the working agreement in
+[`CLAUDE.md`](../CLAUDE.md): tests run at the start of every session, TDD for every
+behaviour change, enterprise naming and layering, explicit security rules, and a doc
+comment on every public declaration.
+
+The rule with the sharpest consequence for this plan: **testable logic lives in
+`Sources/EchnoCore`**, never in a SwiftUI view or the app target. There is no test bundle in
+the Xcode project, so logic in the app target cannot be reached by `swift test` at all. The
+registration rules were moved into `EchnoCore` for exactly this reason.
+
+---
+
 ## 6. Immediate next steps
 
 1. Send asks **A**, **B**, **C** to the backend team alongside the existing gap report.
