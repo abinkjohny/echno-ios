@@ -92,6 +92,14 @@ struct SignInView: View {
                 .environment(session)
                 .preferredColorScheme(.dark)
                 .tint(Echno.primary)
+                // A default sheet on iPad is a form sheet: ~540pt wide, which
+                // carries the *compact* size class. The registration form would
+                // render single-column on a 13-inch iPad, with most of it below
+                // the fold, and the two-up layout would never appear. A page
+                // sheet is wide enough to be regular width, so the form gets the
+                // room the device actually has. No effect on iPhone, where a
+                // sheet is full width either way.
+                .presentationSizing(.page)
         }
         .alert(
             "Sign-In Failed",
