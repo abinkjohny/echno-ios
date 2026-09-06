@@ -23,6 +23,12 @@ final class RegistrationForm {
     /// True while a registration request is in flight.
     var isSubmitting = false
 
+    /// The field the view should scroll to and focus.
+    ///
+    /// Set when a submit fails validation and cleared by the view once it has
+    /// scrolled, so a second failed submit on the same field scrolls again.
+    var scrollTarget: RegistrationField?
+
     // MARK: Field access
     //
     // Forwarded so the view binds to `form.email` rather than
@@ -97,6 +103,9 @@ final class RegistrationForm {
         errors = draft.validate()
         return errors.isEmpty
     }
+
+    /// The topmost invalid field, in screen order.
+    func firstInvalidField() -> RegistrationField? { draft.firstInvalidField() }
 
     /// How many of the five password rules are currently satisfied.
     var passwordStrength: Int { draft.passwordStrength }

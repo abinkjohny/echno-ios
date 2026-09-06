@@ -1,13 +1,17 @@
 import SwiftUI
+import UIKit
 import EchnoKit
 
 /// The registration screen.
 ///
-/// Field set and validation come from the backend's `UserRegistrationDto`
-/// (`POST /api/v1/auth/register`) and echno-web's `RegistrationForm`. echno-web
-/// lays the fields out two-up; here they are one per row on iPhone and two-up
-/// on iPad, because a half-width text field on a phone is a worse target and
-/// wraps its label.
+/// The field set and every validation rule come from `EchnoKit`'s
+/// ``RegistrationDraft``, which mirrors the backend's `UserRegistrationDto` and
+/// echno-web's `lib/validators`. This file owns presentation only.
+///
+/// echno-web lays the fields out two-up in a single run. Here they are grouped
+/// into three sections and stacked one per row on iPhone — a half-width text
+/// field on a phone is a worse target and wraps its label — reverting to two-up
+/// only at regular width, where there is room for it.
 struct RegisterView: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -21,24 +25,42 @@ struct RegisterView: View {
         NavigationStack {
             ZStack {
                 BrandBackground()
-                ScrollView {
-                    VStack(spacing: 24) {
-                        header
-                        EchnoCard { fields }
-                        submit
+
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            header
+                            accountSection
+                            securitySection
+                            profileSection
+                            termsAndSubmit
+                        }
+                        .frame(maxWidth: 560)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 20)
                     }
-                    .frame(maxWidth: 560)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 20)
+                    .scrollDismissesKeyboard(.interactively)
+                    .onChange(of: form.scrollTarget) { _, target in
+                        guard let target else { return }
+                        withAnimation(.easeOut(duration: 0.25)) {
+                            proxy.scrollTo(target, anchor: .center)
+                        }
+                        if target.isTextEntry { focused = target }
+                        form.scrollTarget = nil
+                    }
                 }
-                .scrollDismissesKeyboard(.interactively)
             }
             .navigationTitle("Create account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { focused = nil }
+                        .fontWeight(.semibold)
                 }
             }
         }
@@ -47,140 +69,141 @@ struct RegisterView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Create your account")
-                .font(.system(size: 26, weight: .black))
+                .font(.title2.weight(.black))
                 .foregroundStyle(Echno.foreground)
             Text("Fill in your details to get started — it only takes a minute.")
                 .font(.subheadline)
                 .foregroundStyle(Echno.mutedForeground)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: Fields
+    // MARK: Sections
 
-    @ViewBuilder
-    private var fields: some View {
-        VStack(spacing: 16) {
-            pair {
-                EchnoField(title: "Username", isRequired: true, error: form.error(for: .userName)) {
-                    TextField("", text: $form.userName, prompt: Self.hint("john_doe"))
-                        .textContentType(.username)
+    private var accountSection: some View {
+        EchnoSection(title: "Account") {
+            VStack(spacing: 16) {
+                pair {
+                    field(.userName, "Username") {
+                        TextField("", text: $form.userName, prompt: Self.hint("john_doe"))
+                            .textContentType(.username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                } second: {
+                    field(.name, "Full name") {
+                        TextField("", text: $form.name, prompt: Self.hint("John Doe"))
+                            .textContentType(.name)
+                    }
+                }
+
+                field(.email, "Email") {
+                    TextField("", text: $form.email, prompt: Self.hint("john@company.com"))
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
-                        .focused($focused, equals: .userName)
-                }
-            } second: {
-                EchnoField(title: "Full name", isRequired: true, error: form.error(for: .name)) {
-                    TextField("", text: $form.name, prompt: Self.hint("John Doe"))
-                        .textContentType(.name)
-                        .focused($focused, equals: .name)
                 }
             }
+        }
+    }
 
-            EchnoField(title: "Email", isRequired: true, error: form.error(for: .email)) {
-                TextField("", text: $form.email, prompt: Self.hint("john@company.com"))
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .focused($focused, equals: .email)
-            }
-
-            VStack(alignment: .leading, spacing: 8) {
-                EchnoField(title: "Password", isRequired: true, error: form.error(for: .password)) {
-                    EchnoSecureField(placeholder: "At least 8 characters", text: $form.password)
-                        .focused($focused, equals: .password)
+    private var securitySection: some View {
+        EchnoSection(
+            title: "Security",
+            caption: "At least 8 characters, with upper and lower case, a number and a symbol."
+        ) {
+            VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    field(.password, "Password") {
+                        EchnoSecureField(placeholder: "At least 8 characters", text: $form.password)
+                            .textContentType(.newPassword)
+                    }
+                    if !form.password.isEmpty {
+                        PasswordStrengthMeter(score: form.passwordStrength)
+                    }
                 }
-                if !form.password.isEmpty {
-                    PasswordStrengthMeter(score: form.passwordStrength)
+
+                field(.confirmPassword, "Confirm password") {
+                    EchnoSecureField(placeholder: "Re-enter password", text: $form.confirmPassword)
+                        .textContentType(.newPassword)
                 }
             }
+        }
+    }
 
-            EchnoField(
-                title: "Confirm password",
-                isRequired: true,
-                error: form.error(for: .confirmPassword)
-            ) {
-                EchnoSecureField(placeholder: "Re-enter password", text: $form.confirmPassword)
-                    .focused($focused, equals: .confirmPassword)
-            }
-
-            pair {
-                EchnoField(title: "Phone", isRequired: true, error: form.error(for: .phone)) {
-                    TextField("", text: $form.phone, prompt: Self.hint("+911234567890"))
-                        .textContentType(.telephoneNumber)
-                        .keyboardType(.phonePad)
-                        .focused($focused, equals: .phone)
+    private var profileSection: some View {
+        EchnoSection(title: "Profile") {
+            VStack(spacing: 16) {
+                pair {
+                    field(.phone, "Phone") {
+                        TextField("", text: $form.phone, prompt: Self.hint("+911234567890"))
+                            .textContentType(.telephoneNumber)
+                            .keyboardType(.phonePad)
+                    }
+                } second: {
+                    EchnoField(title: "Gender", isRequired: true) {
+                        Picker("Gender", selection: $form.gender) {
+                            ForEach(Gender.allCases) { Text($0.rawValue).tag($0) }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(Echno.foreground)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .labelsHidden()
+                    }
+                    .id(RegistrationField.gender)
                 }
-            } second: {
-                EchnoField(title: "Gender", isRequired: true) {
-                    Picker("Gender", selection: $form.gender) {
-                        ForEach(Gender.allCases) { Text($0.rawValue).tag($0) }
+
+                EchnoDateField(
+                    title: "Date of birth",
+                    prompt: "Select date",
+                    selection: $form.dateOfBirth,
+                    range: form.dateOfBirthRange,
+                    error: form.error(for: .dateOfBirth)
+                )
+                .id(RegistrationField.dateOfBirth)
+                .accessibilityHint("You must be at least \(RegistrationDraft.minimumAge) years old")
+
+                EchnoField(title: "Role", isRequired: true, error: form.error(for: .role)) {
+                    Picker("Role", selection: $form.role) {
+                        Text("Select a role").tag(UserRole?.none)
+                        ForEach(UserRole.allCases) { Text($0.label).tag(UserRole?.some($0)) }
                     }
                     .pickerStyle(.menu)
-                    .tint(Echno.foreground)
+                    .tint(form.role == nil ? Echno.mutedForeground : Echno.foreground)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .labelsHidden()
                 }
+                .id(RegistrationField.role)
             }
+        }
+    }
 
-            EchnoField(
-                title: "Date of birth",
-                isRequired: true,
-                error: form.error(for: .dateOfBirth)
-            ) {
-                DatePicker(
-                    "Date of birth",
-                    selection: Binding(
-                        get: { form.dateOfBirth ?? form.dateOfBirthRange.upperBound },
-                        set: { form.dateOfBirth = $0 }
-                    ),
-                    in: form.dateOfBirthRange,
-                    displayedComponents: .date
-                )
-                .labelsHidden()
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
+    private var termsAndSubmit: some View {
+        VStack(spacing: 18) {
+            EchnoCard {
+                VStack(alignment: .leading, spacing: 6) {
+                    Toggle(isOn: $form.acceptTerms) {
+                        Text("I accept the Terms of Service and Privacy Policy")
+                            .font(.footnote)
+                            .foregroundStyle(Echno.foreground)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .toggleStyle(.switch)
+                    .tint(Echno.primary)
 
-            EchnoField(title: "Role", isRequired: true, error: form.error(for: .role)) {
-                Picker("Role", selection: $form.role) {
-                    Text("Select a role").tag(UserRole?.none)
-                    ForEach(UserRole.allCases) { Text($0.label).tag(UserRole?.some($0)) }
+                    if let error = form.error(for: .acceptTerms) {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(Echno.destructive)
+                    }
                 }
-                .pickerStyle(.menu)
-                .tint(form.role == nil ? Echno.mutedForeground : Echno.foreground)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .labelsHidden()
             }
+            .id(RegistrationField.acceptTerms)
 
-            terms
-        }
-    }
-
-    private var terms: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Toggle(isOn: $form.acceptTerms) {
-                Text("I accept the Terms of Service and Privacy Policy")
-                    .font(.footnote)
-                    .foregroundStyle(Echno.foreground)
-            }
-            .toggleStyle(.switch)
-            .tint(Echno.primary)
-            .onChange(of: form.acceptTerms) { form.clearError(.acceptTerms) }
-
-            if let error = form.error(for: .acceptTerms) {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(Echno.destructive)
-            }
-        }
-    }
-
-    private var submit: some View {
-        VStack(spacing: 14) {
             EchnoPrimaryButton(title: "Create account", isLoading: form.isSubmitting) {
-                focused = nil
-                if form.validate() { register() }
+                submit()
             }
 
             HStack(spacing: 4) {
@@ -195,8 +218,22 @@ struct RegisterView: View {
         }
     }
 
-    /// Phase 1 replaces this with `POST /api/v1/auth/register` followed by the
-    /// hosted sign-in, which is the sequence echno-web uses.
+    // MARK: Behaviour
+
+    private func submit() {
+        focused = nil
+        guard form.validate() else {
+            // Land the user on the first problem reading down the form, not on
+            // whichever key the error dictionary happened to yield first.
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            form.scrollTarget = form.firstInvalidField()
+            return
+        }
+        register()
+    }
+
+    /// Phase 1 replaces this with the generated `registerUser` operation
+    /// followed by the hosted sign-in, which is the sequence echno-web uses.
     private func register() {
         form.isSubmitting = true
         Task {
@@ -205,12 +242,33 @@ struct RegisterView: View {
         }
     }
 
-    /// A placeholder in the muted foreground colour.
+    // MARK: Building blocks
+
+    /// A text field wired into the keyboard chain, its error, and its scroll id.
+    ///
+    /// Every text field needs the same five modifiers; applying them here rather
+    /// than at each call site is what keeps the Next button working when a field
+    /// is added or moved.
+    @ViewBuilder
+    private func field<Control: View>(
+        _ id: RegistrationField,
+        _ title: String,
+        @ViewBuilder control: () -> Control
+    ) -> some View {
+        EchnoField(title: title, isRequired: true, error: form.error(for: id)) {
+            control()
+                .focused($focused, equals: id)
+                .submitLabel(id.next == nil ? .done : .next)
+                .onSubmit { focused = id.next }
+        }
+        .id(id)
+    }
+
     private static func hint(_ text: String) -> Text {
         Text(text).foregroundStyle(Echno.mutedForeground)
     }
 
-    /// Two fields side by side on iPad, stacked on iPhone.
+    /// Two fields side by side at regular width, stacked when compact.
     @ViewBuilder
     private func pair<A: View, B: View>(
         @ViewBuilder first: () -> A,
@@ -224,8 +282,10 @@ struct RegisterView: View {
     }
 }
 
-/// Five segments, one per satisfied password rule, coloured by how far along
-/// the password is. Gives the rules a shape before the user hits submit.
+/// Five segments, one per satisfied password rule.
+///
+/// Gives the rules a shape while the user is typing, rather than revealing them
+/// one refusal at a time after each submit.
 private struct PasswordStrengthMeter: View {
     let score: Int
 
@@ -261,10 +321,18 @@ private struct PasswordStrengthMeter: View {
         }
         .animation(.easeOut(duration: 0.2), value: score)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Password strength: \(label)")
+        .accessibilityLabel("Password strength: \(label), \(score) of 5 rules met")
     }
 }
 
-#Preview {
+#Preview("iPhone") {
     RegisterView().preferredColorScheme(.dark)
+}
+
+// Forces the regular-width layout so the two-up rows are reviewable without an
+// iPad in the canvas. For a true iPad rendering, pick one in the device picker.
+#Preview("Regular width") {
+    RegisterView()
+        .environment(\.horizontalSizeClass, .regular)
+        .preferredColorScheme(.dark)
 }

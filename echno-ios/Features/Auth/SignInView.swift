@@ -62,8 +62,9 @@ struct SignInView: View {
             BrandPanel(layout: .full)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            VStack(spacing: 0) {
+            VStack(spacing: 28) {
                 signInBlock
+                footer
             }
             .frame(maxWidth: .infinity)
             .padding(40)
@@ -76,12 +77,13 @@ struct SignInView: View {
             BrandPanel(layout: .header)
             // Capped so the card sits in the upper-middle on a tall phone
             // instead of drifting to the centre of a mostly empty field.
-            Spacer(minLength: 16).frame(maxHeight: 96)
+            Spacer(minLength: 16).frame(maxHeight: 88)
             signInBlock
                 .padding(.horizontal, 24)
-            Spacer(minLength: 20)
+            Spacer(minLength: 24)
+            footer
         }
-        .padding(.bottom, 12)
+        .padding(.bottom, 8)
     }
 
     // MARK: Content
@@ -90,7 +92,7 @@ struct SignInView: View {
         VStack(spacing: 22) {
             VStack(spacing: 8) {
                 Text("Welcome back")
-                    .font(.system(size: 27, weight: .black))
+                    .font(.title.weight(.black))
                     .foregroundStyle(Echno.foreground)
                 Text("Sign in to your Echno account to continue.")
                     .font(.subheadline)
@@ -103,6 +105,7 @@ struct SignInView: View {
                     EchnoPrimaryButton(title: "Sign in", isLoading: isAuthenticating) {
                         signIn()
                     }
+                    .accessibilityHint("Opens the Echno sign-in page in a secure browser")
 
                     HStack(alignment: .firstTextBaseline, spacing: 7) {
                         Image(systemName: "lock.shield")
@@ -144,6 +147,19 @@ struct SignInView: View {
         Rectangle().fill(Echno.border).frame(height: 1)
     }
 
+    /// Anchors the bottom of the screen and gives support something to quote.
+    private var footer: some View {
+        VStack(spacing: 4) {
+            Text("Echno for iOS")
+                .font(.caption2.weight(.medium))
+            Text(Bundle.main.displayVersion)
+                .font(.caption2)
+                .monospacedDigit()
+        }
+        .foregroundStyle(Echno.mutedForeground.opacity(0.7))
+        .accessibilityElement(children: .combine)
+    }
+
     /// Phase 1 replaces this with `ASWebAuthenticationSession` + PKCE.
     private func signIn() {
         isAuthenticating = true
@@ -156,4 +172,17 @@ struct SignInView: View {
 
 #Preview("iPhone") { AuthFlowView() }
 
-#Preview("iPad", traits: .landscapeLeft) { AuthFlowView() }
+// `traits: .landscapeLeft` only rotates whichever device the canvas has
+// selected, and an iPhone stays horizontally compact in landscape — so it
+// rendered the phone layout, not the iPad one. Overriding the size class shows
+// the two-column layout on any device. For a true iPad rendering, pick an iPad
+// in the canvas device picker.
+#Preview("Regular width — two column") {
+    AuthFlowView()
+        .environment(\.horizontalSizeClass, .regular)
+}
+
+#Preview("Accessibility XXL") {
+    AuthFlowView()
+        .environment(\.dynamicTypeSize, .accessibility2)
+}

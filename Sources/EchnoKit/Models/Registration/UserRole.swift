@@ -43,7 +43,11 @@ public enum Gender: String, CaseIterable, Identifiable, Sendable {
     public var id: String { rawValue }
 }
 
-/// A field on the registration form, used to key validation messages.
+/// A field on the registration form.
+///
+/// Used to key validation messages, to drive the keyboard's Next button, and to
+/// decide which field to scroll to when a submit fails. Declared in the order
+/// the fields appear on screen — ``screenOrder`` depends on that.
 public enum RegistrationField: Hashable, Sendable, CaseIterable {
     case userName
     case name
@@ -51,7 +55,39 @@ public enum RegistrationField: Hashable, Sendable, CaseIterable {
     case password
     case confirmPassword
     case phone
+    case gender
     case dateOfBirth
     case role
     case acceptTerms
+
+    /// Every field, top to bottom as laid out on screen.
+    ///
+    /// Screen order rather than declaration order is what a scroll-to-error
+    /// should follow, and `allCases` already matches it — but relying on that
+    /// silently would break the moment someone reorders the enum for tidiness.
+    public static var screenOrder: [RegistrationField] { allCases }
+
+    /// The text-entry fields, in the order the keyboard should walk them.
+    ///
+    /// Pickers and the terms switch are excluded: a Next button that jumped to
+    /// a control which cannot receive typing would dismiss the keyboard and
+    /// look broken.
+    public static let focusOrder: [RegistrationField] = [
+        .userName, .name, .email, .password, .confirmPassword, .phone
+    ]
+
+    /// The next field the keyboard's Next button should move to.
+    ///
+    /// `nil` for the final text field, so the keyboard shows Done and the user
+    /// is not bounced back to the top of a ten-field form.
+    public var next: RegistrationField? {
+        guard
+            let index = Self.focusOrder.firstIndex(of: self),
+            index + 1 < Self.focusOrder.count
+        else { return nil }
+        return Self.focusOrder[index + 1]
+    }
+
+    /// Whether this field takes keyboard focus.
+    public var isTextEntry: Bool { Self.focusOrder.contains(self) }
 }

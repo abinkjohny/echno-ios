@@ -136,10 +136,13 @@ struct BrandPanel: View {
                         )
                     )
             }
-            .font(.system(size: layout == .full ? 38 : 28, weight: .black))
+            // Semantic styles rather than fixed point sizes: at accessibility
+            // text sizes a fixed headline stays put while the body around it
+            // grows, which inverts the hierarchy it exists to establish.
+            .font((layout == .full ? Font.largeTitle : Font.title).weight(.black))
             .tracking(-0.8)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
+            .lineLimit(2)
+            .minimumScaleFactor(0.6)
 
             if layout == .full {
                 Text(

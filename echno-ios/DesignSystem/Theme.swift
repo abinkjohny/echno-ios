@@ -72,3 +72,13 @@ extension UIColor {
         )
     }
 }
+
+extension Bundle {
+    /// `1.0 (1)` — the marketing version and build, for the sign-in footer and
+    /// anything support needs quoted back.
+    var displayVersion: String {
+        let version = infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = infoDictionary?["CFBundleVersion"] as? String ?? "—"
+        return "\(version) (\(build))"
+    }
+}

@@ -120,6 +120,19 @@ public struct RegistrationDraft: Sendable, Equatable {
         return errors
     }
 
+    /// The topmost invalid field, or `nil` when the draft may be submitted.
+    ///
+    /// Screen order, not dictionary order: ``validate()`` returns a dictionary,
+    /// whose iteration order is unspecified, so taking its first element would
+    /// scroll somewhere unpredictable. The user expects to land on the first
+    /// problem they would see reading down the form.
+    ///
+    /// - Returns: The field to scroll to and focus, or `nil` if none failed.
+    public func firstInvalidField() -> RegistrationField? {
+        let errors = validate()
+        return RegistrationField.screenOrder.first { errors[$0] != nil }
+    }
+
     /// The first failing password rule, or `nil` when the password is acceptable.
     ///
     /// Rule order matches echno-web's `lib/validators/password.ts` so the same
