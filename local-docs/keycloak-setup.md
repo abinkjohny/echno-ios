@@ -52,6 +52,25 @@ custom scheme, which is how `ASWebAuthenticationSession` catches the callback.
 > the bundle identifier. Renaming the client does not change the redirect URI,
 > and changing the bundle identifier would.
 
+**Why the redirect reaches the app without any URL-scheme registration.**
+`ASWebAuthenticationSession` hosts the browser out of process and inspects every
+navigation it makes. When one targets the `callbackURLScheme` the app passed in,
+the session intercepts the URL in place — dismisses the sheet and hands the URL
+straight to its completion handler — instead of routing it through the system's
+URL opener. Nothing consults `CFBundleURLTypes`, and the app's scene delegate is
+never involved.
+
+That is also why the scheme should **not** be registered. A `CFBundleURLTypes`
+entry would additionally let Safari, and any other app on the device, launch
+Echno with `com.tornotron.echno-ios://…` — an inbound entry point that buys
+nothing here, since the session never uses it.
+
+One consequence worth knowing: this mechanism is for **custom schemes only**.
+Using an `https://` redirect would need Universal Links and the newer
+`ASWebAuthenticationSession.Callback.https(host:path:)` API, plus a
+`apple-app-site-association` file on the domain. The custom scheme avoids all of
+that, which is why OAuth clients for native apps conventionally use one.
+
 ---
 
 ## Steps

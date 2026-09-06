@@ -44,6 +44,28 @@ public struct KeycloakConfiguration: Sendable, Equatable {
         issuer.appending(path: "protocol/openid-connect/logout")
     }
 
+    /// The scheme `ASWebAuthenticationSession` watches for to end the flow.
+    ///
+    /// The session hosts the browser out of process and inspects every
+    /// navigation it makes. When one targets this scheme it intercepts the URL
+    /// in place — dismissing the sheet and handing the URL back — rather than
+    /// dispatching it through the system's URL opener. That is why the scheme
+    /// needs no `CFBundleURLTypes` entry, and why it should not have one:
+    /// registering it would additionally let Safari and any other app launch
+    /// this app with that scheme, for no benefit here.
+    ///
+    /// - Returns: The redirect URI's scheme.
+    /// - Throws: ``AuthError/invalidRedirectURI`` when the redirect has no
+    ///   scheme. Passing an empty one to the session leaves it unable to ever
+    ///   match the redirect, so sign-in would hang on Keycloak's callback page
+    ///   with nothing to show for it.
+    public func callbackScheme() throws -> String {
+        guard let scheme = redirectURI.scheme, !scheme.isEmpty else {
+            throw AuthError.invalidRedirectURI
+        }
+        return scheme
+    }
+
     /// The URL to open in the browser to begin sign-in.
     ///
     /// - Parameters:
@@ -110,6 +132,8 @@ public enum AuthError: Error, Sendable, Equatable {
     case missingAuthorizationCode
     /// A PKCE verifier outside the length RFC 7636 permits.
     case invalidVerifier
+    /// The configured redirect URI has no scheme for the session to match.
+    case invalidRedirectURI
     /// The token endpoint returned something that is not a token response.
     case malformedTokenResponse
 }
@@ -124,6 +148,7 @@ extension AuthError: LocalizedError {
         case .stateMismatch: "The sign-in response could not be verified."
         case .missingAuthorizationCode: "The sign-in response was incomplete."
         case .invalidVerifier: "The sign-in request could not be prepared."
+        case .invalidRedirectURI: "The sign-in request is misconfigured."
         case .malformedTokenResponse: "The sign-in service returned an unexpected response."
         }
     }

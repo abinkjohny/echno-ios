@@ -39,11 +39,33 @@ struct KeycloakConfigurationTests {
         #expect(configuration.scopes.contains("offline_access"))
     }
 
-    @Test("The redirect URI uses the app's custom scheme")
-    func redirectScheme() {
-        // Must match the app's CFBundleURLSchemes and the client registration
-        // in Keycloak, or the callback never returns to the app.
+    @Test("The redirect URI carries a custom scheme that parses")
+    func redirectScheme() throws {
+        // This value is handed to ASWebAuthenticationSession as its
+        // callbackURLScheme. The session watches its own browser for a
+        // navigation to this scheme and intercepts it in place, so it is
+        // deliberately NOT registered in CFBundleURLTypes — registering it
+        // would additionally let Safari and any other app launch us with it.
+        //
+        // Reverse-DNS schemes are legal: RFC 3986 allows dots and hyphens after
+        // the first letter. Worth asserting, because a scheme Foundation failed
+        // to parse would surface only as a sign-in that never returns.
         #expect(configuration.redirectURI.scheme == "com.tornotron.echno-ios")
+        #expect(try configuration.callbackScheme() == "com.tornotron.echno-ios")
+    }
+
+    @Test("A redirect URI with no scheme is rejected rather than silently unusable")
+    func rejectsSchemelessRedirect() {
+        // Reachable through a bad ECHNO_OAUTH_REDIRECT_URI override. Passing an
+        // empty callbackURLScheme leaves the session unable to ever match the
+        // redirect: the browser sits on Keycloak's callback page and sign-in
+        // hangs with nothing logged.
+        let broken = KeycloakConfiguration(
+            issuer: configuration.issuer,
+            clientID: configuration.clientID,
+            redirectURI: URL(string: "oauth/callback")!
+        )
+        #expect(throws: AuthError.self) { try broken.callbackScheme() }
     }
 }
 

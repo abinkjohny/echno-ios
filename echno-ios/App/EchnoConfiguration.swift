@@ -28,9 +28,15 @@ enum EchnoConfiguration {
 
     private static let defaultIssuer = URL(string: "https://auth.echno.in/realms/echno-realm")!
 
-    /// `ASWebAuthenticationSession` intercepts this scheme itself, so it does not
-    /// need registering in `CFBundleURLTypes`. It must match the redirect URI on
-    /// the Keycloak client exactly.
+    /// The scheme is the app's **bundle identifier**, not its Keycloak client id
+    /// — the two look alike and are unrelated. It must match the redirect URI
+    /// registered on the Keycloak client exactly.
+    ///
+    /// It is deliberately absent from `CFBundleURLTypes`.
+    /// `ASWebAuthenticationSession` watches the browser it hosts and intercepts
+    /// a navigation to this scheme in place, so no registration is needed — and
+    /// adding one would let Safari and every other app launch this app with the
+    /// scheme, widening the surface for nothing.
     private static let defaultRedirect = URL(string: "com.tornotron.echno-ios://oauth/callback")!
 
     private static func string(for key: String, default fallback: String) -> String {

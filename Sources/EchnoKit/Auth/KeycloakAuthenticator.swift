@@ -64,7 +64,7 @@ public actor KeycloakAuthenticator: AuthenticationService {
 
         let callback = try await browser.authenticate(
             url: configuration.authorizationURL(pkce: pkce, state: state),
-            callbackScheme: configuration.redirectURI.scheme ?? ""
+            callbackScheme: try configuration.callbackScheme()
         )
 
         let code = try AuthorizationCallback.code(from: callback, expectedState: state)
