@@ -58,7 +58,7 @@ struct AuthorizationRequestTests {
 
     private let configuration = KeycloakConfiguration(
         issuer: URL(string: "https://auth.echno.in/realms/echno-realm")!,
-        clientID: "echno-ios",
+        clientID: "echno-ios-client",
         redirectURI: URL(string: "com.tornotron.echno-ios://oauth/callback")!
     )
 
@@ -82,7 +82,7 @@ struct AuthorizationRequestTests {
         let pkce = try PKCE(verifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")
         let items = queryItems(configuration.authorizationURL(pkce: pkce, state: "state-123"))
 
-        #expect(items["client_id"] == "echno-ios")
+        #expect(items["client_id"] == "echno-ios-client")
         #expect(items["redirect_uri"] == "com.tornotron.echno-ios://oauth/callback")
         #expect(items["response_type"] == "code")
         #expect(items["state"] == "state-123")

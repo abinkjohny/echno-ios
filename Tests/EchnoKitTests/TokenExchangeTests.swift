@@ -4,7 +4,7 @@ import Testing
 
 private let configuration = KeycloakConfiguration(
     issuer: URL(string: "https://auth.echno.in/realms/echno-realm")!,
-    clientID: "echno-ios",
+    clientID: "echno-ios-client",
     redirectURI: URL(string: "com.tornotron.echno-ios://oauth/callback")!
 )
 
@@ -21,7 +21,7 @@ struct TokenRequestTests {
         #expect(items["grant_type"] == "authorization_code")
         #expect(items["code"] == "abc")
         #expect(items["code_verifier"] == "v-123")
-        #expect(items["client_id"] == "echno-ios")
+        #expect(items["client_id"] == "echno-ios-client")
         #expect(items["redirect_uri"] == "com.tornotron.echno-ios://oauth/callback")
         // A public client has no secret. Sending one would mean we had shipped
         // one, which is the thing PKCE exists to avoid.
@@ -33,7 +33,7 @@ struct TokenRequestTests {
         let items = form(configuration.refreshForm(refreshToken: "r-123"))
         #expect(items["grant_type"] == "refresh_token")
         #expect(items["refresh_token"] == "r-123")
-        #expect(items["client_id"] == "echno-ios")
+        #expect(items["client_id"] == "echno-ios-client")
     }
 
     @Test("Ending the session sends the refresh token so Keycloak can revoke it")
@@ -43,7 +43,7 @@ struct TokenRequestTests {
         // person straight back in.
         let items = form(configuration.endSessionForm(refreshToken: "r-123"))
         #expect(items["refresh_token"] == "r-123")
-        #expect(items["client_id"] == "echno-ios")
+        #expect(items["client_id"] == "echno-ios-client")
     }
 
     @Test("Bodies encode as form data with reserved characters escaped")

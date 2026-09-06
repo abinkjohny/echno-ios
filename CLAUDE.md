@@ -213,4 +213,5 @@ Two traps, both hit once already:
 
 - `local-docs/ios-action-plan.md` — architecture and phases
 - `local-docs/backend-mobile-api-gaps.md` — backend contract gaps and open asks
+- `local-docs/keycloak-setup.md` — registering the `echno-ios-client` Keycloak client
 - `Scripts/sync-openapi.sh` — refresh the vendored OpenAPI document

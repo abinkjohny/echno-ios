@@ -12,7 +12,7 @@ enum EchnoConfiguration {
     static var keycloak: KeycloakConfiguration {
         KeycloakConfiguration(
             issuer: url(for: "ECHNO_KEYCLOAK_ISSUER", default: defaultIssuer),
-            clientID: string(for: "ECHNO_KEYCLOAK_CLIENT_ID", default: "echno-ios"),
+            clientID: string(for: "ECHNO_KEYCLOAK_CLIENT_ID", default: "echno-ios-client"),
             redirectURI: url(for: "ECHNO_OAUTH_REDIRECT_URI", default: defaultRedirect)
         )
     }

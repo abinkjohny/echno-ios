@@ -237,11 +237,12 @@ synchronized group, and a target's own Info.plist being copied as a resource fai
 
 **131 tests**, up from 80.
 
-> ⛔ **Blocked for live use: the `echno-ios` Keycloak client does not exist yet.** Everything
+> ⛔ **Blocked for live use until the `echno-ios-client` Keycloak client exists.** Everything
 > above is built and tested, but a real sign-in cannot succeed until the client is registered
 > — public, PKCE (S256) required, redirect URI `com.tornotron.echno-ios://oauth/callback`,
-> refresh tokens enabled. See `backend-mobile-api-gaps.md` §7. Registration is not blocked by
-> this: `POST /api/v1/auth/register` is `permitAll`.
+> refresh tokens enabled. Console steps, the two required mappers and verification are in
+> [`keycloak-setup.md`](./keycloak-setup.md). Registration is not blocked by this:
+> `POST /api/v1/auth/register` is `permitAll`.
 
 **Not done, deliberately deferred:** organization selection after sign-in (needs the
 `user` module, Wave 1), biometric app lock, and idle-timeout handling.

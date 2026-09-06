@@ -4,7 +4,7 @@ import Testing
 
 private let configuration = KeycloakConfiguration(
     issuer: URL(string: "https://auth.echno.in/realms/echno-realm")!,
-    clientID: "echno-ios",
+    clientID: "echno-ios-client",
     redirectURI: URL(string: "com.tornotron.echno-ios://oauth/callback")!
 )
 
