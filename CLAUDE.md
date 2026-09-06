@@ -115,6 +115,31 @@ Services are `actor`. Stores are `@Observable final class`.
 
 ---
 
+## Copy and capitalization
+
+Apple's HIG asks for title-style capitalization on view titles, labels and
+buttons, and sentence case for everything that is prose. Both appear on the same
+screen, so the split is by role, not by taste:
+
+| Title Case | Sentence case |
+|---|---|
+| View and navigation titles — "Create Account" | Body and subtitles — "Fill in your details to get started." |
+| Section headers — "Security" | Helper and caption text — "At least 8 characters, with a number." |
+| Field labels — "Date of Birth", "Confirm Password" | Placeholders — "Re-enter password" |
+| Buttons and links — "Sign In", "Create an Account" | Validation messages — "Username is required" |
+| Menu and picker options — "Select a Role" | Accessibility labels and hints |
+| Status labels — "Getting There" | Legal and marketing prose |
+
+Title case lowercases articles (`a`, `an`, `the`), coordinating conjunctions and
+prepositions of four letters or fewer, unless first or last: "Create an Account",
+"Date of Birth", "New to Echno?".
+
+Validation messages are sentences and stay that way — they are read as
+statements, not labels, and they are shared with echno-web, whose wording they
+must match exactly.
+
+---
+
 ## Security
 
 - **Never log a token, refresh token, JWT payload, password or request body.**

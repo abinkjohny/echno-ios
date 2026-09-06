@@ -112,7 +112,7 @@ struct BrandPanel: View {
         HStack(spacing: 6) {
             Image(systemName: "bolt.fill")
                 .font(.system(size: 11, weight: .semibold))
-            Text("Construction-first platform")
+            Text("Construction-First Platform")
                 .font(.footnote.weight(.medium))
         }
         .foregroundStyle(Echno.brand)

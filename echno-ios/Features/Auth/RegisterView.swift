@@ -51,7 +51,7 @@ struct RegisterView: View {
                     }
                 }
             }
-            .navigationTitle("Create account")
+            .navigationTitle("Create Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -68,7 +68,7 @@ struct RegisterView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Create your account")
+            Text("Create Your Account")
                 .font(.title2.weight(.black))
                 .foregroundStyle(Echno.foreground)
             Text("Fill in your details to get started — it only takes a minute.")
@@ -92,7 +92,7 @@ struct RegisterView: View {
                             .autocorrectionDisabled()
                     }
                 } second: {
-                    field(.name, "Full name") {
+                    field(.name, "Full Name") {
                         TextField("", text: $form.name, prompt: Self.hint("John Doe"))
                             .textContentType(.name)
                     }
@@ -125,7 +125,7 @@ struct RegisterView: View {
                     }
                 }
 
-                field(.confirmPassword, "Confirm password") {
+                field(.confirmPassword, "Confirm Password") {
                     EchnoSecureField(placeholder: "Re-enter password", text: $form.confirmPassword)
                         .textContentType(.newPassword)
                 }
@@ -156,8 +156,8 @@ struct RegisterView: View {
                 }
 
                 EchnoDateField(
-                    title: "Date of birth",
-                    prompt: "Select date",
+                    title: "Date of Birth",
+                    prompt: "Select Date",
                     selection: $form.dateOfBirth,
                     range: form.dateOfBirthRange,
                     error: form.error(for: .dateOfBirth)
@@ -167,7 +167,7 @@ struct RegisterView: View {
 
                 EchnoField(title: "Role", isRequired: true, error: form.error(for: .role)) {
                     Picker("Role", selection: $form.role) {
-                        Text("Select a role").tag(UserRole?.none)
+                        Text("Select a Role").tag(UserRole?.none)
                         ForEach(UserRole.allCases) { Text($0.label).tag(UserRole?.some($0)) }
                     }
                     .pickerStyle(.menu)
@@ -202,14 +202,14 @@ struct RegisterView: View {
             }
             .id(RegistrationField.acceptTerms)
 
-            EchnoPrimaryButton(title: "Create account", isLoading: form.isSubmitting) {
+            EchnoPrimaryButton(title: "Create Account", isLoading: form.isSubmitting) {
                 submit()
             }
 
             HStack(spacing: 4) {
                 Text("Already have an account?")
                     .foregroundStyle(Echno.mutedForeground)
-                Button("Sign in") { dismiss() }
+                Button("Sign In") { dismiss() }
                     .foregroundStyle(Echno.brand)
                     .fontWeight(.semibold)
             }
@@ -300,7 +300,7 @@ private struct PasswordStrengthMeter: View {
     private var label: String {
         switch score {
         case 0...2: "Weak"
-        case 3...4: "Getting there"
+        case 3...4: "Getting There"
         default: "Strong"
         }
     }

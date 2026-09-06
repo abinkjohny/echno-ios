@@ -91,7 +91,7 @@ struct SignInView: View {
     private var signInBlock: some View {
         VStack(spacing: 22) {
             VStack(spacing: 8) {
-                Text("Welcome back")
+                Text("Welcome Back")
                     .font(.title.weight(.black))
                     .foregroundStyle(Echno.foreground)
                 Text("Sign in to your Echno account to continue.")
@@ -102,7 +102,7 @@ struct SignInView: View {
 
             EchnoCard {
                 VStack(spacing: 16) {
-                    EchnoPrimaryButton(title: "Sign in", isLoading: isAuthenticating) {
+                    EchnoPrimaryButton(title: "Sign In", isLoading: isAuthenticating) {
                         signIn()
                     }
                     .accessibilityHint("Opens the Echno sign-in page in a secure browser")
@@ -126,7 +126,7 @@ struct SignInView: View {
                     }
 
                     EchnoSecondaryButton(
-                        title: "Create an account",
+                        title: "Create an Account",
                         systemImage: "person.badge.plus"
                     ) {
                         showRegister = true
