@@ -10,18 +10,17 @@ Run the suite before writing anything. A green baseline is what makes a later
 failure mean something.
 
 ```bash
-swift test                                  # EchnoKit + EchnoAPI logic
+swift test          # EchnoKit logic — fast, no simulator
 xcodebuild -project echno-ios.xcodeproj -scheme echno-ios \
-  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-  -skipPackagePluginValidation build        # the app target
+  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' build
 ```
 
 If the baseline is red, fix that first and say so. Do not build on top of a
 failing suite, and do not describe a suite as passing without having run it.
 
-`-skipPackagePluginValidation` is required from the command line because Xcode
-gates build-tool plugins behind a trust prompt. In the IDE, approve
-`OpenAPIGenerator` once instead.
+No flags, no trust prompts, no per-machine setup: the OpenAPI client is
+generated ahead of time by `Scripts/sync-openapi.sh` and committed, so nothing
+runs a build-tool plugin. See ``EchnoAPI`` below.
 
 ---
 
@@ -74,8 +73,15 @@ EchnoKit                 domain types, mapping, services, stores, auth
 EchnoAPI                  generated from the backend OpenAPI document
 ```
 
-- **`EchnoAPI` is never hand-edited.** To change it, re-run
-  `Scripts/sync-openapi.sh` or add a tag to `openapi-generator-config.yaml`.
+- **`EchnoAPI` is never hand-edited.** To change it, add a tag to
+  `openapi-generator-config.yaml` and/or re-run `Scripts/sync-openapi.sh`, then
+  commit `Sources/EchnoAPI/`. `Scripts/sync-openapi.sh --check` fails if the
+  committed client is stale — run it in CI.
+- **Generation happens in the script, not as a build-tool plugin.** Xcode gates
+  build plugins behind a per-machine trust prompt, and until it is granted the
+  whole scheme fails to build — which takes SwiftUI previews down with it, not
+  just `xcodebuild`. Generating ahead of time keeps previews and CI working
+  anywhere, and makes a contract change arrive as a reviewable diff.
 - **Generated types never reach the app target.** `EchnoKit` maps them into
   domain types first. Generated DTOs are all-`var` and largely all-optional
   because 185 schemas omit `required`; unwrapping those invariants once, at the

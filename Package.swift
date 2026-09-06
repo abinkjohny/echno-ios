@@ -35,14 +35,24 @@ let package = Package(
     ],
     targets: [
         // Generated from the backend's OpenAPI document. Never hand-edited —
-        // run `Scripts/sync-openapi.sh` and rebuild instead.
+        // run `Scripts/sync-openapi.sh` and commit the result.
+        //
+        // The generator is deliberately NOT attached here as a build-tool
+        // plugin. Xcode gates build plugins behind a per-machine trust prompt,
+        // and until it is granted the entire scheme fails to build, which takes
+        // SwiftUI previews down with it. Generating ahead of time and committing
+        // the output means previews, builds and CI work anywhere with no setup.
         .target(
             name: "EchnoAPI",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession")
             ],
-            exclude: ["openapi.source"],
+            exclude: [
+                "openapi.json",
+                "openapi-generator-config.yaml",
+                "openapi.source"
+            ],
             swiftSettings: [
                 .swiftLanguageMode(.v6),
                 // The generator emits `public import Foundation` in files that
@@ -50,9 +60,6 @@ let package = Package(
                 // not ours to fix and there are hundreds; left on, they bury
                 // the warnings that are ours.
                 .unsafeFlags(["-suppress-warnings"])
-            ],
-            plugins: [
-                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
             ]
         ),
         .target(

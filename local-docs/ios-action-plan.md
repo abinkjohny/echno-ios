@@ -170,7 +170,7 @@ Both screens compile clean under Swift 6 strict concurrency. `signIn()` needs Ph
 
 - [x] `Scripts/sync-openapi.sh` — vendors `echno-backend/docs/openapi.json`, normalises it,
       stamps the source commit into `Sources/EchnoAPI/openapi.source`
-- [x] `EchnoAPI` target: generator plugin + runtime + URLSession transport
+- [x] `EchnoAPI` target: generated sources committed, plus runtime + URLSession transport
 - [x] `openapi-generator-config.yaml` with a `filter`, currently just the `Auth` tag —
       1,437 lines generated instead of the ~100k the whole document would produce
 - [x] `AuthenticationMiddleware` — bearer token and `X-Organization-Id`, with an
@@ -189,12 +189,16 @@ Both screens compile clean under Swift 6 strict concurrency. `signIn()` needs Ph
 endpoint reachable without a session is registration, and calling it would create a real user,
 so the proof is a recording transport instead. A live round trip becomes free after Phase 1.
 
-**Two things to know when building:**
+**Generation runs in the script, not as a build-tool plugin.** It started as a plugin, which
+Xcode gates behind a per-machine trust prompt; until that is granted the whole scheme fails to
+build, and SwiftUI previews fail with it — which is how the problem surfaced.
+`Scripts/sync-openapi.sh` now generates ahead of time and the output is committed under
+`Sources/EchnoAPI/Generated/`, so previews, `xcodebuild` and CI all work with no flags and no
+per-machine setup. `--check` regenerates into a temporary directory and exits non-zero if the
+committed client is stale; run it in CI.
 
-- Xcode gates build-tool plugins behind a trust prompt. In the IDE, approve `OpenAPIGenerator`
-  once. From the command line, pass `-skipPackagePluginValidation`.
-- The generator emits `public import` warnings by the hundred. They are suppressed for the
-  `EchnoAPI` target only, so warnings from our own code stay visible.
+The generator emits `public import` warnings by the hundred; they are suppressed for the
+`EchnoAPI` target only, so warnings from our own code stay visible.
 
 ### Phase 1 — Auth (2–3 days) — unchanged from v1
 
