@@ -11,5 +11,5 @@
 // `openapi.source` records the backend commit the document came from, so a
 // regeneration is traceable.
 //
-// Consumers do not use these types directly. EchnoCore maps them into domain
+// Consumers do not use these types directly. EchnoKit maps them into domain
 // types first — see local-docs/ios-action-plan.md §1 for why.

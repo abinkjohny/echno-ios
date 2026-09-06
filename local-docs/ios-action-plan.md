@@ -45,7 +45,7 @@ Three layers. Only the middle one is written by hand.
 └───────────────────────────┬──────────────────────────────┘
                             │ domain types
 ┌───────────────────────────┴──────────────────────────────┐
-│  EchnoCore — HAND-WRITTEN                                │
+│  EchnoKit — HAND-WRITTEN                                │
 │  · domain structs: `let`, non-optional where invariant   │
 │  · mapping from generated DTOs (unwrap once, here)       │
 │  · service actors, @Observable stores                    │
@@ -144,7 +144,7 @@ tag, `filter: tags: [Employees]` pulls both the mobile and the web operations in
 
 ### Phase 0 — Foundation ✅ done (`e500fa7`, reverted, rebuilt)
 
-- `Package.swift` with the `EchnoCore` and `EchnoAPI` targets; app links them as a local package
+- `Package.swift` with the `EchnoKit` and `EchnoAPI` targets; app links them as a local package
 - `APIError`, `APIResponse`, `CacheMerge`, `Endpoints`, `JSONCoding`, `Log`, `TokenStore`,
   `KeycloakAuth`, `Credentials`, `Multipart`
 - Project settings: **iOS 18.0**, **Swift 6 + `SWIFT_STRICT_CONCURRENCY = complete`**,
@@ -315,6 +315,23 @@ Items 3–6 are detailed in [`backend-mobile-api-gaps.md`](./backend-mobile-api-
 
 ---
 
+## 5a. A note on the name
+
+`EchnoKit` was called `EchnoCore` until 2026-09-06. The name implied a dependency on
+`@tornotron/echno-core`, the TypeScript package the web client uses, and it misled a
+reader into thinking this app still consumed it. It does not, and never did in this
+architecture:
+
+```
+swift package show-dependencies  →  apple/swift-openapi-{generator,runtime,urlsession}
+                                     and their transitive dependencies. Nothing else.
+```
+
+The app speaks to the Spring Boot backend directly. The contract arrives as the
+backend's own OpenAPI document, vendored by `Scripts/sync-openapi.sh`.
+
+---
+
 ## 5b. Working practices
 
 From 2026-09-06 this repo follows the working agreement in
@@ -323,9 +340,9 @@ behaviour change, enterprise naming and layering, explicit security rules, and a
 comment on every public declaration.
 
 The rule with the sharpest consequence for this plan: **testable logic lives in
-`Sources/EchnoCore`**, never in a SwiftUI view or the app target. There is no test bundle in
+`Sources/EchnoKit`**, never in a SwiftUI view or the app target. There is no test bundle in
 the Xcode project, so logic in the app target cannot be reached by `swift test` at all. The
-registration rules were moved into `EchnoCore` for exactly this reason.
+registration rules were moved into `EchnoKit` for exactly this reason.
 
 ---
 

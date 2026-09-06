@@ -10,7 +10,7 @@ Run the suite before writing anything. A green baseline is what makes a later
 failure mean something.
 
 ```bash
-swift test                                  # EchnoCore + EchnoAPI logic
+swift test                                  # EchnoKit + EchnoAPI logic
 xcodebuild -project echno-ios.xcodeproj -scheme echno-ios \
   -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
   -skipPackagePluginValidation build        # the app target
@@ -37,7 +37,7 @@ gates build-tool plugins behind a trust prompt. In the IDE, approve
 Rules that follow from that:
 
 - **Logic lives where it can be tested.** Domain rules, validation, mapping and
-  parsing belong in `Sources/EchnoCore`, reachable by `swift test` without a
+  parsing belong in `Sources/EchnoKit`, reachable by `swift test` without a
   simulator. Do not put testable logic in a SwiftUI view or in the app target —
   if a rule matters enough to be right, it matters enough to be reachable.
 - **Test behaviour, not implementation.** Assert on the outcome a user or caller
@@ -69,14 +69,14 @@ Three layers, one direction of dependency. See `local-docs/ios-action-plan.md` �
 ```
 app target (echno-ios/)   SwiftUI screens, design system
         ↓
-EchnoCore                 domain types, mapping, services, stores, auth
+EchnoKit                 domain types, mapping, services, stores, auth
         ↓
 EchnoAPI                  generated from the backend OpenAPI document
 ```
 
 - **`EchnoAPI` is never hand-edited.** To change it, re-run
   `Scripts/sync-openapi.sh` or add a tag to `openapi-generator-config.yaml`.
-- **Generated types never reach the app target.** `EchnoCore` maps them into
+- **Generated types never reach the app target.** `EchnoKit` maps them into
   domain types first. Generated DTOs are all-`var` and largely all-optional
   because 185 schemas omit `required`; unwrapping those invariants once, at the
   mapping boundary, with an error that names the field, is the entire reason

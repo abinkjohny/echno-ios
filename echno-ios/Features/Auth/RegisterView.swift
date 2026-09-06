@@ -1,5 +1,5 @@
 import SwiftUI
-import EchnoCore
+import EchnoKit
 
 /// The registration screen.
 ///

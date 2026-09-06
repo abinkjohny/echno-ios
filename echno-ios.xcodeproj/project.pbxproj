@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ECC0000000000000000003 /* EchnoCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECC0000000000000000002 /* EchnoCore */; };
+		ECC0000000000000000003 /* EchnoKit in Frameworks */ = {isa = PBXBuildFile; productRef = ECC0000000000000000002 /* EchnoKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECC0000000000000000003 /* EchnoCore in Frameworks */,
+				ECC0000000000000000003 /* EchnoKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +70,7 @@
 			);
 			name = "echno-ios";
 			packageProductDependencies = (
-				ECC0000000000000000002 /* EchnoCore */,
+				ECC0000000000000000002 /* EchnoKit */,
 			);
 			productName = "echno-ios";
 			productReference = 0063E922304D3C9D0034949A /* echno-ios.app */;
@@ -346,9 +346,9 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ECC0000000000000000002 /* EchnoCore */ = {
+		ECC0000000000000000002 /* EchnoKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = EchnoCore;
+			productName = EchnoKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 

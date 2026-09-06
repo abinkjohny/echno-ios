@@ -1,11 +1,11 @@
 import Foundation
 import Observation
-import EchnoCore
+import EchnoKit
 
 /// Observable state for the registration screen.
 ///
 /// Deliberately thin. Every rule about what makes a registration valid lives in
-/// ``RegistrationDraft`` in `EchnoCore`, where it is reachable by `swift test`
+/// ``RegistrationDraft`` in `EchnoKit`, where it is reachable by `swift test`
 /// without a simulator. This type owns only what is genuinely presentation:
 /// which messages are currently visible, and whether a submit is in flight.
 @Observable

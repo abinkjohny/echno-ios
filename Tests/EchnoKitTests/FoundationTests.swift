@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import EchnoCore
+@testable import EchnoKit
 
 @Suite("Endpoint family selection")
 struct EndpointsTests {

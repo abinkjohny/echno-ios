@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import EchnoCore
+@testable import EchnoKit
 
 /// A draft that passes every rule, so each test can vary one field and be sure
 /// the failure it asserts is the one it caused.

@@ -2,7 +2,7 @@ import Foundation
 import HTTPTypes
 import OpenAPIRuntime
 import Testing
-@testable import EchnoCore
+@testable import EchnoKit
 import EchnoAPI
 
 /// Records the request it is handed and answers with a canned response, so a
@@ -149,8 +149,58 @@ struct GeneratedClientTests {
     }
 }
 
+@Suite("Server environment")
+struct ServerEnvironmentTests {
+
+    @Test("Production points at the live backend's versioned API root")
+    func production() {
+        #expect(ServerEnvironment.production.baseURL.absoluteString
+                == "https://backend.echno.in/api/v1")
+    }
+
+    @Test("A custom environment is used verbatim")
+    func custom() {
+        let local = URL(string: "http://10.0.0.5:8080/api/v1")!
+        #expect(ServerEnvironment.custom(local).baseURL == local)
+    }
+}
+
 @Suite("Error mapping")
 struct ErrorMappingTests {
+
+    @Test("A ClientError is unwrapped to the cause the app can act on")
+    func unwrapsClientError() {
+        // The generated client wraps everything it throws. Left wrapped, a
+        // timeout would present as a generic failure and the UI would offer the
+        // wrong recovery.
+        let wrapped = ClientError(
+            operationID: "getEmployeeById",
+            operationInput: "input",
+            causeDescription: "timed out",
+            underlyingError: URLError(.timedOut)
+        )
+        #expect(APIError.from(wrapped).isTimeout)
+    }
+
+    @Test("An APIError wrapped by the client still passes through intact")
+    func unwrapsToAPIError() {
+        let original = APIError(message: "Session expired", status: 401)
+        let wrapped = ClientError(
+            operationID: "getEmployeeById",
+            operationInput: "input",
+            causeDescription: "auth",
+            underlyingError: original
+        )
+        #expect(APIError.from(wrapped) == original)
+    }
+
+    @Test("An unrecognised error still produces a usable APIError")
+    func unknownError() {
+        struct Odd: Error {}
+        let mapped = APIError.from(Odd())
+        #expect(mapped.status == 0)
+        #expect(!mapped.message.isEmpty)
+    }
 
     @Test("A timeout stays distinguishable from a plain network failure")
     func timeout() {
