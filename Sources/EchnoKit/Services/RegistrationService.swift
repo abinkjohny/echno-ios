@@ -31,9 +31,9 @@ extension RegistrationError: LocalizedError {
 /// `operationId` so no token is attached.
 public struct RegistrationService: Sendable {
 
-    private let client: any APIProtocol
+    private let client: any RegistrationEndpoint
 
-    public init(client: any APIProtocol) {
+    public init(client: any RegistrationEndpoint) {
         self.client = client
     }
 

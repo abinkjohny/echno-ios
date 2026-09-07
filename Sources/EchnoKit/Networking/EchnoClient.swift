@@ -20,16 +20,20 @@ public enum ServerEnvironment: Sendable {
 
 /// Builds the generated client with Echno's middleware attached.
 ///
-/// Call sites take `any APIProtocol` — the generated protocol — so services
-/// depend on the contract rather than on this factory, and tests can pass a
-/// stub without a transport.
+/// Services take a narrow protocol from `Endpoints+Narrow.swift` rather than
+/// this type, so a test double implements one or two operations instead of the
+/// whole document.
 public enum EchnoClient {
 
+    /// - Returns: The generated `Client`, which conforms to every narrow
+    ///   service protocol in `Endpoints+Narrow.swift`. Returning the concrete
+    ///   type rather than `any APIProtocol` is what lets a service ask for just
+    ///   the operations it uses.
     public static func make(
         environment: ServerEnvironment = .production,
         credentials: any APICredentialProvider,
         transport: any ClientTransport = URLSessionTransport()
-    ) -> any APIProtocol {
+    ) -> Client {
         Client(
             serverURL: environment.baseURL,
             transport: transport,

@@ -5,7 +5,11 @@ import Testing
 import EchnoAPI
 
 /// Records the request and answers with a scripted output.
-private final class StubAPI: APIProtocol, @unchecked Sendable {
+///
+/// Conforms to `RegistrationEndpoint`, not `APIProtocol` — one method instead
+/// of every operation in the document, so adding a module's tag to the
+/// generator config cannot break this test.
+private final class StubAPI: RegistrationEndpoint, @unchecked Sendable {
     private let lock = NSLock()
     private var received: Operations.registerUser.Input?
     private let output: @Sendable () throws -> Operations.registerUser.Output

@@ -27,7 +27,7 @@ final class AuthSession {
 
     private let authenticator: KeycloakAuthenticator
     private let credentials: SessionCredentials
-    private let client: any APIProtocol
+    private let client: Client
 
     init(
         configuration: KeycloakConfiguration = EchnoConfiguration.keycloak,
