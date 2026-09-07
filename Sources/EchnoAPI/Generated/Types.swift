@@ -18,6 +18,97 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /api/v1/auth/register`.
     /// - Remark: Generated from `#/paths//api/v1/auth/register/post(registerUser)`.
     func registerUser(_ input: Operations.registerUser.Input) async throws -> Operations.registerUser.Output
+    /// Get the current user
+    ///
+    /// Resolves the caller's user record from the subject claim of their access token.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user`.
+    /// - Remark: Generated from `#/paths//api/v1/user/get(readAnUser)`.
+    func readAnUser(_ input: Operations.readAnUser.Input) async throws -> Operations.readAnUser.Output
+    /// List users
+    ///
+    /// Returns a single page of user accounts. The pageNo and pageSize parameters control paging; only the page content is returned, without paging metadata.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/all`.
+    /// - Remark: Generated from `#/paths//api/v1/user/all/get(readAllUsers_1)`.
+    func readAllUsers_1(_ input: Operations.readAllUsers_1.Input) async throws -> Operations.readAllUsers_1.Output
+    /// Batch update users
+    ///
+    /// Applies partial updates to several users in one call. Each entry names a user id and the map of fields to change on that user.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/batch`.
+    /// - Remark: Generated from `#/paths//api/v1/user/batch/patch(batchUpdateUsers_1)`.
+    func batchUpdateUsers_1(_ input: Operations.batchUpdateUsers_1.Input) async throws -> Operations.batchUpdateUsers_1.Output
+    /// Get the current user
+    ///
+    /// Resolves the caller's user record from their Keycloak identity.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/get(getCurrentUser)`.
+    func getCurrentUser(_ input: Operations.getCurrentUser.Input) async throws -> Operations.getCurrentUser.Output
+    /// List users
+    ///
+    /// Returns a single page of user accounts. The pageNo and pageSize parameters control paging; only the page content is returned, without paging metadata.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web/all`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/all/get(readAllUsers)`.
+    func readAllUsers(_ input: Operations.readAllUsers.Input) async throws -> Operations.readAllUsers.Output
+    /// Batch update users
+    ///
+    /// Applies partial updates to several users in one call. Each entry names a user id and the map of fields to change on that user.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/web/batch`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/batch/patch(batchUpdateUsers)`.
+    func batchUpdateUsers(_ input: Operations.batchUpdateUsers.Input) async throws -> Operations.batchUpdateUsers.Output
+    /// List the current user's employee records
+    ///
+    /// Returns every employee record linked to the caller's user account, across the organizations they belong to.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web/employees`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/employees/get(getEmployeesForCurrentUser)`.
+    func getEmployeesForCurrentUser(_ input: Operations.getEmployeesForCurrentUser.Input) async throws -> Operations.getEmployeesForCurrentUser.Output
+    /// Partially update a user
+    ///
+    /// Applies field updates from a multipart request. The data part carries the changed fields as JSON, and the optional profilePicture and cv parts replace those files. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/web/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/{id}/patch(partialUpdateAUser_1)`.
+    func partialUpdateAUser_1(_ input: Operations.partialUpdateAUser_1.Input) async throws -> Operations.partialUpdateAUser_1.Output
+    /// Delete a user
+    ///
+    /// Deletes the user account with the given id.
+    ///
+    /// - Remark: HTTP `DELETE /api/v1/user/web/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/{id}/delete(deleteAnUser_1)`.
+    func deleteAnUser_1(_ input: Operations.deleteAnUser_1.Input) async throws -> Operations.deleteAnUser_1.Output
+    /// List a user's organizations
+    ///
+    /// Returns every organization the given user belongs to. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web/{userId}/organizations`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/{userId}/organizations/get(readAllOrganizationsForCurrentUser_1)`.
+    func readAllOrganizationsForCurrentUser_1(_ input: Operations.readAllOrganizationsForCurrentUser_1.Input) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output
+    /// Partially update a user
+    ///
+    /// Applies the given field updates to the user with the given id. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/{id}/patch(partialUpdateAUser)`.
+    func partialUpdateAUser(_ input: Operations.partialUpdateAUser.Input) async throws -> Operations.partialUpdateAUser.Output
+    /// Delete a user
+    ///
+    /// Deletes the user account with the given id.
+    ///
+    /// - Remark: HTTP `DELETE /api/v1/user/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/{id}/delete(deleteAnUser)`.
+    func deleteAnUser(_ input: Operations.deleteAnUser.Input) async throws -> Operations.deleteAnUser.Output
+    /// List a user's organizations
+    ///
+    /// Returns every organization the given user belongs to. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/{userId}/organizations`.
+    /// - Remark: Generated from `#/paths//api/v1/user/{userId}/organizations/get(readAllOrganizationsForCurrentUser)`.
+    func readAllOrganizationsForCurrentUser(_ input: Operations.readAllOrganizationsForCurrentUser.Input) async throws -> Operations.readAllOrganizationsForCurrentUser.Output
 }
 
 /// Convenience overloads for operation inputs.
@@ -35,6 +126,185 @@ extension APIProtocol {
         try await registerUser(Operations.registerUser.Input(
             headers: headers,
             body: body
+        ))
+    }
+    /// Get the current user
+    ///
+    /// Resolves the caller's user record from the subject claim of their access token.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user`.
+    /// - Remark: Generated from `#/paths//api/v1/user/get(readAnUser)`.
+    public func readAnUser(headers: Operations.readAnUser.Input.Headers = .init()) async throws -> Operations.readAnUser.Output {
+        try await readAnUser(Operations.readAnUser.Input(headers: headers))
+    }
+    /// List users
+    ///
+    /// Returns a single page of user accounts. The pageNo and pageSize parameters control paging; only the page content is returned, without paging metadata.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/all`.
+    /// - Remark: Generated from `#/paths//api/v1/user/all/get(readAllUsers_1)`.
+    public func readAllUsers_1(
+        query: Operations.readAllUsers_1.Input.Query = .init(),
+        headers: Operations.readAllUsers_1.Input.Headers = .init()
+    ) async throws -> Operations.readAllUsers_1.Output {
+        try await readAllUsers_1(Operations.readAllUsers_1.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Batch update users
+    ///
+    /// Applies partial updates to several users in one call. Each entry names a user id and the map of fields to change on that user.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/batch`.
+    /// - Remark: Generated from `#/paths//api/v1/user/batch/patch(batchUpdateUsers_1)`.
+    public func batchUpdateUsers_1(
+        headers: Operations.batchUpdateUsers_1.Input.Headers = .init(),
+        body: Operations.batchUpdateUsers_1.Input.Body
+    ) async throws -> Operations.batchUpdateUsers_1.Output {
+        try await batchUpdateUsers_1(Operations.batchUpdateUsers_1.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Get the current user
+    ///
+    /// Resolves the caller's user record from their Keycloak identity.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/get(getCurrentUser)`.
+    public func getCurrentUser(headers: Operations.getCurrentUser.Input.Headers = .init()) async throws -> Operations.getCurrentUser.Output {
+        try await getCurrentUser(Operations.getCurrentUser.Input(headers: headers))
+    }
+    /// List users
+    ///
+    /// Returns a single page of user accounts. The pageNo and pageSize parameters control paging; only the page content is returned, without paging metadata.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web/all`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/all/get(readAllUsers)`.
+    public func readAllUsers(
+        query: Operations.readAllUsers.Input.Query = .init(),
+        headers: Operations.readAllUsers.Input.Headers = .init()
+    ) async throws -> Operations.readAllUsers.Output {
+        try await readAllUsers(Operations.readAllUsers.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Batch update users
+    ///
+    /// Applies partial updates to several users in one call. Each entry names a user id and the map of fields to change on that user.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/web/batch`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/batch/patch(batchUpdateUsers)`.
+    public func batchUpdateUsers(
+        headers: Operations.batchUpdateUsers.Input.Headers = .init(),
+        body: Operations.batchUpdateUsers.Input.Body
+    ) async throws -> Operations.batchUpdateUsers.Output {
+        try await batchUpdateUsers(Operations.batchUpdateUsers.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List the current user's employee records
+    ///
+    /// Returns every employee record linked to the caller's user account, across the organizations they belong to.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web/employees`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/employees/get(getEmployeesForCurrentUser)`.
+    public func getEmployeesForCurrentUser(headers: Operations.getEmployeesForCurrentUser.Input.Headers = .init()) async throws -> Operations.getEmployeesForCurrentUser.Output {
+        try await getEmployeesForCurrentUser(Operations.getEmployeesForCurrentUser.Input(headers: headers))
+    }
+    /// Partially update a user
+    ///
+    /// Applies field updates from a multipart request. The data part carries the changed fields as JSON, and the optional profilePicture and cv parts replace those files. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/web/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/{id}/patch(partialUpdateAUser_1)`.
+    public func partialUpdateAUser_1(
+        path: Operations.partialUpdateAUser_1.Input.Path,
+        headers: Operations.partialUpdateAUser_1.Input.Headers = .init()
+    ) async throws -> Operations.partialUpdateAUser_1.Output {
+        try await partialUpdateAUser_1(Operations.partialUpdateAUser_1.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Delete a user
+    ///
+    /// Deletes the user account with the given id.
+    ///
+    /// - Remark: HTTP `DELETE /api/v1/user/web/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/{id}/delete(deleteAnUser_1)`.
+    public func deleteAnUser_1(
+        path: Operations.deleteAnUser_1.Input.Path,
+        headers: Operations.deleteAnUser_1.Input.Headers = .init()
+    ) async throws -> Operations.deleteAnUser_1.Output {
+        try await deleteAnUser_1(Operations.deleteAnUser_1.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// List a user's organizations
+    ///
+    /// Returns every organization the given user belongs to. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/web/{userId}/organizations`.
+    /// - Remark: Generated from `#/paths//api/v1/user/web/{userId}/organizations/get(readAllOrganizationsForCurrentUser_1)`.
+    public func readAllOrganizationsForCurrentUser_1(
+        path: Operations.readAllOrganizationsForCurrentUser_1.Input.Path,
+        headers: Operations.readAllOrganizationsForCurrentUser_1.Input.Headers = .init()
+    ) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output {
+        try await readAllOrganizationsForCurrentUser_1(Operations.readAllOrganizationsForCurrentUser_1.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Partially update a user
+    ///
+    /// Applies the given field updates to the user with the given id. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/user/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/{id}/patch(partialUpdateAUser)`.
+    public func partialUpdateAUser(
+        path: Operations.partialUpdateAUser.Input.Path,
+        headers: Operations.partialUpdateAUser.Input.Headers = .init(),
+        body: Operations.partialUpdateAUser.Input.Body
+    ) async throws -> Operations.partialUpdateAUser.Output {
+        try await partialUpdateAUser(Operations.partialUpdateAUser.Input(
+            path: path,
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Delete a user
+    ///
+    /// Deletes the user account with the given id.
+    ///
+    /// - Remark: HTTP `DELETE /api/v1/user/{id}`.
+    /// - Remark: Generated from `#/paths//api/v1/user/{id}/delete(deleteAnUser)`.
+    public func deleteAnUser(
+        path: Operations.deleteAnUser.Input.Path,
+        headers: Operations.deleteAnUser.Input.Headers = .init()
+    ) async throws -> Operations.deleteAnUser.Output {
+        try await deleteAnUser(Operations.deleteAnUser.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// List a user's organizations
+    ///
+    /// Returns every organization the given user belongs to. Callable by the user themselves or by a system admin.
+    ///
+    /// - Remark: HTTP `GET /api/v1/user/{userId}/organizations`.
+    /// - Remark: Generated from `#/paths//api/v1/user/{userId}/organizations/get(readAllOrganizationsForCurrentUser)`.
+    public func readAllOrganizationsForCurrentUser(
+        path: Operations.readAllOrganizationsForCurrentUser.Input.Path,
+        headers: Operations.readAllOrganizationsForCurrentUser.Input.Headers = .init()
+    ) async throws -> Operations.readAllOrganizationsForCurrentUser.Output {
+        try await readAllOrganizationsForCurrentUser(Operations.readAllOrganizationsForCurrentUser.Input(
+            path: path,
+            headers: headers
         ))
     }
 }

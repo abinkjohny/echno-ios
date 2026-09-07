@@ -19,3 +19,8 @@ filter:
   tags:
     # Phase 0.5 — registration, so the register screen can stop being a stub.
     - Auth
+    # Phase 2 / Wave 1 — the user module, the reference for every later port.
+    # `Users` is one of the six tags shared by a mobile and a web controller
+    # (ask #16), so this pulls both families in until the backend suffixes the
+    # web one.
+    - Users
