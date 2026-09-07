@@ -53,6 +53,10 @@ public final class UserStore {
 
     private let loader: any UserLoading
 
+    /// Bumped whenever the cache is invalidated, so a load that started before
+    /// the change cannot write its result afterwards.
+    private var generation = 0
+
     public init(loader: any UserLoading) {
         self.loader = loader
     }
@@ -97,20 +101,39 @@ public final class UserStore {
 
     /// Drops the cached user. Call on sign-out, or the next sign-in screen
     /// shows the previous person's name behind it.
+    ///
+    /// Also invalidates any load already in flight. Sign-out routinely lands
+    /// while one is suspended, and without this the resumed load writes the
+    /// signed-out user straight back into the cache.
     public func clear() {
+        generation &+= 1
         currentUser = nil
         error = nil
         isLoading = false
     }
 
     private func fetch() async {
+        let generation = self.generation
         isLoading = true
         error = nil
-        defer { isLoading = false }
+
+        let result: Result<User, any Error>
         do {
-            currentUser = try await loader.currentUser()
+            result = .success(try await loader.currentUser())
         } catch {
-            self.error = error
+            result = .failure(error)
         }
+
+        // Everything below re-reads state that may have changed while the load
+        // was suspended. If it was superseded, this result describes a session
+        // that no longer exists — dropping it is the only safe action, and that
+        // includes the loading flag, which now belongs to whatever came after.
+        guard generation == self.generation else { return }
+
+        switch result {
+        case .success(let user): currentUser = user
+        case .failure(let error): self.error = error
+        }
+        isLoading = false
     }
 }
