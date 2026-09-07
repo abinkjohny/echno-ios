@@ -12,6 +12,21 @@ public import struct Foundation.Date
 extension Components {
     /// Types generated from the `#/components/schemas` section of the OpenAPI document.
     public enum Schemas {
+        /// - Remark: Generated from `#/components/schemas/ApiResponse`.
+        public struct ApiResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ApiResponse/message`.
+            public var message: Swift.String?
+            /// Creates a new `ApiResponse`.
+            ///
+            /// - Parameters:
+            ///   - message:
+            public init(message: Swift.String? = nil) {
+                self.message = message
+            }
+            public enum CodingKeys: String, CodingKey {
+                case message
+            }
+        }
         /// A file attached to an entity, with a short-lived download URL and, where the file is a document rather than a photo, what kind of document it is and when it stops being valid.
         ///
         /// - Remark: Generated from `#/components/schemas/AttachmentDto`.
@@ -129,6 +144,608 @@ extension Components {
                 case url
             }
         }
+        /// Work category used to classify tasks.
+        ///
+        /// - Remark: Generated from `#/components/schemas/CategoryDto`.
+        public struct CategoryDto: Codable, Hashable, Sendable {
+            /// Short description of what the category covers.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CategoryDto/description`.
+            public var description: Swift.String?
+            /// Icon identifier or URL shown alongside the category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CategoryDto/icon`.
+            public var icon: Swift.String?
+            /// Id of the category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CategoryDto/id`.
+            public var id: Swift.Int64?
+            /// Image URL shown alongside the category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CategoryDto/image`.
+            public var image: Swift.String?
+            /// Name of the category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CategoryDto/name`.
+            public var name: Swift.String?
+            /// Creates a new `CategoryDto`.
+            ///
+            /// - Parameters:
+            ///   - description: Short description of what the category covers.
+            ///   - icon: Icon identifier or URL shown alongside the category.
+            ///   - id: Id of the category.
+            ///   - image: Image URL shown alongside the category.
+            ///   - name: Name of the category.
+            public init(
+                description: Swift.String? = nil,
+                icon: Swift.String? = nil,
+                id: Swift.Int64? = nil,
+                image: Swift.String? = nil,
+                name: Swift.String? = nil
+            ) {
+                self.description = description
+                self.icon = icon
+                self.id = id
+                self.image = image
+                self.name = name
+            }
+            public enum CodingKeys: String, CodingKey {
+                case description
+                case icon
+                case id
+                case image
+                case name
+            }
+        }
+        /// Full view of an employee, covering personal details, employment, reporting line, roles and status.
+        ///
+        /// - Remark: Generated from `#/components/schemas/EmployeeDto`.
+        public struct EmployeeDto: Codable, Hashable, Sendable {
+            /// Postal address of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/address`.
+            public var address: Swift.String?
+            /// Files attached to the employee record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/attachments`.
+            public var attachments: [Components.Schemas.AttachmentDto]?
+            /// Blood group of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/bloodGroup`.
+            public var bloodGroup: Swift.String?
+            /// Certifications held by the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/certifications`.
+            public var certifications: [Swift.String]?
+            /// Creation timestamp.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// URL of the employee's stored CV.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/cvUrl`.
+            public var cvUrl: Swift.String?
+            /// Date of birth of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/dateOfBirth`.
+            public var dateOfBirth: Foundation.Date?
+            /// Department the employee works in.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/department`.
+            public var department: Swift.String?
+            /// Job title of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/designation`.
+            public var designation: Swift.String?
+            /// Contact email address.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/emailAddress`.
+            public var emailAddress: Swift.String?
+            /// Emergency contact details.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/emergencyContact`.
+            public var emergencyContact: Swift.String?
+            /// Organization-assigned employee code.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/employeeId`.
+            public var employeeId: Swift.String?
+            /// Full name of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/employeeName`.
+            public var employeeName: Swift.String?
+            /// Years of experience.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/experience`.
+            public var experience: Swift.Int32?
+            /// Gender of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/gender`.
+            public var gender: Swift.String?
+            /// Unique employee id.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/id`.
+            public var id: Swift.Int64?
+            /// Date the employee joined.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/joiningDate`.
+            public var joiningDate: Foundation.Date?
+            /// Id of this employee's reporting manager.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/managerId`.
+            public var managerId: Swift.Int64?
+            /// Name of this employee's reporting manager.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/managerName`.
+            public var managerName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/orgRolesPayload`.
+            @frozen public enum orgRolesPayloadPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case SYSTEM_ADMIN = "SYSTEM_ADMIN"
+                case ORG_MANAGER = "ORG_MANAGER"
+                case HR_ADMIN = "HR_ADMIN"
+                case PROJECT_MANAGER = "PROJECT_MANAGER"
+                case QA_ENGINEER = "QA_ENGINEER"
+                case SAFETY_OFFICER = "SAFETY_OFFICER"
+                case SITE_ENGINEER = "SITE_ENGINEER"
+            }
+            /// Organization roles granted to the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/orgRoles`.
+            public typealias orgRolesPayload = [Components.Schemas.EmployeeDto.orgRolesPayloadPayload]
+            /// Organization roles granted to the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/orgRoles`.
+            public var orgRoles: Components.Schemas.EmployeeDto.orgRolesPayload?
+            /// Id of the organization the employee belongs to.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/organizationId`.
+            public var organizationId: Swift.Int64?
+            /// Name of the organization the employee belongs to.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/organizationName`.
+            public var organizationName: Swift.String?
+            /// Ten-digit contact phone number.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/phoneNumber`.
+            public var phoneNumber: Swift.String?
+            /// URL of the employee's profile picture.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/profilePictureUrl`.
+            public var profilePictureUrl: Swift.String?
+            /// Highest qualification held.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/qualification`.
+            public var qualification: Swift.String?
+            /// Platform-level user role.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/role`.
+            @frozen public enum rolePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case OWNER = "OWNER"
+                case CO_FOUNDER = "CO_FOUNDER"
+                case HR_MANAGER = "HR_MANAGER"
+                case EMPLOYEE = "EMPLOYEE"
+                case STUDENT = "STUDENT"
+                case MANAGEMENT = "MANAGEMENT"
+                case ADMINISTRATOR = "ADMINISTRATOR"
+            }
+            /// Platform-level user role.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/role`.
+            public var role: Components.Schemas.EmployeeDto.rolePayload?
+            /// Salary of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/salary`.
+            public var salary: Swift.Double?
+            /// Id of the structured shift timing assigned to the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/shiftTimingId`.
+            public var shiftTimingId: Swift.Int64?
+            /// Skills of the employee.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/skills`.
+            public var skills: [Swift.String]?
+            /// Employment status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case active = "active"
+                case inactive = "inactive"
+                case onLeave = "onLeave"
+                case terminated = "terminated"
+                case resigned = "resigned"
+                case probation = "probation"
+                case suspended = "suspended"
+            }
+            /// Employment status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/status`.
+            public var status: Components.Schemas.EmployeeDto.statusPayload?
+            /// Timestamp of the last update.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EmployeeDto/updatedAt`.
+            public var updatedAt: Foundation.Date?
+            /// Creates a new `EmployeeDto`.
+            ///
+            /// - Parameters:
+            ///   - address: Postal address of the employee.
+            ///   - attachments: Files attached to the employee record.
+            ///   - bloodGroup: Blood group of the employee.
+            ///   - certifications: Certifications held by the employee.
+            ///   - createdAt: Creation timestamp.
+            ///   - cvUrl: URL of the employee's stored CV.
+            ///   - dateOfBirth: Date of birth of the employee.
+            ///   - department: Department the employee works in.
+            ///   - designation: Job title of the employee.
+            ///   - emailAddress: Contact email address.
+            ///   - emergencyContact: Emergency contact details.
+            ///   - employeeId: Organization-assigned employee code.
+            ///   - employeeName: Full name of the employee.
+            ///   - experience: Years of experience.
+            ///   - gender: Gender of the employee.
+            ///   - id: Unique employee id.
+            ///   - joiningDate: Date the employee joined.
+            ///   - managerId: Id of this employee's reporting manager.
+            ///   - managerName: Name of this employee's reporting manager.
+            ///   - orgRoles: Organization roles granted to the employee.
+            ///   - organizationId: Id of the organization the employee belongs to.
+            ///   - organizationName: Name of the organization the employee belongs to.
+            ///   - phoneNumber: Ten-digit contact phone number.
+            ///   - profilePictureUrl: URL of the employee's profile picture.
+            ///   - qualification: Highest qualification held.
+            ///   - role: Platform-level user role.
+            ///   - salary: Salary of the employee.
+            ///   - shiftTimingId: Id of the structured shift timing assigned to the employee.
+            ///   - skills: Skills of the employee.
+            ///   - status: Employment status.
+            ///   - updatedAt: Timestamp of the last update.
+            public init(
+                address: Swift.String? = nil,
+                attachments: [Components.Schemas.AttachmentDto]? = nil,
+                bloodGroup: Swift.String? = nil,
+                certifications: [Swift.String]? = nil,
+                createdAt: Foundation.Date? = nil,
+                cvUrl: Swift.String? = nil,
+                dateOfBirth: Foundation.Date? = nil,
+                department: Swift.String? = nil,
+                designation: Swift.String? = nil,
+                emailAddress: Swift.String? = nil,
+                emergencyContact: Swift.String? = nil,
+                employeeId: Swift.String? = nil,
+                employeeName: Swift.String? = nil,
+                experience: Swift.Int32? = nil,
+                gender: Swift.String? = nil,
+                id: Swift.Int64? = nil,
+                joiningDate: Foundation.Date? = nil,
+                managerId: Swift.Int64? = nil,
+                managerName: Swift.String? = nil,
+                orgRoles: Components.Schemas.EmployeeDto.orgRolesPayload? = nil,
+                organizationId: Swift.Int64? = nil,
+                organizationName: Swift.String? = nil,
+                phoneNumber: Swift.String? = nil,
+                profilePictureUrl: Swift.String? = nil,
+                qualification: Swift.String? = nil,
+                role: Components.Schemas.EmployeeDto.rolePayload? = nil,
+                salary: Swift.Double? = nil,
+                shiftTimingId: Swift.Int64? = nil,
+                skills: [Swift.String]? = nil,
+                status: Components.Schemas.EmployeeDto.statusPayload? = nil,
+                updatedAt: Foundation.Date? = nil
+            ) {
+                self.address = address
+                self.attachments = attachments
+                self.bloodGroup = bloodGroup
+                self.certifications = certifications
+                self.createdAt = createdAt
+                self.cvUrl = cvUrl
+                self.dateOfBirth = dateOfBirth
+                self.department = department
+                self.designation = designation
+                self.emailAddress = emailAddress
+                self.emergencyContact = emergencyContact
+                self.employeeId = employeeId
+                self.employeeName = employeeName
+                self.experience = experience
+                self.gender = gender
+                self.id = id
+                self.joiningDate = joiningDate
+                self.managerId = managerId
+                self.managerName = managerName
+                self.orgRoles = orgRoles
+                self.organizationId = organizationId
+                self.organizationName = organizationName
+                self.phoneNumber = phoneNumber
+                self.profilePictureUrl = profilePictureUrl
+                self.qualification = qualification
+                self.role = role
+                self.salary = salary
+                self.shiftTimingId = shiftTimingId
+                self.skills = skills
+                self.status = status
+                self.updatedAt = updatedAt
+            }
+            public enum CodingKeys: String, CodingKey {
+                case address
+                case attachments
+                case bloodGroup
+                case certifications
+                case createdAt
+                case cvUrl
+                case dateOfBirth
+                case department
+                case designation
+                case emailAddress
+                case emergencyContact
+                case employeeId
+                case employeeName
+                case experience
+                case gender
+                case id
+                case joiningDate
+                case managerId
+                case managerName
+                case orgRoles
+                case organizationId
+                case organizationName
+                case phoneNumber
+                case profilePictureUrl
+                case qualification
+                case role
+                case salary
+                case shiftTimingId
+                case skills
+                case status
+                case updatedAt
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/IssueCommentDto`.
+        public struct IssueCommentDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/IssueCommentDto/authorId`.
+            public var authorId: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/IssueCommentDto/comment`.
+            public var comment: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/IssueCommentDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// - Remark: Generated from `#/components/schemas/IssueCommentDto/id`.
+            public var id: Swift.Int64?
+            /// Creates a new `IssueCommentDto`.
+            ///
+            /// - Parameters:
+            ///   - authorId:
+            ///   - comment:
+            ///   - createdAt:
+            ///   - id:
+            public init(
+                authorId: Swift.Int64? = nil,
+                comment: Swift.String? = nil,
+                createdAt: Foundation.Date? = nil,
+                id: Swift.Int64? = nil
+            ) {
+                self.authorId = authorId
+                self.comment = comment
+                self.createdAt = createdAt
+                self.id = id
+            }
+            public enum CodingKeys: String, CodingKey {
+                case authorId
+                case comment
+                case createdAt
+                case id
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/IssueDto`.
+        public struct IssueDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/IssueDto/assignedToId`.
+            public var assignedToId: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/assignedToName`.
+            public var assignedToName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/attachments`.
+            public var attachments: [Components.Schemas.AttachmentDto]?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/createdById`.
+            public var createdById: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/createdByName`.
+            public var createdByName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/description`.
+            public var description: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/id`.
+            public var id: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/issueComments`.
+            public var issueComments: [Components.Schemas.IssueCommentDto]?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case open = "open"
+                case inProgress = "inProgress"
+                case pending = "pending"
+                case inReview = "inReview"
+                case blocked = "blocked"
+                case reOpened = "reOpened"
+                case resolved = "resolved"
+                case closed = "closed"
+            }
+            /// - Remark: Generated from `#/components/schemas/IssueDto/status`.
+            public var status: Components.Schemas.IssueDto.statusPayload?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/taskId`.
+            public var taskId: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/taskName`.
+            public var taskName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/title`.
+            public var title: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/type`.
+            @frozen public enum _typePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case technical = "technical"
+                case design = "design"
+                case quality = "quality"
+                case safety = "safety"
+                case material = "material"
+                case equipment = "equipment"
+                case labour = "labour"
+                case weather = "weather"
+                case permit = "permit"
+                case coordination = "coordination"
+                case other = "other"
+            }
+            /// - Remark: Generated from `#/components/schemas/IssueDto/type`.
+            public var _type: Components.Schemas.IssueDto._typePayload?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/updatedAt`.
+            public var updatedAt: Foundation.Date?
+            /// Creates a new `IssueDto`.
+            ///
+            /// - Parameters:
+            ///   - assignedToId:
+            ///   - assignedToName:
+            ///   - attachments:
+            ///   - createdAt:
+            ///   - createdById:
+            ///   - createdByName:
+            ///   - description:
+            ///   - id:
+            ///   - issueComments:
+            ///   - status:
+            ///   - taskId:
+            ///   - taskName:
+            ///   - title:
+            ///   - _type:
+            ///   - updatedAt:
+            public init(
+                assignedToId: Swift.Int64? = nil,
+                assignedToName: Swift.String? = nil,
+                attachments: [Components.Schemas.AttachmentDto]? = nil,
+                createdAt: Foundation.Date? = nil,
+                createdById: Swift.Int64? = nil,
+                createdByName: Swift.String? = nil,
+                description: Swift.String? = nil,
+                id: Swift.Int64? = nil,
+                issueComments: [Components.Schemas.IssueCommentDto]? = nil,
+                status: Components.Schemas.IssueDto.statusPayload? = nil,
+                taskId: Swift.Int64? = nil,
+                taskName: Swift.String? = nil,
+                title: Swift.String? = nil,
+                _type: Components.Schemas.IssueDto._typePayload? = nil,
+                updatedAt: Foundation.Date? = nil
+            ) {
+                self.assignedToId = assignedToId
+                self.assignedToName = assignedToName
+                self.attachments = attachments
+                self.createdAt = createdAt
+                self.createdById = createdById
+                self.createdByName = createdByName
+                self.description = description
+                self.id = id
+                self.issueComments = issueComments
+                self.status = status
+                self.taskId = taskId
+                self.taskName = taskName
+                self.title = title
+                self._type = _type
+                self.updatedAt = updatedAt
+            }
+            public enum CodingKeys: String, CodingKey {
+                case assignedToId
+                case assignedToName
+                case attachments
+                case createdAt
+                case createdById
+                case createdByName
+                case description
+                case id
+                case issueComments
+                case status
+                case taskId
+                case taskName
+                case title
+                case _type = "type"
+                case updatedAt
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/OrganizationDto`.
+        public struct OrganizationDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/attachments`.
+            public var attachments: [Components.Schemas.AttachmentDto]?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/creatorId`.
+            public var creatorId: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/employees`.
+            public var employees: [Components.Schemas.EmployeeDto]?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/id`.
+            public var id: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/isActive`.
+            public var isActive: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/organizationAddress`.
+            public var organizationAddress: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/organizationEmail`.
+            public var organizationEmail: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/organizationLogo`.
+            public var organizationLogo: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/organizationName`.
+            public var organizationName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/organizationPhone`.
+            public var organizationPhone: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/organizationWebsite`.
+            public var organizationWebsite: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/projects`.
+            public var projects: [Components.Schemas.ProjectDto]?
+            /// Creates a new `OrganizationDto`.
+            ///
+            /// - Parameters:
+            ///   - attachments:
+            ///   - createdAt:
+            ///   - creatorId:
+            ///   - employees:
+            ///   - id:
+            ///   - isActive:
+            ///   - organizationAddress:
+            ///   - organizationEmail:
+            ///   - organizationLogo:
+            ///   - organizationName:
+            ///   - organizationPhone:
+            ///   - organizationWebsite:
+            ///   - projects:
+            public init(
+                attachments: [Components.Schemas.AttachmentDto]? = nil,
+                createdAt: Foundation.Date? = nil,
+                creatorId: Swift.Int32? = nil,
+                employees: [Components.Schemas.EmployeeDto]? = nil,
+                id: Swift.Int64? = nil,
+                isActive: Swift.Bool? = nil,
+                organizationAddress: Swift.String? = nil,
+                organizationEmail: Swift.String? = nil,
+                organizationLogo: Swift.String? = nil,
+                organizationName: Swift.String? = nil,
+                organizationPhone: Swift.String? = nil,
+                organizationWebsite: Swift.String? = nil,
+                projects: [Components.Schemas.ProjectDto]? = nil
+            ) {
+                self.attachments = attachments
+                self.createdAt = createdAt
+                self.creatorId = creatorId
+                self.employees = employees
+                self.id = id
+                self.isActive = isActive
+                self.organizationAddress = organizationAddress
+                self.organizationEmail = organizationEmail
+                self.organizationLogo = organizationLogo
+                self.organizationName = organizationName
+                self.organizationPhone = organizationPhone
+                self.organizationWebsite = organizationWebsite
+                self.projects = projects
+            }
+            public enum CodingKeys: String, CodingKey {
+                case attachments
+                case createdAt
+                case creatorId
+                case employees
+                case id
+                case isActive
+                case organizationAddress
+                case organizationEmail
+                case organizationLogo
+                case organizationName
+                case organizationPhone
+                case organizationWebsite
+                case projects
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/ProblemDetail`.
         public struct ProblemDetail: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/ProblemDetail/detail`.
@@ -194,6 +811,329 @@ extension Components {
                 case _type = "type"
             }
         }
+        /// Full view of a construction project, including its team, tasks, attachments and overall progress.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ProjectDto`.
+        public struct ProjectDto: Codable, Hashable, Sendable {
+            /// Files attached to the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/attachments`.
+            public var attachments: [Components.Schemas.AttachmentDto]?
+            /// Creation timestamp.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// Id of the user who created the project. Null on projects created before this was recorded.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/createdBy`.
+            public var createdBy: Swift.Int64?
+            /// Finance customer the project is billed to. Null when no client is set.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/customerId`.
+            public var customerId: Swift.String?
+            /// Free-text description of the project. Null when not recorded.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/description`.
+            public var description: Swift.String?
+            /// Employees assigned to the project team.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/employees`.
+            public var employees: [Components.Schemas.EmployeeDto]?
+            /// Planned completion date of the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/endDate`.
+            public var endDate: Foundation.Date?
+            /// Unique project id.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/id`.
+            public var id: Swift.Int64?
+            /// Overall completion of the project, as a percentage from 0 to 100. The mean of the project's task progress values.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/progress`.
+            public var progress: Swift.Double?
+            /// Street address of the site, as one line.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectAddress`.
+            public var projectAddress: Swift.String?
+            /// Town or city the site is in. Null when not recorded.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectCity`.
+            public var projectCity: Swift.String?
+            /// Site latitude in decimal degrees.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectLatitude`.
+            public var projectLatitude: Swift.Float?
+            /// Site longitude in decimal degrees.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectLongitude`.
+            public var projectLongitude: Swift.Float?
+            /// Project name.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectName`.
+            public var projectName: Swift.String?
+            /// Postal (PIN) code of the site. Null when not recorded.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectPostalCode`.
+            public var projectPostalCode: Swift.String?
+            /// Indian state or union territory the site is in, used to match statutory compliances. Null when not recorded.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectState`.
+            public var projectState: Swift.String?
+            /// Construction category of the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectType`.
+            @frozen public enum projectTypePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case RESIDENTIAL = "RESIDENTIAL"
+                case COMMERCIAL = "COMMERCIAL"
+                case INDUSTRIAL = "INDUSTRIAL"
+                case INFRASTRUCTURE = "INFRASTRUCTURE"
+                case INSTITUTIONAL = "INSTITUTIONAL"
+                case MIXED_USE = "MIXED_USE"
+                case OTHER = "OTHER"
+            }
+            /// Construction category of the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/projectType`.
+            public var projectType: Components.Schemas.ProjectDto.projectTypePayload?
+            /// Planned start date of the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/startDate`.
+            public var startDate: Foundation.Date?
+            /// Current project status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case open = "open"
+                case closed = "closed"
+                case upcoming = "upcoming"
+                case completed = "completed"
+                case dropped = "dropped"
+                case onHold = "onHold"
+                case cancelled = "cancelled"
+                case approved = "approved"
+            }
+            /// Current project status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/status`.
+            public var status: Components.Schemas.ProjectDto.statusPayload?
+            /// Tasks that belong to the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/tasks`.
+            public var tasks: [Components.Schemas.TaskDto]?
+            /// When the project was last written. Null on projects not written since this was recorded. It is a last-write stamp, so it is overwritten by the next edit to any field: to read who moved the project's status and when, use GET /api/v1/project/web/{id}/status-history.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/updatedAt`.
+            public var updatedAt: Foundation.Date?
+            /// Id of the user who last wrote the project.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ProjectDto/updatedBy`.
+            public var updatedBy: Swift.Int64?
+            /// Creates a new `ProjectDto`.
+            ///
+            /// - Parameters:
+            ///   - attachments: Files attached to the project.
+            ///   - createdAt: Creation timestamp.
+            ///   - createdBy: Id of the user who created the project. Null on projects created before this was recorded.
+            ///   - customerId: Finance customer the project is billed to. Null when no client is set.
+            ///   - description: Free-text description of the project. Null when not recorded.
+            ///   - employees: Employees assigned to the project team.
+            ///   - endDate: Planned completion date of the project.
+            ///   - id: Unique project id.
+            ///   - progress: Overall completion of the project, as a percentage from 0 to 100. The mean of the project's task progress values.
+            ///   - projectAddress: Street address of the site, as one line.
+            ///   - projectCity: Town or city the site is in. Null when not recorded.
+            ///   - projectLatitude: Site latitude in decimal degrees.
+            ///   - projectLongitude: Site longitude in decimal degrees.
+            ///   - projectName: Project name.
+            ///   - projectPostalCode: Postal (PIN) code of the site. Null when not recorded.
+            ///   - projectState: Indian state or union territory the site is in, used to match statutory compliances. Null when not recorded.
+            ///   - projectType: Construction category of the project.
+            ///   - startDate: Planned start date of the project.
+            ///   - status: Current project status.
+            ///   - tasks: Tasks that belong to the project.
+            ///   - updatedAt: When the project was last written. Null on projects not written since this was recorded. It is a last-write stamp, so it is overwritten by the next edit to any field: to read who moved the project's status and when, use GET /api/v1/project/web/{id}/status-history.
+            ///   - updatedBy: Id of the user who last wrote the project.
+            public init(
+                attachments: [Components.Schemas.AttachmentDto]? = nil,
+                createdAt: Foundation.Date? = nil,
+                createdBy: Swift.Int64? = nil,
+                customerId: Swift.String? = nil,
+                description: Swift.String? = nil,
+                employees: [Components.Schemas.EmployeeDto]? = nil,
+                endDate: Foundation.Date? = nil,
+                id: Swift.Int64? = nil,
+                progress: Swift.Double? = nil,
+                projectAddress: Swift.String? = nil,
+                projectCity: Swift.String? = nil,
+                projectLatitude: Swift.Float? = nil,
+                projectLongitude: Swift.Float? = nil,
+                projectName: Swift.String? = nil,
+                projectPostalCode: Swift.String? = nil,
+                projectState: Swift.String? = nil,
+                projectType: Components.Schemas.ProjectDto.projectTypePayload? = nil,
+                startDate: Foundation.Date? = nil,
+                status: Components.Schemas.ProjectDto.statusPayload? = nil,
+                tasks: [Components.Schemas.TaskDto]? = nil,
+                updatedAt: Foundation.Date? = nil,
+                updatedBy: Swift.Int64? = nil
+            ) {
+                self.attachments = attachments
+                self.createdAt = createdAt
+                self.createdBy = createdBy
+                self.customerId = customerId
+                self.description = description
+                self.employees = employees
+                self.endDate = endDate
+                self.id = id
+                self.progress = progress
+                self.projectAddress = projectAddress
+                self.projectCity = projectCity
+                self.projectLatitude = projectLatitude
+                self.projectLongitude = projectLongitude
+                self.projectName = projectName
+                self.projectPostalCode = projectPostalCode
+                self.projectState = projectState
+                self.projectType = projectType
+                self.startDate = startDate
+                self.status = status
+                self.tasks = tasks
+                self.updatedAt = updatedAt
+                self.updatedBy = updatedBy
+            }
+            public enum CodingKeys: String, CodingKey {
+                case attachments
+                case createdAt
+                case createdBy
+                case customerId
+                case description
+                case employees
+                case endDate
+                case id
+                case progress
+                case projectAddress
+                case projectCity
+                case projectLatitude
+                case projectLongitude
+                case projectName
+                case projectPostalCode
+                case projectState
+                case projectType
+                case startDate
+                case status
+                case tasks
+                case updatedAt
+                case updatedBy
+            }
+        }
+        /// A named work shift with its timing windows and work-hour thresholds.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ShiftTimingDto`.
+        public struct ShiftTimingDto: Codable, Hashable, Sendable {
+            /// Timestamp the shift timing was created.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// Scheduled end time.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/endTime`.
+            public var endTime: Swift.String?
+            /// Minutes of grace allowed after startTime before an arrival counts as late.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/gracePeriodMinutes`.
+            public var gracePeriodMinutes: Swift.Int32?
+            /// Hours worked below which the day is counted as a half day.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/halfDayWorkHours`.
+            public var halfDayWorkHours: Swift.Double?
+            /// Id of the shift timing.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/id`.
+            public var id: Swift.Int64?
+            /// End of the lunch break.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/lunchBreakEnd`.
+            public var lunchBreakEnd: Swift.String?
+            /// Start of the lunch break.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/lunchBreakStart`.
+            public var lunchBreakStart: Swift.String?
+            /// Minimum hours worked to be counted as a full day.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/minimumWorkHours`.
+            public var minimumWorkHours: Swift.Double?
+            /// Hours worked beyond which time is counted as overtime.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/overtimeThreshold`.
+            public var overtimeThreshold: Swift.Double?
+            /// Display name of the shift.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/shiftName`.
+            public var shiftName: Swift.String?
+            /// Scheduled start time.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/startTime`.
+            public var startTime: Swift.String?
+            /// Timestamp the shift timing was last updated.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ShiftTimingDto/updatedAt`.
+            public var updatedAt: Foundation.Date?
+            /// Creates a new `ShiftTimingDto`.
+            ///
+            /// - Parameters:
+            ///   - createdAt: Timestamp the shift timing was created.
+            ///   - endTime: Scheduled end time.
+            ///   - gracePeriodMinutes: Minutes of grace allowed after startTime before an arrival counts as late.
+            ///   - halfDayWorkHours: Hours worked below which the day is counted as a half day.
+            ///   - id: Id of the shift timing.
+            ///   - lunchBreakEnd: End of the lunch break.
+            ///   - lunchBreakStart: Start of the lunch break.
+            ///   - minimumWorkHours: Minimum hours worked to be counted as a full day.
+            ///   - overtimeThreshold: Hours worked beyond which time is counted as overtime.
+            ///   - shiftName: Display name of the shift.
+            ///   - startTime: Scheduled start time.
+            ///   - updatedAt: Timestamp the shift timing was last updated.
+            public init(
+                createdAt: Foundation.Date? = nil,
+                endTime: Swift.String? = nil,
+                gracePeriodMinutes: Swift.Int32? = nil,
+                halfDayWorkHours: Swift.Double? = nil,
+                id: Swift.Int64? = nil,
+                lunchBreakEnd: Swift.String? = nil,
+                lunchBreakStart: Swift.String? = nil,
+                minimumWorkHours: Swift.Double? = nil,
+                overtimeThreshold: Swift.Double? = nil,
+                shiftName: Swift.String? = nil,
+                startTime: Swift.String? = nil,
+                updatedAt: Foundation.Date? = nil
+            ) {
+                self.createdAt = createdAt
+                self.endTime = endTime
+                self.gracePeriodMinutes = gracePeriodMinutes
+                self.halfDayWorkHours = halfDayWorkHours
+                self.id = id
+                self.lunchBreakEnd = lunchBreakEnd
+                self.lunchBreakStart = lunchBreakStart
+                self.minimumWorkHours = minimumWorkHours
+                self.overtimeThreshold = overtimeThreshold
+                self.shiftName = shiftName
+                self.startTime = startTime
+                self.updatedAt = updatedAt
+            }
+            public enum CodingKeys: String, CodingKey {
+                case createdAt
+                case endTime
+                case gracePeriodMinutes
+                case halfDayWorkHours
+                case id
+                case lunchBreakEnd
+                case lunchBreakStart
+                case minimumWorkHours
+                case overtimeThreshold
+                case shiftName
+                case startTime
+                case updatedAt
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/SubscriptionErrorResponse`.
         public struct SubscriptionErrorResponse: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/SubscriptionErrorResponse/details`.
@@ -251,6 +1191,156 @@ extension Components {
                 case message
                 case path
                 case timestamp
+            }
+        }
+        /// Full view of a task, with its resolved creator, assignees, category, issues and attachments.
+        ///
+        /// - Remark: Generated from `#/components/schemas/TaskDto`.
+        public struct TaskDto: Codable, Hashable, Sendable {
+            /// Employees assigned to the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/assignees`.
+            public var assignees: [Components.Schemas.EmployeeDto]?
+            /// Files attached to the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/attachments`.
+            public var attachments: [Components.Schemas.AttachmentDto]?
+            /// Category the task is filed under.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/category`.
+            public var category: Components.Schemas.CategoryDto?
+            /// Creation timestamp.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/createdAt`.
+            public var createdAt: Foundation.Date?
+            /// Employee who created the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/creator`.
+            public var creator: Components.Schemas.EmployeeDto?
+            /// Longer description of the work to be done.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/description`.
+            public var description: Swift.String?
+            /// Planned end of the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/endDate`.
+            public var endDate: Foundation.Date?
+            /// Unique task id.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/id`.
+            public var id: Swift.Int64?
+            /// Issues raised against the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/issues`.
+            public var issues: [Components.Schemas.IssueDto]?
+            /// Completion of the task, as a percentage from 0 to 100.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/progress`.
+            public var progress: Swift.Double?
+            /// Id of the project the task belongs to.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/projectId`.
+            public var projectId: Swift.Int64?
+            /// Planned start of the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/startDate`.
+            public var startDate: Foundation.Date?
+            /// Current task status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/status`.
+            @frozen public enum statusPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case upcoming = "upcoming"
+                case onGoing = "onGoing"
+                case onHold = "onHold"
+                case completed = "completed"
+            }
+            /// Current task status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/status`.
+            public var status: Components.Schemas.TaskDto.statusPayload?
+            /// Free-text tags applied to the task.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/tags`.
+            public var tags: [Swift.String]?
+            /// Short task title.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/title`.
+            public var title: Swift.String?
+            /// Timestamp of the last update.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TaskDto/updatedAt`.
+            public var updatedAt: Foundation.Date?
+            /// Creates a new `TaskDto`.
+            ///
+            /// - Parameters:
+            ///   - assignees: Employees assigned to the task.
+            ///   - attachments: Files attached to the task.
+            ///   - category: Category the task is filed under.
+            ///   - createdAt: Creation timestamp.
+            ///   - creator: Employee who created the task.
+            ///   - description: Longer description of the work to be done.
+            ///   - endDate: Planned end of the task.
+            ///   - id: Unique task id.
+            ///   - issues: Issues raised against the task.
+            ///   - progress: Completion of the task, as a percentage from 0 to 100.
+            ///   - projectId: Id of the project the task belongs to.
+            ///   - startDate: Planned start of the task.
+            ///   - status: Current task status.
+            ///   - tags: Free-text tags applied to the task.
+            ///   - title: Short task title.
+            ///   - updatedAt: Timestamp of the last update.
+            public init(
+                assignees: [Components.Schemas.EmployeeDto]? = nil,
+                attachments: [Components.Schemas.AttachmentDto]? = nil,
+                category: Components.Schemas.CategoryDto? = nil,
+                createdAt: Foundation.Date? = nil,
+                creator: Components.Schemas.EmployeeDto? = nil,
+                description: Swift.String? = nil,
+                endDate: Foundation.Date? = nil,
+                id: Swift.Int64? = nil,
+                issues: [Components.Schemas.IssueDto]? = nil,
+                progress: Swift.Double? = nil,
+                projectId: Swift.Int64? = nil,
+                startDate: Foundation.Date? = nil,
+                status: Components.Schemas.TaskDto.statusPayload? = nil,
+                tags: [Swift.String]? = nil,
+                title: Swift.String? = nil,
+                updatedAt: Foundation.Date? = nil
+            ) {
+                self.assignees = assignees
+                self.attachments = attachments
+                self.category = category
+                self.createdAt = createdAt
+                self.creator = creator
+                self.description = description
+                self.endDate = endDate
+                self.id = id
+                self.issues = issues
+                self.progress = progress
+                self.projectId = projectId
+                self.startDate = startDate
+                self.status = status
+                self.tags = tags
+                self.title = title
+                self.updatedAt = updatedAt
+            }
+            public enum CodingKeys: String, CodingKey {
+                case assignees
+                case attachments
+                case category
+                case createdAt
+                case creator
+                case description
+                case endDate
+                case id
+                case issues
+                case progress
+                case projectId
+                case startDate
+                case status
+                case tags
+                case title
+                case updatedAt
             }
         }
         /// - Remark: Generated from `#/components/schemas/UserDto`.
@@ -394,6 +1484,33 @@ extension Components {
                 case updatedAt
             }
         }
+        /// A single user's partial update within a batch: the user id and the fields to change on them.
+        ///
+        /// - Remark: Generated from `#/components/schemas/UserPatchDto`.
+        public struct UserPatchDto: Codable, Hashable, Sendable {
+            /// Id of the user to update.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserPatchDto/id`.
+            public var id: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/UserPatchDto/updates`.
+            public var updates: Components.Schemas.UserUpdateFieldsDto?
+            /// Creates a new `UserPatchDto`.
+            ///
+            /// - Parameters:
+            ///   - id: Id of the user to update.
+            ///   - updates:
+            public init(
+                id: Swift.Int64? = nil,
+                updates: Components.Schemas.UserUpdateFieldsDto? = nil
+            ) {
+                self.id = id
+                self.updates = updates
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case updates
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/UserRegistrationDto`.
         public struct UserRegistrationDto: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/UserRegistrationDto/acceptTerms`.
@@ -463,6 +1580,159 @@ extension Components {
                 case phone
                 case role
                 case userName
+            }
+        }
+        /// Fields a partial user update may change. Every field is optional and an absent field is left untouched. A field this schema declares nullable is cleared by sending an explicit null; a field it does not declare nullable refuses a null with a 400 rather than clearing. Keys not listed here are ignored.
+        ///
+        /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto`.
+        public struct UserUpdateFieldsDto: Codable, Hashable, Sendable {
+            /// Postal address of the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/address`.
+            public var address: Swift.String?
+            /// Blood group recorded for the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/bloodGroup`.
+            public var bloodGroup: Swift.String?
+            /// Certifications recorded for the user. Replaces the existing list rather than adding to it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/certifications`.
+            public var certifications: [Swift.String]?
+            /// Stored key or URL of the uploaded CV.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/cvUrl`.
+            public var cvUrl: Swift.String?
+            /// Date of birth, sent as an ISO date-time string.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/dateOfBirth`.
+            public var dateOfBirth: Foundation.Date?
+            /// Id of the organization the user lands in after signing in. Must be sent as a number.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/defaultOrganizationId`.
+            public var defaultOrganizationId: Swift.Int64?
+            /// Contact email of the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/email`.
+            public var email: Swift.String?
+            /// Emergency contact for the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/emergencyContact`.
+            public var emergencyContact: Swift.String?
+            /// Years of experience. Must be sent as a whole number.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/experience`.
+            public var experience: Swift.Int32?
+            /// Gender recorded for the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/gender`.
+            public var gender: Swift.String?
+            /// Full name of the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/name`.
+            public var name: Swift.String?
+            /// Contact phone number of the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/phone`.
+            public var phone: Swift.String?
+            /// Stored key or URL of the profile picture.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/profilePictureUrl`.
+            public var profilePictureUrl: Swift.String?
+            /// Highest qualification held.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/qualification`.
+            public var qualification: Swift.String?
+            /// Platform role held by the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/role`.
+            @frozen public enum rolePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case OWNER = "OWNER"
+                case CO_FOUNDER = "CO_FOUNDER"
+                case HR_MANAGER = "HR_MANAGER"
+                case EMPLOYEE = "EMPLOYEE"
+                case STUDENT = "STUDENT"
+                case MANAGEMENT = "MANAGEMENT"
+                case ADMINISTRATOR = "ADMINISTRATOR"
+            }
+            /// Platform role held by the user.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/role`.
+            public var role: Components.Schemas.UserUpdateFieldsDto.rolePayload?
+            /// Skills recorded for the user. Replaces the existing list rather than adding to it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UserUpdateFieldsDto/skills`.
+            public var skills: [Swift.String]?
+            /// Creates a new `UserUpdateFieldsDto`.
+            ///
+            /// - Parameters:
+            ///   - address: Postal address of the user.
+            ///   - bloodGroup: Blood group recorded for the user.
+            ///   - certifications: Certifications recorded for the user. Replaces the existing list rather than adding to it.
+            ///   - cvUrl: Stored key or URL of the uploaded CV.
+            ///   - dateOfBirth: Date of birth, sent as an ISO date-time string.
+            ///   - defaultOrganizationId: Id of the organization the user lands in after signing in. Must be sent as a number.
+            ///   - email: Contact email of the user.
+            ///   - emergencyContact: Emergency contact for the user.
+            ///   - experience: Years of experience. Must be sent as a whole number.
+            ///   - gender: Gender recorded for the user.
+            ///   - name: Full name of the user.
+            ///   - phone: Contact phone number of the user.
+            ///   - profilePictureUrl: Stored key or URL of the profile picture.
+            ///   - qualification: Highest qualification held.
+            ///   - role: Platform role held by the user.
+            ///   - skills: Skills recorded for the user. Replaces the existing list rather than adding to it.
+            public init(
+                address: Swift.String? = nil,
+                bloodGroup: Swift.String? = nil,
+                certifications: [Swift.String]? = nil,
+                cvUrl: Swift.String? = nil,
+                dateOfBirth: Foundation.Date? = nil,
+                defaultOrganizationId: Swift.Int64? = nil,
+                email: Swift.String? = nil,
+                emergencyContact: Swift.String? = nil,
+                experience: Swift.Int32? = nil,
+                gender: Swift.String? = nil,
+                name: Swift.String? = nil,
+                phone: Swift.String? = nil,
+                profilePictureUrl: Swift.String? = nil,
+                qualification: Swift.String? = nil,
+                role: Components.Schemas.UserUpdateFieldsDto.rolePayload? = nil,
+                skills: [Swift.String]? = nil
+            ) {
+                self.address = address
+                self.bloodGroup = bloodGroup
+                self.certifications = certifications
+                self.cvUrl = cvUrl
+                self.dateOfBirth = dateOfBirth
+                self.defaultOrganizationId = defaultOrganizationId
+                self.email = email
+                self.emergencyContact = emergencyContact
+                self.experience = experience
+                self.gender = gender
+                self.name = name
+                self.phone = phone
+                self.profilePictureUrl = profilePictureUrl
+                self.qualification = qualification
+                self.role = role
+                self.skills = skills
+            }
+            public enum CodingKeys: String, CodingKey {
+                case address
+                case bloodGroup
+                case certifications
+                case cvUrl
+                case dateOfBirth
+                case defaultOrganizationId
+                case email
+                case emergencyContact
+                case experience
+                case gender
+                case name
+                case phone
+                case profilePictureUrl
+                case qualification
+                case role
+                case skills
             }
         }
     }
