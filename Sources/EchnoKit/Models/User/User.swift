@@ -14,9 +14,12 @@ import EchnoAPI
 ///   backend genuinely returns null for ordinary rows. The generated DTO makes
 ///   everything optional because the schema omits `required`, so this
 ///   distinction is made here, deliberately, once — not inferred at call sites.
-/// - **No generated type in the public surface.** `Components.Schemas.*` never
-///   escapes the mapping. Backend enums are re-exported as domain enums so the
-///   app has one vocabulary.
+/// - **No generated type on a domain model.** `Components.Schemas.*` never
+///   appears on a property, an initializer parameter callers use, or a return
+///   value. Backend enums are re-exported as domain enums so the app has one
+///   vocabulary. The endpoint protocols in `Endpoints+Narrow.swift` do name
+///   generated types — they are the seam to the client and cannot avoid it —
+///   but nothing above the service layer sees them.
 public struct User: Sendable, Hashable, Identifiable {
 
     // Invariants. Null in any of these means the contract broke, and mapping
@@ -87,8 +90,14 @@ extension User {
     /// "every field might be nil" into three named invariants and a set of
     /// honest optionals.
     ///
+    /// Deliberately **internal**. Making it public would put
+    /// `Components.Schemas.UserDto` in `EchnoKit`'s public API, so a
+    /// regeneration that changed the DTO would be a breaking change for every
+    /// consumer — which is the opposite of what this layer is for. Callers get
+    /// a `User` from ``UserService``; only the mapping needs the DTO.
+    ///
     /// - Throws: ``MappingError`` naming the field when an invariant is null.
-    public init(_ dto: Components.Schemas.UserDto) throws {
+    init(_ dto: Components.Schemas.UserDto) throws {
         self.init(
             id: try require(dto.id, "id", in: Self.dtoName),
             name: try require(dto.name, "name", in: Self.dtoName),
