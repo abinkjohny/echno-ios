@@ -6,6 +6,32 @@ private func user(id: Int64 = 42, name: String = "Ravi Kumar") -> User {
     User(id: id, name: name, email: "ravi@echno.in", skills: ["Rigging"])
 }
 
+/// A loader that can be held mid-flight, so a test can interleave `clear()`
+/// with a load that has already started.
+private actor BlockingLoader: UserLoading {
+    private var resume: CheckedContinuation<Void, Never>?
+    private var isWaiting = false
+
+    func currentUser() async throws -> User {
+        await withCheckedContinuation { continuation in
+            resume = continuation
+            isWaiting = true
+        }
+        return user(name: "Previous User")
+    }
+
+    /// Waits until the loader has actually suspended, so the test is not racing
+    /// the thing it means to control.
+    func waitUntilBlocked() async {
+        while !isWaiting { await Task.yield() }
+    }
+
+    func release() {
+        resume?.resume()
+        resume = nil
+    }
+}
+
 private actor StubLoader: UserLoading {
     private(set) var loads = 0
     var result: Result<User, any Error> = .success(user())
@@ -94,6 +120,26 @@ struct UserStoreTests {
 
         await store.reload()
         #expect(await loader.loads == 2)
+    }
+
+    @Test("A load that resumes after clear() cannot restore the signed-out user")
+    func clearInvalidatesInFlightLoad() async {
+        // Sign-out can land while a load is suspended. Without invalidation the
+        // resumed load writes the previous user straight back into the cache,
+        // and the next screen shows the person who just signed out.
+        let loader = BlockingLoader()
+        let store = UserStore(loader: loader)
+
+        let load = Task { await store.load() }
+        await loader.waitUntilBlocked()
+
+        store.clear()
+        await loader.release()
+        await load.value
+
+        #expect(store.currentUser == nil)
+        #expect(store.error == nil)
+        #expect(!store.isLoading)
     }
 
     @Test("Signing out clears the cached user")
