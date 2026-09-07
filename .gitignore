@@ -6,3 +6,8 @@ xcuserdata/
 .swiftpm/
 .build/
 Package.resolved
+
+# Local working notes and the agent working agreement — kept on disk, out of
+# the repo. Ignored as well as untracked, so a `git add -A` cannot re-add them.
+CLAUDE.md
+local-docs/
