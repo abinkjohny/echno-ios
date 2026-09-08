@@ -2,11 +2,16 @@ import SwiftUI
 
 /// The auth flow: sign-in, with registration presented over it.
 ///
-/// Both screens sit on the dark brand field and run in dark appearance
-/// regardless of the system setting. That is deliberate — this is the brand
-/// moment, the same one echno-web builds with its near-black register panel,
-/// and committing to it also keeps the status bar legible over the artwork.
-/// Everything past sign-in follows the system appearance.
+/// The sign-in and registration screens sit on the dark brand field and run in
+/// dark appearance regardless of the system setting — the brand moment, the same
+/// one echno-web builds with its near-black register panel, and what keeps the
+/// status bar legible over the artwork.
+///
+/// The app shell does **not**. `preferredColorScheme` is applied to the
+/// signed-out branch alone, so it lifts the moment the shell replaces it and the
+/// app follows whatever the user set. Applied to the whole `Group` it would
+/// force the entire signed-in app dark, which is a different product decision
+/// and not one anybody made.
 struct AuthFlowView: View {
     @State private var session = AuthSession()
 
@@ -14,42 +19,18 @@ struct AuthFlowView: View {
         Group {
             switch session.state {
             case .signedOut, .signingIn:
-                SignInView()
+                // Dark only while signed out. The preference travels with the
+                // view, so it lifts as soon as the shell replaces this — which
+                // is the intent: auth is a brand moment, the app itself follows
+                // whatever the user set.
+                SignInView().preferredColorScheme(.dark)
             case .signedIn:
-                SignedInPlaceholderView()
+                AppShell()
             }
         }
         .environment(session)
-        .preferredColorScheme(.dark)
         .tint(Echno.primary)
         .task { await session.restore() }
-    }
-}
-
-/// Stands in for the app shell until Phase 3 builds it.
-struct SignedInPlaceholderView: View {
-    @Environment(AuthSession.self) private var session
-
-    var body: some View {
-        ZStack {
-            BrandBackground()
-            VStack(spacing: 20) {
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 44))
-                    .foregroundStyle(Echno.brand)
-                Text("Signed In")
-                    .font(.title.weight(.black))
-                    .foregroundStyle(Echno.foreground)
-                Text("The app shell arrives in Phase 3.")
-                    .font(.subheadline)
-                    .foregroundStyle(Echno.mutedForeground)
-                EchnoSecondaryButton(title: "Sign Out", systemImage: "rectangle.portrait.and.arrow.right") {
-                    Task { await session.signOut() }
-                }
-                .frame(maxWidth: 320)
-            }
-            .padding(24)
-        }
     }
 }
 
