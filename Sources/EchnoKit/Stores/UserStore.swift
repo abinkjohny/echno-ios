@@ -95,20 +95,30 @@ public final class UserStore {
             Log.store.error("Refused to replace user \(String(describing: self.currentUser?.id)) with \(user.id)")
             return
         }
+        // A full Dto is the freshest state there is. A read that started before
+        // it must not land on top, or the save the user just made reverts on
+        // screen a moment later.
+        invalidateLoadInFlight()
         currentUser = user
         error = nil
     }
 
     /// Drops the cached user. Call on sign-out, or the next sign-in screen
     /// shows the previous person's name behind it.
-    ///
-    /// Also invalidates any load already in flight. Sign-out routinely lands
-    /// while one is suspended, and without this the resumed load writes the
-    /// signed-out user straight back into the cache.
     public func clear() {
-        generation &+= 1
+        invalidateLoadInFlight()
         currentUser = nil
         error = nil
+    }
+
+    /// Discards any load already running, so its result cannot land afterwards.
+    ///
+    /// Every path that writes ``currentUser`` from outside ``fetch()`` must call
+    /// this first. A read that started earlier is, by definition, describing an
+    /// older state; letting it commit after a sign-out restores the signed-out
+    /// user, and after a mutation it reverts the change the user just made.
+    private func invalidateLoadInFlight() {
+        generation &+= 1
         isLoading = false
     }
 

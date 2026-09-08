@@ -142,6 +142,25 @@ struct UserStoreTests {
         #expect(!store.isLoading)
     }
 
+    @Test("A mutation result is not overwritten by a load that was already running")
+    func replaceInvalidatesInFlightLoad() async {
+        // replace(with:) carries a full Dto — the freshest state there is. A
+        // read that started earlier and is still suspended must not land on top
+        // of it, or a save the user just made silently reverts on screen.
+        let loader = BlockingLoader()
+        let store = UserStore(loader: loader)
+
+        let load = Task { await store.load() }
+        await loader.waitUntilBlocked()
+
+        store.replace(with: user(name: "Just Saved"))
+        await loader.release()
+        await load.value
+
+        #expect(store.currentUser?.name == "Just Saved")
+        #expect(!store.isLoading)
+    }
+
     @Test("Signing out clears the cached user")
     func clearsOnSignOut() async {
         // Leaving it would show the previous user's name behind the next
