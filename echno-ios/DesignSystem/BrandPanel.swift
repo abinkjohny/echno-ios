@@ -46,7 +46,7 @@ struct BrandPanel: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Color(rgb: 0xEA580C).opacity(0.22), .clear],
+                            colors: [Echno.brandGlow.opacity(0.22), .clear],
                             center: .center,
                             startRadius: 0,
                             endRadius: proxy.size.width * 0.45
@@ -130,7 +130,7 @@ struct BrandPanel: View {
                 Text("Manage Better.")
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color(rgb: 0xF59E0B), Color(rgb: 0xEA580C)],
+                            colors: Echno.brandGradient,
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -150,7 +150,7 @@ struct BrandPanel: View {
                     + "inventory, and billing — built for the construction industry."
                 )
                 .font(.callout)
-                .foregroundStyle(Color(rgb: 0xA1A1AA))
+                .foregroundStyle(Echno.OnPanel.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -172,10 +172,10 @@ struct BrandPanel: View {
                     VStack(alignment: .leading, spacing: Echno.Space.hairline) {
                         Text(item.title)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color(rgb: 0xF4F4F5))
+                            .foregroundStyle(Echno.OnPanel.primary)
                         Text(item.detail)
                             .font(.caption)
-                            .foregroundStyle(Color(rgb: 0x71717B))
+                            .foregroundStyle(Echno.OnPanel.tertiary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -191,7 +191,7 @@ struct BrandPanel: View {
                 .font(.caption2)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .foregroundStyle(Color(rgb: 0x52525C))
+        .foregroundStyle(Echno.OnPanel.faint)
     }
 }
 

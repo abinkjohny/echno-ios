@@ -51,6 +51,30 @@ enum Echno {
     /// it is artwork, not a surface, and it reads as Echno in either theme.
     static let panel = Color(rgb: 0x09090B)
 
+    /// Text on ``panel``.
+    ///
+    /// Fixed, not adaptive, and that is the point: the panel is always dark, so
+    /// the adaptive `foreground` and `mutedForeground` would turn near-black on
+    /// it in light appearance and disappear. These were inline hex literals in
+    /// `BrandPanel` for exactly that reason — naming them records the reason
+    /// with them.
+    enum OnPanel {
+        /// Headings and highlight titles.
+        static let primary = Color(rgb: 0xF4F4F5)
+        /// Supporting copy under a heading.
+        static let secondary = Color(rgb: 0xA1A1AA)
+        /// Detail lines beneath a highlight.
+        static let tertiary = Color(rgb: 0x71717B)
+        /// The quietest thing on the panel — legal and trust lines.
+        static let faint = Color(rgb: 0x52525C)
+    }
+
+    /// The amber sweep on the brand headline, warm end first.
+    static let brandGradient = [Color(rgb: 0xF59E0B), Color(rgb: 0xEA580C)]
+
+    /// The deeper amber behind the panel's lower glow.
+    static let brandGlow = Color(rgb: 0xEA580C)
+
     // MARK: Text
 
     static let foreground = Color(light: 0x09090B, dark: 0xFAFAFA)
