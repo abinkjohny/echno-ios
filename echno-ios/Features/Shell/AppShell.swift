@@ -13,20 +13,20 @@ import EchnoKit
 struct AppShell: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @State private var selection: NavigationDestination = .home
+    @State private var navigation = ShellNavigation()
 
     var body: some View {
         if sizeClass == .regular {
-            SidebarShell(selection: $selection)
+            SidebarShell(navigation: $navigation)
         } else {
-            TabShell(selection: $selection)
+            TabShell(navigation: $navigation)
         }
     }
 }
 
 /// iPad, and iPhone in landscape on the larger devices.
 private struct SidebarShell: View {
-    @Binding var selection: NavigationDestination
+    @Binding var navigation: ShellNavigation
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     var body: some View {
@@ -35,8 +35,8 @@ private struct SidebarShell: View {
             // deselection, which the shell has no state for — there is always a
             // detail on screen — so it is ignored rather than modelled.
             List(selection: Binding(
-                get: { Optional(selection) },
-                set: { if let new = $0 { selection = new } }
+                get: { Optional(navigation.destination) },
+                set: { if let new = $0 { navigation.selectFromSidebar(new) } }
             )) {
                 ForEach(NavigationSection.all) { section in
                     Section(section.title) {
@@ -51,7 +51,7 @@ private struct SidebarShell: View {
             .listStyle(.sidebar)
         } detail: {
             NavigationStack {
-                DestinationView(destination: selection)
+                DestinationView(destination: navigation.destination)
                     // On the detail, not the sidebar. iPad collapses the
                     // sidebar in portrait, and the active tenant has to stay
                     // visible — someone reading a materials list needs to know
@@ -65,24 +65,37 @@ private struct SidebarShell: View {
 /// iPhone. Four tabs plus More, so the fifth slot is ours rather than the
 /// system's — see ``NavigationDestination/phoneTabs``.
 private struct TabShell: View {
-    @Binding var selection: NavigationDestination
+    @Binding var navigation: ShellNavigation
+
+    /// More is tagged `.more`, not a borrowed destination — see ``PhoneTab``.
+    private var tab: Binding<PhoneTab> {
+        Binding(get: { navigation.phoneTab }, set: { navigation.selectTab($0) })
+    }
+
+    private var morePath: Binding<[NavigationDestination]> {
+        Binding(get: { navigation.morePath }, set: { navigation.setMorePath($0) })
+    }
 
     var body: some View {
-        TabView(selection: $selection) {
+        TabView(selection: tab) {
             ForEach(NavigationDestination.phoneTabs) { destination in
                 NavigationStack {
                     DestinationView(destination: destination)
                         .toolbar { OrganizationSwitcher() }
                 }
                 .tabItem { Label(destination.title, systemImage: destination.symbol) }
-                .tag(destination)
+                .tag(PhoneTab.destination(destination))
             }
 
-            NavigationStack {
-                MoreView(selection: $selection)
+            NavigationStack(path: morePath) {
+                MoreView()
+                    .navigationDestination(for: NavigationDestination.self) { destination in
+                        DestinationView(destination: destination)
+                            .toolbar { OrganizationSwitcher() }
+                    }
             }
             .tabItem { Label("More", systemImage: "ellipsis") }
-            .tag(NavigationDestination.settings)
+            .tag(PhoneTab.more)
         }
     }
 }
@@ -92,7 +105,6 @@ private struct TabShell: View {
 /// Grouped by section rather than flattened, so the phone's More and the iPad's
 /// sidebar describe the same shape.
 private struct MoreView: View {
-    @Binding var selection: NavigationDestination
 
     private var sections: [NavigationSection] {
         NavigationSection.all.compactMap { section in
@@ -109,9 +121,9 @@ private struct MoreView: View {
             ForEach(sections) { section in
                 Section(section.title) {
                     ForEach(section.destinations) { destination in
-                        NavigationLink {
-                            DestinationView(destination: destination)
-                        } label: {
+                        // Value-based, so the push goes through the bound path
+                        // and the shared state learns where the user went.
+                        NavigationLink(value: destination) {
                             Label(destination.title, systemImage: destination.symbol)
                         }
                     }
