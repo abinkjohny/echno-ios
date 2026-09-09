@@ -126,3 +126,56 @@ struct UserEndpointTests {
         #expect(document.path(forOperation: "readAnUser") == "/api/v1/user")
     }
 }
+
+@Suite("User initials")
+struct UserInitialsTests {
+
+    private func user(_ name: String) -> User {
+        User(id: 1, name: name, email: "a@b.c")
+    }
+
+    @Test("Two words give two initials")
+    func twoWords() {
+        #expect(user("Ravi Kumar").initials == "RK")
+    }
+
+    @Test("One word gives one initial")
+    func oneWord() {
+        #expect(user("Ravi").initials == "R")
+    }
+
+    @Test("More than two words uses the first and last")
+    func manyWords() {
+        // Middle names are common here; "RKS" reads as a different person than
+        // "RS", and the surname is the part people recognise.
+        #expect(user("Ravi Kumar Sharma").initials == "RS")
+    }
+
+    @Test("Extra whitespace does not become an initial")
+    func messyWhitespace() {
+        #expect(user("  Ravi   Kumar  ").initials == "RK")
+    }
+
+    @Test("A name that is only whitespace falls back rather than showing nothing")
+    func blankName() {
+        // An empty avatar reads as a rendering bug. A person glyph reads as
+        // "no name on file", which is the truth.
+        #expect(user("   ").initials == "")
+    }
+
+    @Test("Initials are uppercased regardless of how the name was entered")
+    func casing() {
+        #expect(user("ravi kumar").initials == "RK")
+    }
+
+    @Test("Non-Latin names take whole grapheme clusters")
+    func nonLatin() throws {
+        // Derived, not hand-written: in Malayalam a consonant plus its vowel
+        // sign is one Character, so the initial of കുമാർ is കു and not ക —
+        // splitting it would drop the vowel and spell something else.
+        let given = "രവി", family = "കുമാർ"
+        let expected = String(try #require(given.first)) + String(try #require(family.first))
+        #expect(user("\(given) \(family)").initials == expected)
+        #expect(expected.count == 2, "two Characters, whatever their scalar count")
+    }
+}

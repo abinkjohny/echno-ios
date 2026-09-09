@@ -80,6 +80,22 @@ public struct User: Sendable, Hashable, Identifiable {
 
 extension User {
 
+    /// One or two letters standing in for a profile picture.
+    ///
+    /// First and last word rather than the first two: middle names are common,
+    /// and the surname is the part people recognise — "Ravi Kumar Sharma" reads
+    /// as RS, not RK.
+    ///
+    /// Empty when the name has no letters to take. Callers should show a person
+    /// glyph then; an empty circle reads as a rendering bug rather than as "no
+    /// name on file".
+    public var initials: String {
+        let words = name.split(whereSeparator: \.isWhitespace)
+        guard let first = words.first else { return "" }
+        let letters = words.count > 1 ? [first, words[words.index(before: words.endIndex)]] : [first]
+        return letters.compactMap(\.first).map(String.init).joined().uppercased()
+    }
+
     /// The DTO's name, used in mapping errors so a failure says which contract
     /// broke.
     static let dtoName = "UserDto"
