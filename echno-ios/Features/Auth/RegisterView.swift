@@ -318,8 +318,8 @@ private struct PasswordStrengthMeter: View {
     private var colour: Color {
         switch score {
         case 0...2: Echno.destructive
-        case 3...4: Echno.brand
-        default: Color(light: 0x16A34A, dark: 0x4ADE80)
+        case 3...4: Echno.warning
+        default: Echno.success
         }
     }
 

@@ -20,6 +20,27 @@ enum Echno {
     /// Red. Destructive actions and validation failures.
     static let destructive = Color(light: 0xE7000B, dark: 0xFF6467)
 
+    // MARK: Status
+    //
+    // Almost every module in this product is status-shaped: attendance is
+    // pending, approved or rejected; so are leave requests, indents, purchase
+    // orders and site transfers. Without a named set each screen picks its own
+    // green, and "approved" stops looking the same from one screen to the next —
+    // which is exactly how a design system comes apart.
+    //
+    // Paired with an icon or a label wherever they carry meaning. Colour alone
+    // fails for the ~8% of men with a colour vision deficiency, and a
+    // construction workforce is not an exception to that.
+
+    /// Approved, complete, in good standing.
+    static let success = Color(light: 0x16A34A, dark: 0x4ADE80)
+
+    /// Pending, expiring, needs attention but is not yet wrong.
+    static let warning = Color(light: 0xD97706, dark: 0xFBBF24)
+
+    /// Neutral information — draft, submitted, awaiting someone else.
+    static let info = Color(light: 0x0284C7, dark: 0x38BDF8)
+
     // MARK: Surfaces
 
     static let background = Color(light: 0xFFFFFF, dark: 0x09090B)
