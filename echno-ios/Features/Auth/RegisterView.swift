@@ -30,7 +30,7 @@ struct RegisterView: View {
 
                 ScrollViewReader { proxy in
                     ScrollView {
-                        VStack(spacing: 20) {
+                        VStack(spacing: Echno.Space.xl) {
                             header
                             accountSection
                             securitySection
@@ -39,8 +39,8 @@ struct RegisterView: View {
                         }
                         .frame(maxWidth: 560)
                         .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 20)
+                        .padding(.horizontal, Echno.Space.xl)
+                        .padding(.vertical, Echno.Space.xl)
                     }
                     .scrollDismissesKeyboard(.interactively)
                     .onChange(of: form.scrollTarget) { _, target in
@@ -77,9 +77,9 @@ struct RegisterView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Echno.Space.sm) {
             Text("Create Your Account")
-                .font(.title2.weight(.black))
+                .font(.echnoScreenTitleCompact)
                 .foregroundStyle(Echno.foreground)
             Text("Fill in your details to get started — it only takes a minute.")
                 .font(.subheadline)
@@ -93,7 +93,7 @@ struct RegisterView: View {
 
     private var accountSection: some View {
         EchnoSection(title: "Account") {
-            VStack(spacing: 16) {
+            VStack(spacing: Echno.Space.lg) {
                 pair {
                     field(.userName, "Username") {
                         TextField("", text: $form.userName, prompt: Self.hint("john_doe"))
@@ -124,8 +124,8 @@ struct RegisterView: View {
             title: "Security",
             caption: "At least 8 characters, with upper and lower case, a number and a symbol."
         ) {
-            VStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: Echno.Space.lg) {
+                VStack(alignment: .leading, spacing: Echno.Space.sm) {
                     field(.password, "Password") {
                         EchnoSecureField(placeholder: "At least 8 characters", text: $form.password)
                             .textContentType(.newPassword)
@@ -145,7 +145,7 @@ struct RegisterView: View {
 
     private var profileSection: some View {
         EchnoSection(title: "Profile") {
-            VStack(spacing: 16) {
+            VStack(spacing: Echno.Space.lg) {
                 pair {
                     field(.phone, "Phone") {
                         TextField("", text: $form.phone, prompt: Self.hint("+911234567890"))
@@ -191,9 +191,9 @@ struct RegisterView: View {
     }
 
     private var termsAndSubmit: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: Echno.Space.xl) {
             EchnoCard {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: Echno.Space.sm) {
                     Toggle(isOn: $form.acceptTerms) {
                         Text("I accept the Terms of Service and Privacy Policy")
                             .font(.footnote)
@@ -216,7 +216,7 @@ struct RegisterView: View {
                 submit()
             }
 
-            HStack(spacing: 4) {
+            HStack(spacing: Echno.Space.xs) {
                 Text("Already have an account?")
                     .foregroundStyle(Echno.mutedForeground)
                 Button("Sign In") { dismiss() }
@@ -301,9 +301,9 @@ struct RegisterView: View {
         @ViewBuilder second: () -> B
     ) -> some View {
         if isWide {
-            HStack(alignment: .top, spacing: 14) { first(); second() }
+            HStack(alignment: .top, spacing: Echno.Space.lg) { first(); second() }
         } else {
-            VStack(spacing: 16) { first(); second() }
+            VStack(spacing: Echno.Space.lg) { first(); second() }
         }
     }
 }
@@ -332,8 +332,8 @@ private struct PasswordStrengthMeter: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
-            HStack(spacing: 4) {
+        HStack(spacing: Echno.Space.sm) {
+            HStack(spacing: Echno.Space.xs) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
                         .fill(index < score ? colour : Echno.border)

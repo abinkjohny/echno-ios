@@ -37,6 +37,38 @@ enum Echno {
 
     // MARK: Geometry
 
+    /// The spacing scale.
+    ///
+    /// Before this existed the view layer used 21 distinct spacing values across
+    /// 65 sites — 7, 14, 18, 22, 28 among them. Nobody chose 7 over 8; they were
+    /// whatever looked right while typing. With 26 module screens still to come,
+    /// that spread only widens and screens drift out of rhythm in ways nobody
+    /// can point at.
+    ///
+    /// A 4-point grid, because that is what iOS lays out on. Reach for the
+    /// nearest step rather than adding one — a scale with an exception for every
+    /// case is just the literals again with longer names.
+    enum Space {
+        /// 2 — between a label and the value it describes.
+        static let hairline: CGFloat = 2
+        /// 4 — inside a tightly grouped pair.
+        static let xs: CGFloat = 4
+        /// 8 — between elements of one control.
+        static let sm: CGFloat = 8
+        /// 12 — between related controls.
+        static let md: CGFloat = 12
+        /// 16 — between controls in a form.
+        static let lg: CGFloat = 16
+        /// 20 — between a group and its neighbour.
+        static let xl: CGFloat = 20
+        /// 24 — screen margins when compact; between sections.
+        static let xxl: CGFloat = 24
+        /// 32 — around a major block.
+        static let section: CGFloat = 32
+        /// 40 — screen margins at regular width.
+        static let screen: CGFloat = 40
+    }
+
     /// echno-web's `--radius: 0.625rem`.
     enum Radius {
         static let sm: CGFloat = 6
@@ -44,6 +76,29 @@ enum Echno {
         static let lg: CGFloat = 10
         static let xl: CGFloat = 14
     }
+}
+
+/// The few typographic mannerisms that are Echno's rather than the system's.
+///
+/// Deliberately built on semantic styles, never point sizes. A scale expressed
+/// in points would reintroduce a bug this codebase already had: headings at
+/// fixed sizes while body text scaled, so at accessibility sizes the subtitle
+/// rendered larger than the heading it sat under. Everything here scales with
+/// Dynamic Type because `.title` and `.subheadline` do.
+///
+/// The system styles are used directly everywhere else — `.caption`,
+/// `.subheadline`, `.headline` say what they mean, and wrapping them would add
+/// a layer of indirection over names SwiftUI already chose well.
+extension Font {
+    /// The heading at the top of a screen. Heavier than the system's title,
+    /// which is the whole mannerism.
+    static let echnoScreenTitle = Font.title.weight(.black)
+
+    /// A screen heading where a full title would crowd the content.
+    static let echnoScreenTitleCompact = Font.title2.weight(.black)
+
+    /// A group heading inside a form.
+    static let echnoSectionTitle = Font.subheadline.weight(.semibold)
 }
 
 // MARK: - Hex helpers

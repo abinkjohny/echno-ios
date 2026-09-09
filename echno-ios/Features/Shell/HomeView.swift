@@ -37,9 +37,9 @@ struct HomeView: View {
     }
 
     private func profile(_ user: User) -> some View {
-        HStack(spacing: 14) {
+        HStack(spacing: Echno.Space.lg) {
             EchnoAvatar(initials: user.initials)
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: Echno.Space.xs) {
                 Text(user.name)
                     .font(.headline)
                 Text(user.email)
@@ -53,14 +53,14 @@ struct HomeView: View {
             }
             Spacer()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Echno.Space.xs)
         .accessibilityElement(children: .combine)
     }
 
     /// Held as state by the store, presented here — the store owns data, the
     /// view owns feedback.
     private func failure(_ error: any Error) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Echno.Space.md) {
             Label(
                 (error as? LocalizedError)?.errorDescription ?? "Could not load your profile.",
                 systemImage: "exclamationmark.triangle"
@@ -71,21 +71,21 @@ struct HomeView: View {
             Button("Try Again") { Task { await store.reload() } }
                 .font(.subheadline.weight(.semibold))
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Echno.Space.xs)
     }
 
     /// Redacted rather than a spinner: the row keeps its shape, so the screen
     /// does not jump when the real name arrives.
     private var placeholder: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: Echno.Space.lg) {
             EchnoAvatar(initials: "")
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: Echno.Space.xs) {
                 Text("Loading name").font(.headline)
                 Text("loading@example.com").font(.subheadline)
             }
             Spacer()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Echno.Space.xs)
         .redacted(reason: .placeholder)
         .accessibilityLabel("Loading your profile")
     }

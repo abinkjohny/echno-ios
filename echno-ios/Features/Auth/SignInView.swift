@@ -103,12 +103,12 @@ struct SignInView: View {
             BrandPanel(layout: .full)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            VStack(spacing: 28) {
+            VStack(spacing: Echno.Space.section) {
                 signInBlock
                 footer
             }
             .frame(maxWidth: .infinity)
-            .padding(40)
+            .padding(Echno.Space.screen)
         }
     }
 
@@ -118,22 +118,22 @@ struct SignInView: View {
             BrandPanel(layout: .header)
             // Capped so the card sits in the upper-middle on a tall phone
             // instead of drifting to the centre of a mostly empty field.
-            Spacer(minLength: 16).frame(maxHeight: 88)
+            Spacer(minLength: Echno.Space.lg).frame(maxHeight: 88)
             signInBlock
-                .padding(.horizontal, 24)
-            Spacer(minLength: 24)
+                .padding(.horizontal, Echno.Space.xxl)
+            Spacer(minLength: Echno.Space.xxl)
             footer
         }
-        .padding(.bottom, 8)
+        .padding(.bottom, Echno.Space.sm)
     }
 
     // MARK: Content
 
     private var signInBlock: some View {
-        VStack(spacing: 22) {
-            VStack(spacing: 8) {
+        VStack(spacing: Echno.Space.xxl) {
+            VStack(spacing: Echno.Space.sm) {
                 Text("Welcome Back")
-                    .font(.title.weight(.black))
+                    .font(.echnoScreenTitle)
                     .foregroundStyle(Echno.foreground)
                 Text("Sign in to your Echno account to continue.")
                     .font(.subheadline)
@@ -142,13 +142,13 @@ struct SignInView: View {
             }
 
             EchnoCard {
-                VStack(spacing: 16) {
+                VStack(spacing: Echno.Space.lg) {
                     EchnoPrimaryButton(title: "Sign In", isLoading: isAuthenticating) {
                         signIn()
                     }
                     .accessibilityHint("Opens the Echno sign-in page in a secure browser")
 
-                    HStack(alignment: .firstTextBaseline, spacing: 7) {
+                    HStack(alignment: .firstTextBaseline, spacing: Echno.Space.sm) {
                         Image(systemName: "lock.shield")
                         Text("Opens a secure Echno sign-in page. Your password is never entered in this app.")
                             .fixedSize(horizontal: false, vertical: true)
@@ -157,7 +157,7 @@ struct SignInView: View {
                     .foregroundStyle(Echno.mutedForeground)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    HStack(spacing: 10) {
+                    HStack(spacing: Echno.Space.md) {
                         rule
                         Text("New to Echno?")
                             .font(.caption)
@@ -190,7 +190,7 @@ struct SignInView: View {
 
     /// Anchors the bottom of the screen and gives support something to quote.
     private var footer: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: Echno.Space.xs) {
             Text("Echno for iOS")
                 .font(.caption2.weight(.medium))
             Text(Bundle.main.displayVersion)

@@ -34,7 +34,7 @@ struct EchnoAvatar: View {
 }
 
 #Preview {
-    HStack(spacing: 16) {
+    HStack(spacing: Echno.Space.lg) {
         EchnoAvatar(initials: "RK")
         EchnoAvatar(initials: "രകു")
         EchnoAvatar(initials: "")
