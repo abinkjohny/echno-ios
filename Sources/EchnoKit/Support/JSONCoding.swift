@@ -75,16 +75,43 @@ public enum EchnoDate {
 
     static func decode(_ decoder: any Decoder) throws -> Date {
         let raw = try decoder.singleValueContainer().decode(String.self)
-        if let date = iso8601Fractional.date(from: raw) { return date }
-        if let date = iso8601.date(from: raw) { return date }
-        if let date = localDateTime.date(from: raw) { return date }
-        if let date = localDate.date(from: raw) { return date }
+        if let date = parse(raw) { return date }
         throw DecodingError.dataCorrupted(
             .init(
                 codingPath: decoder.codingPath,
                 debugDescription: "Unrecognised date format: \(raw)"
             )
         )
+    }
+
+    /// Parses any of the four shapes the backend emits, or `nil`.
+    static func parse(_ raw: String) -> Date? {
+        if let date = iso8601Fractional.date(from: raw) { return date }
+        if let date = iso8601.date(from: raw) { return date }
+        if let date = localDateTime.date(from: raw) { return date }
+        if let date = localDate.date(from: raw) { return date }
+        return unzonedWithFraction(raw)
+    }
+
+    /// `2026-09-06T14:23:05.123456789` — a `LocalDateTime` carrying a fraction.
+    ///
+    /// The backend's `createdAt` and `updatedAt` are `java.time.LocalDateTime`,
+    /// which Jackson writes with no zone and with as many fractional digits as
+    /// the value happens to have — one to nine. `DateFormatter` cannot express a
+    /// variable-length fraction: `SSS` means exactly three, so anything else
+    /// fails and the whole response is rejected as corrupt.
+    ///
+    /// So the fraction is split off and added back as a `TimeInterval`, which
+    /// works for any number of digits.
+    private static func unzonedWithFraction(_ raw: String) -> Date? {
+        guard let dot = raw.firstIndex(of: "."), !raw.hasSuffix("Z") else { return nil }
+        let digits = raw[raw.index(after: dot)...]
+        guard !digits.isEmpty, digits.allSatisfy(\.isNumber) else { return nil }
+        guard let whole = localDateTime.date(from: String(raw[..<dot])) else { return nil }
+        // "123" is 0.123 seconds and "123456789" is 0.123456789 — the digits are
+        // a decimal fraction, not a count of any fixed unit.
+        guard let fraction = Double("0.\(digits)") else { return nil }
+        return whole.addingTimeInterval(fraction)
     }
 
     static func encode(_ date: Date, _ encoder: any Encoder) throws {

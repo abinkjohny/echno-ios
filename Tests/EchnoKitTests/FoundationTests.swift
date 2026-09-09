@@ -85,6 +85,29 @@ struct DateDecodingTests {
         #expect(try decode("2026-09-06T14:23:05Z") == decode("2026-09-06T14:23:05"))
     }
 
+    @Test(
+        "A LocalDateTime keeps its fractional seconds, however many digits",
+        arguments: ["2026-09-06T14:23:05.1", "2026-09-06T14:23:05.12",
+                    "2026-09-06T14:23:05.123", "2026-09-06T14:23:05.123456",
+                    "2026-09-06T14:23:05.123456789"]
+    )
+    func localDateTimeWithFraction(raw: String) throws {
+        // The backend's createdAt and updatedAt are java.time.LocalDateTime,
+        // which Jackson writes without a zone and with as many fractional digits
+        // as the value has — up to nanoseconds. DateFormatter cannot express a
+        // variable-length fraction, so this is parsed in two parts.
+        let whole = try utc(2026, 9, 6, 14, 23, 5)
+        let parsed = try decode(raw)
+        let fraction = Double("0" + raw.drop(while: { $0 != "." })) ?? 0
+        #expect(abs(parsed.timeIntervalSince(whole) - fraction) < 0.000_01)
+    }
+
+    @Test("A zoned instant with a long fraction is still accepted")
+    func zonedWithLongFraction() throws {
+        #expect(try decode("2026-09-06T14:23:05.123456789Z")
+                .timeIntervalSince(utc(2026, 9, 6, 14, 23, 5)) > 0.12)
+    }
+
     @Test("An unrecognised format fails loudly")
     func unknownFormat() {
         #expect(throws: DecodingError.self) { try decode("06/09/2026") }
