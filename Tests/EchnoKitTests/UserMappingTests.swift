@@ -156,11 +156,23 @@ struct UserInitialsTests {
         #expect(user("  Ravi   Kumar  ").initials == "RK")
     }
 
-    @Test("A name that is only whitespace falls back rather than showing nothing")
-    func blankName() {
-        // An empty avatar reads as a rendering bug. A person glyph reads as
-        // "no name on file", which is the truth.
-        #expect(user("   ").initials == "")
+    @Test("A name with no letters yields nothing to show", arguments: [
+        "   ", "---", "123", "...", "'", "-- --"
+    ])
+    func namesWithoutLetters(name: String) {
+        // Empty is the signal for the person-glyph fallback. Returning "-" or
+        // "1" instead puts punctuation in the avatar, which reads as a
+        // rendering fault rather than as "no name on file".
+        //
+        // Reachable: registration permits hyphens, dots and apostrophes so that
+        // "Mary-Jane O'Neill" validates, which also lets "---" through.
+        #expect(user(name).initials == "")
+    }
+
+    @Test("Punctuation inside a real name does not stop it being used")
+    func punctuationWithinNames() {
+        #expect(user("Mary-Jane O'Neill").initials == "MO")
+        #expect(user("J. R. Smith").initials == "JS")
     }
 
     @Test("Initials are uppercased regardless of how the name was entered")
