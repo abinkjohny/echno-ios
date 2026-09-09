@@ -4,6 +4,13 @@ import OpenAPIURLSession
 import EchnoAPI
 
 /// Which backend the app talks to.
+///
+/// The base URL is an **origin only** — no path. Every path in the OpenAPI
+/// document already begins with `/api/v1`, and the document's own `servers`
+/// entry is a bare `http://localhost`. Repeating the prefix here produces
+/// `/api/v1/api/v1/…`, which Spring answers with a 500 and
+/// "No static resource" — a message that reads like a server fault and sends
+/// you looking in the wrong place. A test pins this.
 public enum ServerEnvironment: Sendable {
     case production
     case custom(URL)
@@ -11,7 +18,7 @@ public enum ServerEnvironment: Sendable {
     public var baseURL: URL {
         switch self {
         case .production:
-            URL(string: "https://backend.echno.in/api/v1")!
+            URL(string: "https://backend.echno.in")!
         case .custom(let url):
             url
         }

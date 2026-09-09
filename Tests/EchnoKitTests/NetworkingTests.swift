@@ -9,6 +9,7 @@ import EchnoAPI
 /// middleware can be tested without a backend.
 private actor RecordingTransport: ClientTransport {
     private(set) var lastRequest: HTTPRequest?
+    private(set) var lastBaseURL: URL?
     private let status: Int
     private let body: String
 
@@ -24,6 +25,7 @@ private actor RecordingTransport: ClientTransport {
         operationID: String
     ) async throws -> (HTTPResponse, HTTPBody?) {
         lastRequest = request
+        lastBaseURL = baseURL
         return (
             HTTPResponse(
                 status: .init(code: status),
@@ -34,6 +36,12 @@ private actor RecordingTransport: ClientTransport {
     }
 
     func recorded() -> HTTPRequest? { lastRequest }
+
+    /// The URL the transport would actually fetch.
+    func recordedURL() -> String? {
+        guard let base = lastBaseURL, let path = lastRequest?.path else { return nil }
+        return base.absoluteString + path
+    }
 }
 
 private struct StubCredentials: APICredentialProvider {
@@ -143,7 +151,9 @@ struct GeneratedClientTests {
 
         let request = try #require(await transport.recorded())
         #expect(request.method == .post)
-        #expect(request.path?.hasSuffix("/auth/register") == true)
+        // The whole URL, not just the suffix — a doubled prefix still ends
+        // correctly, which is why the first version of this test missed it.
+        #expect(await transport.recordedURL() == "https://backend.echno.in/api/v1/auth/register")
         // The exemption must hold end to end, not only in the middleware test.
         #expect(request.headerFields[.authorization] == nil)
     }
@@ -152,15 +162,26 @@ struct GeneratedClientTests {
 @Suite("Server environment")
 struct ServerEnvironmentTests {
 
-    @Test("Production points at the live backend's versioned API root")
+    @Test("Production points at the live backend's origin")
     func production() {
-        #expect(ServerEnvironment.production.baseURL.absoluteString
-                == "https://backend.echno.in/api/v1")
+        #expect(ServerEnvironment.production.baseURL.absoluteString == "https://backend.echno.in")
+    }
+
+    @Test("The base URL carries no path of its own")
+    func baseURLHasNoPath() {
+        // Every path in the document already begins with /api/v1 — the
+        // document's own server is a bare origin. A base URL that repeats the
+        // prefix produces /api/v1/api/v1/… and the backend answers 500 with
+        // "No static resource", which reads as a server fault rather than a
+        // client one.
+        #expect(ServerEnvironment.production.baseURL.path.isEmpty)
     }
 
     @Test("A custom environment is used verbatim")
     func custom() {
-        let local = URL(string: "http://10.0.0.5:8080/api/v1")!
+        // Also an origin — an override that appends /api/v1 doubles the prefix
+        // exactly as the production URL used to.
+        let local = URL(string: "http://10.0.0.5:8080")!
         #expect(ServerEnvironment.custom(local).baseURL == local)
     }
 }
