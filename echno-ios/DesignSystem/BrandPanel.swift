@@ -70,34 +70,34 @@ struct BrandPanel: View {
             // line to the bottom the way the web panel does.
             VStack(alignment: .leading, spacing: 0) {
                 wordmark
-                Spacer(minLength: 32)
-                VStack(alignment: .leading, spacing: 20) {
+                Spacer(minLength: Echno.Space.section)
+                VStack(alignment: .leading, spacing: Echno.Space.xl) {
                     tagline
                     headline
                     highlights
                 }
-                Spacer(minLength: 32)
+                Spacer(minLength: Echno.Space.section)
                 trustLine
             }
-            .padding(40)
+            .padding(Echno.Space.screen)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
 
         case .header:
             // Hugs its content. Given a flexible height it would stretch and
             // strand the headline in the middle of an empty field.
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: Echno.Space.xl) {
                 wordmark
                 headline
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 20)
-            .padding(.bottom, 28)
+            .padding(.horizontal, Echno.Space.xxl)
+            .padding(.top, Echno.Space.xl)
+            .padding(.bottom, Echno.Space.section)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private var wordmark: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Echno.Space.sm) {
             Image(systemName: "cube.transparent.fill")
                 .font(.system(size: 22, weight: .bold))
                 .foregroundStyle(Echno.brand)
@@ -109,21 +109,21 @@ struct BrandPanel: View {
     }
 
     private var tagline: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: Echno.Space.sm) {
             Image(systemName: "bolt.fill")
                 .font(.system(size: 11, weight: .semibold))
             Text("Construction-First Platform")
                 .font(.footnote.weight(.medium))
         }
         .foregroundStyle(Echno.brand)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 7)
+        .padding(.horizontal, Echno.Space.md)
+        .padding(.vertical, Echno.Space.sm)
         .background(Echno.brand.opacity(0.10), in: Capsule())
         .overlay(Capsule().stroke(Echno.brand.opacity(0.25), lineWidth: 1))
     }
 
     private var headline: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Echno.Space.md) {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Build Smarter,")
                     .foregroundStyle(.white)
@@ -157,9 +157,9 @@ struct BrandPanel: View {
     }
 
     private var highlights: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: Echno.Space.lg) {
             ForEach(Highlight.all) { item in
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: Echno.Space.md) {
                     Image(systemName: item.symbol)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Echno.brand)
@@ -169,7 +169,7 @@ struct BrandPanel: View {
                                 .fill(Echno.brand.opacity(0.10))
                                 .stroke(Echno.brand.opacity(0.20), lineWidth: 1)
                         )
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: Echno.Space.hairline) {
                         Text(item.title)
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(Color(rgb: 0xF4F4F5))
@@ -184,7 +184,7 @@ struct BrandPanel: View {
     }
 
     private var trustLine: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Echno.Space.md) {
             Image(systemName: "checkmark.shield")
                 .font(.caption)
             Text("Enterprise-grade security · GDPR compliant · 99.9% uptime SLA")

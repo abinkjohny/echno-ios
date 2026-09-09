@@ -14,8 +14,8 @@ struct EchnoField<Control: View>: View {
     @ViewBuilder var control: Control
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 2) {
+        VStack(alignment: .leading, spacing: Echno.Space.sm) {
+            HStack(spacing: Echno.Space.hairline) {
                 Text(title)
                 if isRequired {
                     Text("*").foregroundStyle(Echno.destructive)
@@ -25,7 +25,7 @@ struct EchnoField<Control: View>: View {
             .foregroundStyle(Echno.foreground.opacity(0.85))
 
             control
-                .padding(.horizontal, 12)
+                .padding(.horizontal, Echno.Space.md)
                 .frame(minHeight: 44)
                 .background(Echno.background, in: RoundedRectangle(cornerRadius: Echno.Radius.lg))
                 .overlay(
@@ -57,7 +57,7 @@ struct EchnoSecureField: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Echno.Space.sm) {
             Group {
                 if isRevealed {
                     TextField("", text: $text, prompt: prompt)
@@ -117,7 +117,7 @@ struct EchnoSecondaryButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: Echno.Space.sm) {
                 if let systemImage {
                     Image(systemName: systemImage)
                 }
@@ -237,10 +237,10 @@ struct EchnoSection<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: Echno.Space.md) {
+            VStack(alignment: .leading, spacing: Echno.Space.hairline) {
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.echnoSectionTitle)
                     .foregroundStyle(Echno.foreground)
                 if let caption {
                     Text(caption)
@@ -249,7 +249,7 @@ struct EchnoSection<Content: View>: View {
                 }
             }
             .accessibilityAddTraits(.isHeader)
-            .padding(.horizontal, 4)
+            .padding(.horizontal, Echno.Space.xs)
 
             EchnoCard { content }
         }
@@ -262,7 +262,7 @@ struct EchnoCard<Content: View>: View {
 
     var body: some View {
         content
-            .padding(20)
+            .padding(Echno.Space.xl)
             .background(Echno.card, in: RoundedRectangle(cornerRadius: Echno.Radius.xl))
             .overlay(
                 RoundedRectangle(cornerRadius: Echno.Radius.xl)
