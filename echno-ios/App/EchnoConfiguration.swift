@@ -17,6 +17,10 @@ enum EchnoConfiguration {
         )
     }
 
+    /// The API origin.
+    ///
+    /// An origin, not a path: the OpenAPI document's paths already carry
+    /// `/api/v1`, so a base URL that includes it doubles the prefix.
     static var server: ServerEnvironment {
         guard let raw = Bundle.main.object(forInfoDictionaryKey: "ECHNO_API_BASE_URL") as? String,
               !raw.isEmpty, let url = URL(string: raw)
