@@ -315,11 +315,21 @@ struct RegisterView: View {
 private struct PasswordStrengthMeter: View {
     let score: Int
 
-    private var colour: Color {
+    /// The bar's fill — a graphical object, so the vivid values apply.
+    private var fill: Color {
         switch score {
         case 0...2: Echno.destructive
         case 3...4: Echno.warning
         default: Echno.success
+        }
+    }
+
+    /// The label beside it — text, so the darker variants apply.
+    private var labelColour: Color {
+        switch score {
+        case 0...2: Echno.destructive
+        case 3...4: Echno.Text.warning
+        default: Echno.Text.success
         }
     }
 
@@ -336,13 +346,13 @@ private struct PasswordStrengthMeter: View {
             HStack(spacing: Echno.Space.xs) {
                 ForEach(0..<5, id: \.self) { index in
                     Capsule()
-                        .fill(index < score ? colour : Echno.border)
+                        .fill(index < score ? fill : Echno.border)
                         .frame(height: 4)
                 }
             }
             Text(label)
                 .font(.caption2.weight(.medium))
-                .foregroundStyle(colour)
+                .foregroundStyle(labelColour)
                 .frame(width: 84, alignment: .leading)
         }
         .animation(.easeOut(duration: Echno.Motion.standard), value: score)

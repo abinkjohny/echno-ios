@@ -48,7 +48,7 @@ struct HomeView: View {
                 if let role = user.role {
                     Text(role.label)
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(Echno.brand)
+                        .foregroundStyle(Echno.Text.brand)
                 }
             }
             Spacer()
