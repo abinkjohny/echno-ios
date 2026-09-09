@@ -87,13 +87,20 @@ extension User {
     /// as RS, not RK.
     ///
     /// Empty when the name has no letters to take. Callers should show a person
-    /// glyph then; an empty circle reads as a rendering bug rather than as "no
-    /// name on file".
+    /// glyph then; punctuation in the avatar reads as a rendering fault rather
+    /// than as "no name on file".
+    ///
+    /// Only words that *begin* with a letter count. Registration permits
+    /// hyphens, dots and apostrophes so "Mary-Jane O'Neill" validates, which
+    /// also lets "---" through — and `Character.isLetter` is true for a whole
+    /// grapheme cluster, so `കു` still qualifies.
     public var initials: String {
-        let words = name.split(whereSeparator: \.isWhitespace)
+        let words = name
+            .split(whereSeparator: \.isWhitespace)
+            .filter { $0.first?.isLetter == true }
         guard let first = words.first else { return "" }
-        let letters = words.count > 1 ? [first, words[words.index(before: words.endIndex)]] : [first]
-        return letters.compactMap(\.first).map(String.init).joined().uppercased()
+        let chosen = words.count > 1 ? [first, words[words.index(before: words.endIndex)]] : [first]
+        return chosen.compactMap(\.first).map(String.init).joined().uppercased()
     }
 
     /// The DTO's name, used in mapping errors so a failure says which contract
