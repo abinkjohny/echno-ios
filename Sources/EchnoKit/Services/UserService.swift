@@ -50,19 +50,48 @@ public actor UserService {
         switch output {
         case .ok(let response):
             guard case .any(let body) = response.body else {
-                throw APIError(message: "Unexpected response body.", status: 0)
+                throw Self.failure(0, "The server sent a profile in a form the app could not read.")
             }
             return try User(await Self.decode(body))
+
+        // Every status the document declares is named. Collapsing them into one
+        // message is how "Could not load your profile" ends up on screen with
+        // nothing — not a log line, not a status code — to say whether the
+        // server was down, the account lacks access, or the record is missing.
         case .unauthorized:
-            throw APIError(message: "Your session has ended.", status: 401)
+            throw Self.failure(401, "Your session has ended. Please sign in again.")
+        case .forbidden:
+            // The likeliest cause on a fresh Keycloak client: the access token
+            // carries no `groups` claim, so the backend can derive no
+            // organization membership and refuses. See keycloak-setup.md §4.
+            throw Self.failure(403, "Your account does not have access to this profile.")
+        case .notFound:
+            throw Self.failure(404, "No profile exists for this account.")
+        case .badRequest:
+            throw Self.failure(400, "The profile request was rejected.")
+        case .conflict:
+            throw Self.failure(409, "The profile could not be read right now.")
+        case .unprocessableContent:
+            throw Self.failure(422, "The profile request was rejected.")
+        case .code402:
+            throw Self.failure(402, "This organization's subscription does not cover that.")
+        case .internalServerError:
+            throw Self.failure(500, "The server had a problem. Try again shortly.")
+        case .badGateway:
+            throw Self.failure(502, "The server is unreachable. Try again shortly.")
         case .undocumented(let statusCode, _):
-            throw APIError(
-                message: HTTPURLResponse.localizedString(forStatusCode: statusCode),
-                status: statusCode
-            )
-        default:
-            throw APIError(message: "Could not load your profile.", status: 0)
+            throw Self.failure(statusCode, HTTPURLResponse.localizedString(forStatusCode: statusCode))
         }
+    }
+
+    /// Builds the error and records it.
+    ///
+    /// The log line is the point. Without it a failure reaching the user is
+    /// undiagnosable — the screen says something went wrong and nothing anywhere
+    /// says what. Carries no response body, which could hold profile data.
+    private static func failure(_ status: Int, _ message: String) -> APIError {
+        Log.network.error("getCurrentUser failed: \(status, privacy: .public) — \(message, privacy: .public)")
+        return APIError(message: message, status: status)
     }
 
     /// Collects a raw response body and decodes it into a generated schema.
