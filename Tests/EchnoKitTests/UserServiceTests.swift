@@ -116,6 +116,43 @@ struct UserServiceTests {
         }
     }
 
+    @Test("A 500's ProblemDetail reaches the log but not the user")
+    func serverErrorDetailIsLoggedNotShown() async {
+        // The backend's catch-all puts the real cause in `detail`. It belongs in
+        // the log, where whoever is debugging can read it — and not on screen,
+        // because a 500's detail is an exception message.
+        let problem = #"{"title":"Internal Server Error","detail":"An unexpected error occurred: boom","status":500}"#
+        let endpoint = StubUserEndpoint(currentUser: {
+            .internalServerError(.init(body: .any(HTTPBody(problem))))
+        })
+
+        do {
+            _ = try await UserService(client: endpoint).currentUser()
+            Issue.record("expected a failure")
+        } catch let error as APIError {
+            #expect(error.status == 500)
+            #expect(error.message == "The server had a problem. Try again shortly.")
+            #expect(!error.message.contains("boom"))
+        } catch {
+            Issue.record("expected an APIError")
+        }
+    }
+
+    @Test("A 500 with an unreadable body still fails cleanly")
+    func serverErrorWithGarbageBody() async {
+        let endpoint = StubUserEndpoint(currentUser: {
+            .internalServerError(.init(body: .any(HTTPBody("<html>502 Bad Gateway</html>"))))
+        })
+        do {
+            _ = try await UserService(client: endpoint).currentUser()
+            Issue.record("expected a failure")
+        } catch let error as APIError {
+            #expect(error.status == 500)
+        } catch {
+            Issue.record("expected an APIError")
+        }
+    }
+
     @Test("A 401 is still classified as an auth error")
     func unauthorizedIsAnAuthError() async {
         let endpoint = StubUserEndpoint(currentUser: {

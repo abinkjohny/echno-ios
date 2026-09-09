@@ -75,10 +75,16 @@ public actor UserService {
             throw Self.failure(422, "The profile request was rejected.")
         case .code402:
             throw Self.failure(402, "This organization's subscription does not cover that.")
-        case .internalServerError:
-            throw Self.failure(500, "The server had a problem. Try again shortly.")
-        case .badGateway:
-            throw Self.failure(502, "The server is unreachable. Try again shortly.")
+        case .internalServerError(let response):
+            guard case .any(let body) = response.body else {
+                throw Self.failure(500, "The server had a problem. Try again shortly.")
+            }
+            throw await Self.failure(500, "The server had a problem. Try again shortly.", body: body)
+        case .badGateway(let response):
+            guard case .any(let body) = response.body else {
+                throw Self.failure(502, "The server is unreachable. Try again shortly.")
+            }
+            throw await Self.failure(502, "The server is unreachable. Try again shortly.", body: body)
         case .undocumented(let statusCode, _):
             throw Self.failure(statusCode, HTTPURLResponse.localizedString(forStatusCode: statusCode))
         }
@@ -88,9 +94,37 @@ public actor UserService {
     ///
     /// The log line is the point. Without it a failure reaching the user is
     /// undiagnosable — the screen says something went wrong and nothing anywhere
-    /// says what. Carries no response body, which could hold profile data.
+    /// says what.
     private static func failure(_ status: Int, _ message: String) -> APIError {
-        Log.network.error("getCurrentUser failed: \(status, privacy: .public) — \(message, privacy: .public)")
+        Log.network.error(
+            "getCurrentUser failed: \(status, privacy: .public) — \(message, privacy: .public)"
+        )
+        return APIError(message: message, status: status)
+    }
+
+    /// As above, but reads the `ProblemDetail` the backend sent.
+    ///
+    /// The backend's catch-all handler puts the real cause in `detail` —
+    /// literally `"An unexpected error occurred: " + ex.getMessage()`. Throwing
+    /// that away and logging a canned string means the one party who knows what
+    /// broke has told us, and we did not listen.
+    ///
+    /// It reaches the **log only**, never the user: a 500's detail is an
+    /// exception message, which is for whoever is debugging and not for whoever
+    /// is holding the phone.
+    private static func failure(
+        _ status: Int,
+        _ message: String,
+        body: OpenAPIRuntime.HTTPBody
+    ) async -> APIError {
+        var reported = message
+        if let problem = try? await decode(body, as: Components.Schemas.ProblemDetail.self) {
+            let parts = [problem.title, problem.detail].compactMap(\.self).filter { !$0.isEmpty }
+            if !parts.isEmpty { reported = parts.joined(separator: ": ") }
+        }
+        Log.network.error(
+            "getCurrentUser failed: \(status, privacy: .public) — \(reported, privacy: .public)"
+        )
         return APIError(message: message, status: status)
     }
 
