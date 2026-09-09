@@ -45,7 +45,7 @@ struct RegisterView: View {
                     .scrollDismissesKeyboard(.interactively)
                     .onChange(of: form.scrollTarget) { _, target in
                         guard let target else { return }
-                        withAnimation(.easeOut(duration: 0.25)) {
+                        withAnimation(.easeOut(duration: Echno.Motion.deliberate)) {
                             proxy.scrollTo(target, anchor: .center)
                         }
                         if target.isTextEntry { focused = target }
@@ -345,7 +345,7 @@ private struct PasswordStrengthMeter: View {
                 .foregroundStyle(colour)
                 .frame(width: 84, alignment: .leading)
         }
-        .animation(.easeOut(duration: 0.2), value: score)
+        .animation(.easeOut(duration: Echno.Motion.standard), value: score)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Password strength: \(label), \(score) of 5 rules met")
     }

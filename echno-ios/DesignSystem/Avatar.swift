@@ -9,11 +9,11 @@ import EchnoKit
 /// reads as "no name on file", which is the truth.
 struct EchnoAvatar: View {
     let initials: String
-    var diameter: CGFloat = 44
+    var diameter: CGFloat = Echno.Size.avatar
 
     var body: some View {
         ZStack {
-            Circle().fill(Echno.brand.opacity(0.15))
+            Circle().fill(Echno.brand.opacity(Echno.Opacity.subtle))
             if initials.isEmpty {
                 Image(systemName: "person.fill")
                     .font(.system(size: diameter * 0.42))

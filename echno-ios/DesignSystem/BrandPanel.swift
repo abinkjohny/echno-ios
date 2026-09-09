@@ -34,7 +34,7 @@ struct BrandPanel: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Echno.brand.opacity(0.30), .clear],
+                            colors: [Echno.brand.opacity(Echno.Opacity.strong), .clear],
                             center: .center,
                             startRadius: 0,
                             endRadius: proxy.size.width * 0.55
@@ -46,7 +46,7 @@ struct BrandPanel: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Echno.brandGlow.opacity(0.22), .clear],
+                            colors: [Echno.brandGlow.opacity(Echno.Opacity.soft), .clear],
                             center: .center,
                             startRadius: 0,
                             endRadius: proxy.size.width * 0.45
@@ -55,7 +55,7 @@ struct BrandPanel: View {
                     .frame(width: proxy.size.width * 0.9)
                     .position(x: proxy.size.width, y: proxy.size.height)
             }
-            .blur(radius: 40)
+            .blur(radius: Echno.Size.glowBlur)
         }
         .allowsHitTesting(false)
     }
@@ -118,8 +118,8 @@ struct BrandPanel: View {
         .foregroundStyle(Echno.brand)
         .padding(.horizontal, Echno.Space.md)
         .padding(.vertical, Echno.Space.sm)
-        .background(Echno.brand.opacity(0.10), in: Capsule())
-        .overlay(Capsule().stroke(Echno.brand.opacity(0.25), lineWidth: 1))
+        .background(Echno.brand.opacity(Echno.Opacity.faint), in: Capsule())
+        .overlay(Capsule().stroke(Echno.brand.opacity(Echno.Opacity.medium), lineWidth: Echno.Size.hairline))
     }
 
     private var headline: some View {
@@ -166,8 +166,8 @@ struct BrandPanel: View {
                         .frame(width: 32, height: 32)
                         .background(
                             RoundedRectangle(cornerRadius: Echno.Radius.md)
-                                .fill(Echno.brand.opacity(0.10))
-                                .stroke(Echno.brand.opacity(0.20), lineWidth: 1)
+                                .fill(Echno.brand.opacity(Echno.Opacity.faint))
+                                .stroke(Echno.brand.opacity(Echno.Opacity.soft), lineWidth: Echno.Size.hairline)
                         )
                     VStack(alignment: .leading, spacing: Echno.Space.hairline) {
                         Text(item.title)
@@ -237,8 +237,8 @@ struct BrandBackground: View {
         ZStack {
             Echno.panel
             BlueprintGrid()
-                .stroke(Echno.brand.opacity(0.28), lineWidth: 1)
-                .opacity(0.16)
+                .stroke(Echno.brand.opacity(Echno.Opacity.medium), lineWidth: Echno.Size.hairline)
+                .opacity(Echno.Opacity.subtle)
             BrandPanel.glows()
         }
         .ignoresSafeArea()
