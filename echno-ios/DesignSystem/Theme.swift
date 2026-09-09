@@ -1,4 +1,5 @@
 import SwiftUI
+import EchnoKit
 
 /// The Echno colour palette.
 ///
@@ -11,14 +12,17 @@ enum Echno {
 
     // MARK: Brand
 
-    /// Amber. The Echno accent — highlights, marks, the logo lockup.
-    static let brand = Color(light: 0xE68300, dark: 0xFE9A00)
+    /// Amber. The Echno accent — marks, tinted fills, the logo lockup.
+    ///
+    /// A **fill**, not a text colour: on white it is 2.76:1, which is fine
+    /// behind an icon and unreadable as a caption. Use ``Text/brand`` for text.
+    static let brand = Color(light: Palette.brandLight, dark: Palette.brandDark)
 
     /// Indigo. Primary actions and the app tint.
     static let primary = Color(light: 0x686FFF, dark: 0x8693FF)
 
     /// Red. Destructive actions and validation failures.
-    static let destructive = Color(light: 0xE7000B, dark: 0xFF6467)
+    static let destructive = Color(light: Palette.destructiveLight, dark: Palette.destructiveDark)
 
     // MARK: Status
     //
@@ -32,14 +36,31 @@ enum Echno {
     // fails for the ~8% of men with a colour vision deficiency, and a
     // construction workforce is not an exception to that.
 
-    /// Approved, complete, in good standing.
-    static let success = Color(light: 0x16A34A, dark: 0x4ADE80)
+    /// Approved, complete, in good standing. A fill — see ``Text/success``.
+    static let success = Color(light: Palette.successLight, dark: Palette.successDark)
 
-    /// Pending, expiring, needs attention but is not yet wrong.
-    static let warning = Color(light: 0xD97706, dark: 0xFBBF24)
+    /// Pending, expiring, needs attention but is not yet wrong. A fill.
+    static let warning = Color(light: Palette.warningLight, dark: Palette.warningDark)
 
-    /// Neutral information — draft, submitted, awaiting someone else.
-    static let info = Color(light: 0x0284C7, dark: 0x38BDF8)
+    /// Neutral information — draft, submitted, awaiting someone else. A fill.
+    static let info = Color(light: Palette.infoLight, dark: Palette.infoDark)
+
+    /// Status colours for **text**.
+    ///
+    /// Darker than the fills in light appearance. The fills sit between 2.7:1
+    /// and 4.1:1 on white — enough for a bar or an icon, which WCAG holds to
+    /// 3:1 as graphical objects, but short of the 4.5:1 it asks of text. A
+    /// status label rendered in the fill colour is a legibility defect, not a
+    /// styling choice, so the two are separate tokens rather than one
+    /// compromise that serves neither.
+    ///
+    /// `PaletteContrastTests` holds every value here to 4.5:1.
+    enum Text {
+        static let brand = Color(light: Palette.brandTextLight, dark: Palette.brandTextDark)
+        static let success = Color(light: Palette.successTextLight, dark: Palette.successTextDark)
+        static let warning = Color(light: Palette.warningTextLight, dark: Palette.warningTextDark)
+        static let info = Color(light: Palette.infoTextLight, dark: Palette.infoTextDark)
+    }
 
     // MARK: Surfaces
 
@@ -49,7 +70,7 @@ enum Echno {
 
     /// The dark panel behind the brand artwork. Fixed in both appearances —
     /// it is artwork, not a surface, and it reads as Echno in either theme.
-    static let panel = Color(rgb: 0x09090B)
+    static let panel = Color(rgb: Palette.near_black)
 
     /// Text on ``panel``.
     ///
@@ -60,13 +81,15 @@ enum Echno {
     /// with them.
     enum OnPanel {
         /// Headings and highlight titles.
-        static let primary = Color(rgb: 0xF4F4F5)
+        static let primary = Color(rgb: Palette.onPanelPrimary)
         /// Supporting copy under a heading.
-        static let secondary = Color(rgb: 0xA1A1AA)
+        static let secondary = Color(rgb: Palette.onPanelSecondary)
         /// Detail lines beneath a highlight.
-        static let tertiary = Color(rgb: 0x71717B)
-        /// The quietest thing on the panel — legal and trust lines.
-        static let faint = Color(rgb: 0x52525C)
+        static let tertiary = Color(rgb: Palette.onPanelTertiary)
+        /// The quietest thing on the panel — legal and trust lines. Lifted from
+        /// its original value, which was 2.58:1 on the panel: quiet is a design
+        /// choice, illegible is not.
+        static let faint = Color(rgb: Palette.onPanelFaint)
     }
 
     /// The amber sweep on the brand headline, warm end first.
