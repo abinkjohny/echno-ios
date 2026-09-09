@@ -25,6 +25,13 @@ final class AuthSession {
     /// an error to apologise for.
     var error: String?
 
+    /// The signed-in user, for any screen that needs it.
+    ///
+    /// Owned here because its lifetime is the session's: it is cleared on
+    /// sign-out, and a store that outlived the session would show the previous
+    /// user behind the next sign-in screen.
+    let users: UserStore
+
     private let authenticator: KeycloakAuthenticator
     private let credentials: SessionCredentials
     private let client: Client
@@ -42,8 +49,11 @@ final class AuthSession {
             browser: browser
         )
         self.authenticator = authenticator
-        self.credentials = SessionCredentials(authenticator: authenticator)
-        self.client = EchnoClient.make(environment: server, credentials: credentials)
+        let credentials = SessionCredentials(authenticator: authenticator)
+        let client = EchnoClient.make(environment: server, credentials: credentials)
+        self.credentials = credentials
+        self.client = client
+        self.users = UserStore(loader: UserService(client: client))
     }
 
     /// Restores a session left by a previous launch.
@@ -78,6 +88,9 @@ final class AuthSession {
     func signOut() async {
         try? await authenticator.signOut()
         await credentials.select(organization: nil)
+        // Not housekeeping: without this the next sign-in screen renders with
+        // the previous user's name and email still in the store behind it.
+        users.clear()
         state = .signedOut
     }
 

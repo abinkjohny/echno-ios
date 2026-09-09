@@ -13,14 +13,20 @@ import EchnoKit
 struct AppShell: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(AuthSession.self) private var session
     @State private var navigation = ShellNavigation()
 
     var body: some View {
-        if sizeClass == .regular {
-            SidebarShell(navigation: $navigation)
-        } else {
-            TabShell(navigation: $navigation)
+        Group {
+            if sizeClass == .regular {
+                SidebarShell(navigation: $navigation)
+            } else {
+                TabShell(navigation: $navigation)
+            }
         }
+        // The session owns the store; the shell publishes it so screens depend
+        // on the data they need rather than reaching through the session.
+        .environment(session.users)
     }
 }
 
@@ -139,6 +145,14 @@ private struct DestinationView: View {
     let destination: NavigationDestination
 
     var body: some View {
+        if destination == .home {
+            HomeView()
+        } else {
+            placeholder
+        }
+    }
+
+    private var placeholder: some View {
         ContentUnavailableView {
             Label(destination.title, systemImage: destination.symbol)
         } description: {
