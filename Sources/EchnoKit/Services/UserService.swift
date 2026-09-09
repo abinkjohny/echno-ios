@@ -145,6 +145,11 @@ public actor UserService {
         do {
             return try JSONDecoder.echno.decode(T.self, from: data)
         } catch {
+            // The DecodingError carries the coding path and, for a date, the
+            // value that would not parse. On screen that gets truncated to
+            // something unusable, so it goes to the log intact — never the body
+            // itself, which holds profile data.
+            Log.network.error("Could not decode \(String(describing: T.self), privacy: .public): \(String(describing: error), privacy: .public)")
             throw APIError.decoding("Could not decode \(T.self): \(error)")
         }
     }
