@@ -197,7 +197,7 @@ struct SignInView: View {
                 .font(.caption2)
                 .monospacedDigit()
         }
-        .foregroundStyle(Echno.mutedForeground.opacity(0.7))
+        .foregroundStyle(Echno.mutedForeground.opacity(Echno.Opacity.secondary))
         .accessibilityElement(children: .combine)
     }
 

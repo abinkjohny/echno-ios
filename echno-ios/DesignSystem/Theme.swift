@@ -114,6 +114,57 @@ enum Echno {
         static let screen: CGFloat = 40
     }
 
+    /// Fixed dimensions that are not spacing.
+    enum Size {
+        /// Borders and rules. One point, not one pixel — SwiftUI works in
+        /// points and the display scale handles the rest.
+        static let hairline: CGFloat = 1
+        /// Text fields and list rows: the HIG minimum touch target.
+        static let field: CGFloat = 44
+        /// Primary buttons — taller than the minimum, because the main action
+        /// on a screen should be the easiest thing on it to hit.
+        static let control: CGFloat = 50
+        /// The avatar disc. Matches ``field`` so a row with one keeps its rhythm.
+        static let avatar: CGFloat = 44
+        /// The brand panel's glow blur.
+        static let glowBlur: CGFloat = 40
+    }
+
+    /// The opacity ladder.
+    ///
+    /// There were ten distinct values before this, six of them used once —
+    /// 0.16, 0.20, 0.22, 0.25, 0.28, 0.30. Tinted fills and borders that differ
+    /// by two percent do not read as different, they read as unconsidered.
+    enum Opacity {
+        /// A tinted fill behind an icon or a badge.
+        static let faint = 0.10
+        /// A hairline border on a tinted fill.
+        static let subtle = 0.15
+        /// A border that should be seen without being read.
+        static let soft = 0.20
+        /// Artwork that must register.
+        static let medium = 0.25
+        /// The panel's glows.
+        static let strong = 0.30
+        /// De-emphasised text that still has to be legible.
+        static let secondary = 0.70
+        /// Text one step below full strength.
+        static let primary = 0.85
+    }
+
+    /// Animation timings.
+    ///
+    /// Inconsistent timing is felt even when it is not noticed: two controls
+    /// that should feel like siblings stop doing so.
+    enum Motion {
+        /// A state toggle — a message appearing, a meter filling.
+        static let quick = 0.15
+        /// The default for anything that changes in place.
+        static let standard = 0.20
+        /// Movement the eye has to follow, like scrolling to an error.
+        static let deliberate = 0.25
+    }
+
     /// echno-web's `--radius: 0.625rem`.
     enum Radius {
         static let sm: CGFloat = 6

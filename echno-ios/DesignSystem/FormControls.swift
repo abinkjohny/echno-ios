@@ -22,15 +22,15 @@ struct EchnoField<Control: View>: View {
                 }
             }
             .font(.subheadline)
-            .foregroundStyle(Echno.foreground.opacity(0.85))
+            .foregroundStyle(Echno.foreground.opacity(Echno.Opacity.primary))
 
             control
                 .padding(.horizontal, Echno.Space.md)
-                .frame(minHeight: 44)
+                .frame(minHeight: Echno.Size.field)
                 .background(Echno.background, in: RoundedRectangle(cornerRadius: Echno.Radius.lg))
                 .overlay(
                     RoundedRectangle(cornerRadius: Echno.Radius.lg)
-                        .stroke(error == nil ? Echno.border : Echno.destructive, lineWidth: 1)
+                        .stroke(error == nil ? Echno.border : Echno.destructive, lineWidth: Echno.Size.hairline)
                 )
 
             if let error {
@@ -41,7 +41,7 @@ struct EchnoField<Control: View>: View {
                     .accessibilityAddTraits(.isStaticText)
             }
         }
-        .animation(.easeOut(duration: 0.15), value: error)
+        .animation(.easeOut(duration: Echno.Motion.quick), value: error)
     }
 }
 
@@ -100,7 +100,7 @@ struct EchnoPrimaryButton: View {
             }
             .font(.body.weight(.semibold))
             .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .frame(maxWidth: .infinity, minHeight: Echno.Size.control)
             .background(Echno.primary, in: RoundedRectangle(cornerRadius: Echno.Radius.lg))
         }
         .buttonStyle(.plain)
@@ -125,11 +125,11 @@ struct EchnoSecondaryButton: View {
             }
             .font(.body.weight(.semibold))
             .foregroundStyle(Echno.foreground)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .frame(maxWidth: .infinity, minHeight: Echno.Size.control)
             .background(Echno.card, in: RoundedRectangle(cornerRadius: Echno.Radius.lg))
             .overlay(
                 RoundedRectangle(cornerRadius: Echno.Radius.lg)
-                    .stroke(Echno.border, lineWidth: 1)
+                    .stroke(Echno.border, lineWidth: Echno.Size.hairline)
             )
         }
         .buttonStyle(.plain)
@@ -266,7 +266,7 @@ struct EchnoCard<Content: View>: View {
             .background(Echno.card, in: RoundedRectangle(cornerRadius: Echno.Radius.xl))
             .overlay(
                 RoundedRectangle(cornerRadius: Echno.Radius.xl)
-                    .stroke(Echno.border, lineWidth: 1)
+                    .stroke(Echno.border, lineWidth: Echno.Size.hairline)
             )
     }
 }
