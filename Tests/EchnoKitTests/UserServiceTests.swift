@@ -86,13 +86,48 @@ struct UserServiceTests {
         }
     }
 
-    @Test("A 401 is reported as an auth error the UI can act on")
-    func mapsUnauthorized() async {
+    @Test("Each declared status keeps its code, so a failure can be diagnosed")
+    func statusesArePreserved() async throws {
+        // The whole set used to collapse into one message with status 0. A
+        // screen then said "Could not load your profile" whether the server was
+        // down, the account lacked access, or the record did not exist — and
+        // nothing anywhere said which.
+        let cases: [(Operations.getCurrentUser.Output, Int)] = [
+            (.unauthorized(.init(body: .any(HTTPBody("")))), 401),
+            (.forbidden(.init(body: .any(HTTPBody("")))), 403),
+            (.notFound(.init(body: .any(HTTPBody("")))), 404),
+            (.badRequest(.init(body: .any(HTTPBody("")))), 400),
+            (.internalServerError(.init(body: .any(HTTPBody("")))), 500),
+            (.badGateway(.init(body: .any(HTTPBody("")))), 502),
+            (.undocumented(statusCode: 418, .init()), 418)
+        ]
+
+        for (output, expected) in cases {
+            let endpoint = StubUserEndpoint(currentUser: { output })
+            await #expect(throws: APIError.self) {
+                _ = try await UserService(client: endpoint).currentUser()
+            }
+            do {
+                _ = try await UserService(client: endpoint).currentUser()
+            } catch let error as APIError {
+                #expect(error.status == expected)
+                #expect(!error.message.isEmpty)
+            }
+        }
+    }
+
+    @Test("A 401 is still classified as an auth error")
+    func unauthorizedIsAnAuthError() async {
         let endpoint = StubUserEndpoint(currentUser: {
-            .undocumented(statusCode: 401, .init())
+            .unauthorized(.init(body: .any(HTTPBody(""))))
         })
-        await #expect(throws: APIError.self) {
+        do {
             _ = try await UserService(client: endpoint).currentUser()
+            Issue.record("expected a failure")
+        } catch let error as APIError {
+            #expect(error.isAuthError)
+        } catch {
+            Issue.record("expected an APIError")
         }
     }
 
