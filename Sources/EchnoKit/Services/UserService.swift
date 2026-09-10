@@ -140,17 +140,21 @@ public actor UserService {
         do {
             data = try await Data(collecting: body, upTo: 8 << 20)
         } catch {
-            throw APIError.decoding("Could not read the response body: \(error)")
+            Log.network.error(
+                "Could not read the response body: \(String(describing: error), privacy: .public)"
+            )
+            throw APIError.decoding()
         }
         do {
             return try JSONDecoder.echno.decode(T.self, from: data)
         } catch {
             // The DecodingError carries the coding path and, for a date, the
-            // value that would not parse. On screen that gets truncated to
-            // something unusable, so it goes to the log intact — never the body
-            // itself, which holds profile data.
+            // value that would not parse. That is exactly what is needed to
+            // diagnose the fault and exactly what must not reach the screen, so
+            // it goes to the log intact and the thrown error carries none of it
+            // — never the body itself either, which holds profile data.
             Log.network.error("Could not decode \(String(describing: T.self), privacy: .public): \(String(describing: error), privacy: .public)")
-            throw APIError.decoding("Could not decode \(T.self): \(error)")
+            throw APIError.decoding()
         }
     }
 }

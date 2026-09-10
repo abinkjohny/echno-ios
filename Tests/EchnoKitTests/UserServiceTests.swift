@@ -153,6 +153,31 @@ struct UserServiceTests {
         }
     }
 
+    @Test("A body that will not decode keeps its contents out of the message")
+    func decodingFailureDoesNotLeakTheBody() async throws {
+        // A date the parser rejects, so the failure lands in the date decoder —
+        // the one path whose DecodingError quotes the offending value back.
+        // dateOfBirth is the field precisely because it is PII: whatever the
+        // message carries is what a user would see on screen and paste into a
+        // support ticket.
+        let birthday = "1987-03-14-UNPARSEABLE"
+        let json = #"{"id":1,"email":"person@example.com","dateOfBirth":"\#(birthday)"}"#
+        do {
+            _ = try await UserService.decode(
+                HTTPBody(Data(json.utf8)),
+                as: Components.Schemas.UserDto.self
+            )
+            Issue.record("expected the decode to fail")
+        } catch let error as APIError {
+            #expect(!error.message.contains(birthday))
+            #expect(!error.message.contains("dateOfBirth"))
+            #expect(!error.message.contains("DecodingError"))
+            // Still identifiable as a decoding failure by its details, which is
+            // how a caller tells it apart without reading the message.
+            #expect(error.details == "decoding")
+        }
+    }
+
     @Test("A 401 is still classified as an auth error")
     func unauthorizedIsAnAuthError() async {
         let endpoint = StubUserEndpoint(currentUser: {

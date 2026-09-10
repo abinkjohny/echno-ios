@@ -67,8 +67,21 @@ public struct APIError: Error, Hashable, Sendable {
     }
 
     /// A response body that could not be decoded into the expected type.
-    public static func decoding(_ message: String) -> APIError {
-        APIError(message: message, status: 0, details: "decoding")
+    ///
+    /// Takes no detail, deliberately. ``message`` reaches the user through
+    /// `LocalizedError`, and a `DecodingError` description carries the coding
+    /// path and — for a date — the value that would not parse, so a malformed
+    /// `dateOfBirth` would put the user's date of birth on screen and into
+    /// whatever support ticket they paste it into.
+    ///
+    /// The diagnostic goes to `Log.network` at the throw site instead. Callers
+    /// tell a decoding failure apart by ``details``, not by reading the text.
+    public static func decoding() -> APIError {
+        APIError(
+            message: "Could not read the server's response.",
+            status: 0,
+            details: "decoding"
+        )
     }
 }
 
