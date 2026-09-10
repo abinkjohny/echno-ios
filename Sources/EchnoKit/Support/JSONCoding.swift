@@ -97,16 +97,23 @@ public enum EchnoDate {
     ///
     /// The backend's `createdAt` and `updatedAt` are `java.time.LocalDateTime`,
     /// which Jackson writes with no zone and with as many fractional digits as
-    /// the value happens to have — one to nine. `DateFormatter` cannot express a
-    /// variable-length fraction: `SSS` means exactly three, so anything else
-    /// fails and the whole response is rejected as corrupt.
+    /// the value happens to have — one to nine, nanoseconds being the limit of
+    /// the type. `DateFormatter` cannot express a variable-length fraction:
+    /// `SSS` means exactly three, so anything else fails and the whole response
+    /// is rejected as corrupt.
     ///
     /// So the fraction is split off and added back as a `TimeInterval`, which
-    /// works for any number of digits.
+    /// works for any number of digits — including more than nine. That is not
+    /// an oversight: nine is what this backend emits today, not a property of
+    /// the format, and a decimal fraction stays unambiguous however long it
+    /// runs. Rejecting a longer one would lose the whole response over digits
+    /// below any resolution that matters, which is the same over-strictness
+    /// that broke this to begin with.
     private static func unzonedWithFraction(_ raw: String) -> Date? {
         guard let dot = raw.firstIndex(of: "."), !raw.hasSuffix("Z") else { return nil }
         let digits = raw[raw.index(after: dot)...]
-        guard !digits.isEmpty, digits.allSatisfy(\.isNumber) else { return nil }
+        guard !digits.isEmpty, digits.allSatisfy(\.isASCII), digits.allSatisfy(\.isNumber)
+        else { return nil }
         guard let whole = localDateTime.date(from: String(raw[..<dot])) else { return nil }
         // "123" is 0.123 seconds and "123456789" is 0.123456789 — the digits are
         // a decimal fraction, not a count of any fixed unit.
