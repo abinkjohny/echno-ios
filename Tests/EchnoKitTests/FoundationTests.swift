@@ -89,7 +89,14 @@ struct DateDecodingTests {
         "A LocalDateTime keeps its fractional seconds, however many digits",
         arguments: ["2026-09-06T14:23:05.1", "2026-09-06T14:23:05.12",
                     "2026-09-06T14:23:05.123", "2026-09-06T14:23:05.123456",
-                    "2026-09-06T14:23:05.123456789"]
+                    "2026-09-06T14:23:05.123456789",
+                    // Past the nanosecond precision the backend can emit. Kept
+                    // deliberately: the fraction is a decimal, so a longer one
+                    // is still an unambiguous instant, and rejecting it would
+                    // lose a whole profile over digits below the resolution
+                    // anyone can observe. Over-strict date parsing is what
+                    // broke this in the first place.
+                    "2026-09-06T14:23:05.1234567890"]
     )
     func localDateTimeWithFraction(raw: String) throws {
         // The backend's createdAt and updatedAt are java.time.LocalDateTime,
@@ -106,6 +113,15 @@ struct DateDecodingTests {
     func zonedWithLongFraction() throws {
         #expect(try decode("2026-09-06T14:23:05.123456789Z")
                 .timeIntervalSince(utc(2026, 9, 6, 14, 23, 5)) > 0.12)
+    }
+
+    @Test("Digits outside ASCII are not a fraction")
+    func nonASCIIFraction() {
+        // Character.isNumber is true of Arabic-Indic digits and of vulgar
+        // fractions, so the guard says ASCII rather than leaning on Double to
+        // reject what it let through.
+        #expect(throws: DecodingError.self) { try decode("2026-09-06T14:23:05.١٢٣") }
+        #expect(throws: DecodingError.self) { try decode("2026-09-06T14:23:05.½") }
     }
 
     @Test("An unrecognised format fails loudly")
