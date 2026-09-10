@@ -11,3 +11,7 @@ Package.resolved
 # the repo. Ignored as well as untracked, so a `git add -A` cannot re-add them.
 CLAUDE.md
 local-docs/
+
+# Smoke-test credentials. Sourced by hand before running the live suite; never
+# committed. See `Tests/EchnoKitTests/LiveSmokeTests.swift`.
+.env.smoke
