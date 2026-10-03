@@ -35,6 +35,19 @@ enum SmokeConfiguration {
         return raw
     }
 
+    /// Every variable that is a credential or part of one.
+    ///
+    /// Used to tell *nobody asked for this* from *someone asked and got it
+    /// wrong*, which are the same thing to a `nil` credential and must not be
+    /// the same thing to the suite — see ``isIntended``.
+    private static let credentialKeys = [
+        "ECHNO_SMOKE_ACCESS_TOKEN",
+        "ECHNO_SMOKE_REFRESH_TOKEN",
+        "ECHNO_SMOKE_USERNAME",
+        "ECHNO_SMOKE_PASSWORD",
+        "ECHNO_SMOKE_CLIENT_SECRET"
+    ]
+
     static var credential: Credential? {
         if let token = value("ECHNO_SMOKE_ACCESS_TOKEN") { return .access(token) }
         if let token = value("ECHNO_SMOKE_REFRESH_TOKEN") { return .refresh(token) }
@@ -44,20 +57,70 @@ enum SmokeConfiguration {
         return nil
     }
 
-    /// The suite runs only when it has a way to authenticate.
-    static var isConfigured: Bool { credential != nil }
+    /// Whether anyone tried to configure this run.
+    ///
+    /// The suite is enabled by *intent*, not by a complete credential. A
+    /// half-configured run — `ECHNO_SMOKE_USERNAME` with no password, say —
+    /// must fail rather than skip: a skipped suite still prints
+    /// `Test run with 2 tests in 1 suite passed`, which reads as though the
+    /// smoke tests ran and were fine. Silence that looks like success is worse
+    /// than a failure, and in a suite whose entire job is to catch what the
+    /// hermetic tests cannot, it is the one outcome that must be impossible.
+    static var isIntended: Bool {
+        credentialKeys.contains { value($0) != nil }
+    }
 
-    static var server: ServerEnvironment {
+    /// Rejects a URL that would put a credential on the wire in cleartext.
+    ///
+    /// Loopback is allowed. Pointing at a local backend is the reason the
+    /// override exists at all, and traffic that never leaves the machine cannot
+    /// be read off the network — so a blanket HTTPS rule would break the
+    /// primary use of the flag in the name of a threat it does not face.
+    static func requireSecureTransport(_ url: URL, _ variable: String) throws -> URL {
+        let scheme = url.scheme?.lowercased()
+        if scheme == "https" { return url }
+        if scheme == "http", isLoopback(url.host) { return url }
+        throw APIError(
+            message: """
+                \(variable) must be https — \(scheme ?? "no scheme") would send a credential \
+                in cleartext. http is allowed for loopback only.
+                """,
+            status: 0
+        )
+    }
+
+    static func isLoopback(_ host: String?) -> Bool {
+        guard let host = host?.lowercased() else { return false }
+        if host == "localhost" || host.hasSuffix(".localhost") { return true }
+        if host == "::1" || host == "[::1]" { return true }
+
+        // A full dotted quad in 127.0.0.0/8, not a host that merely starts
+        // with one. `127.evil.com` and `127.0.0.1.evil.com` are ordinary names
+        // that resolve wherever their owner points them, and a prefix test on
+        // the host waves both through — which the tests for this caught.
+        let octets = host.split(separator: ".", omittingEmptySubsequences: false)
+        guard octets.count == 4 else { return false }
+        let numbers = octets.compactMap { UInt8($0) }
+        guard numbers.count == 4 else { return false }
+        return numbers[0] == 127
+    }
+
+    static func server() throws -> ServerEnvironment {
         guard let raw = value("ECHNO_SMOKE_API_ORIGIN"), let url = URL(string: raw) else {
             return .production
         }
-        return .custom(url)
+        return .custom(try requireSecureTransport(url, "ECHNO_SMOKE_API_ORIGIN"))
     }
 
-    static var keycloak: KeycloakConfiguration {
-        KeycloakConfiguration(
-            issuer: value("ECHNO_SMOKE_ISSUER").flatMap(URL.init(string:))
-                ?? URL(string: "https://auth.echno.in/realms/echno-realm")!,
+    static func keycloak() throws -> KeycloakConfiguration {
+        let issuer: URL
+        if let raw = value("ECHNO_SMOKE_ISSUER"), let url = URL(string: raw) {
+            issuer = try requireSecureTransport(url, "ECHNO_SMOKE_ISSUER")
+        } else {
+            issuer = URL(string: "https://auth.echno.in/realms/echno-realm")!
+        }
+        return KeycloakConfiguration(
+            issuer: issuer,
             clientID: value("ECHNO_SMOKE_CLIENT_ID") ?? "echno-ios-client",
             redirectURI: URL(string: "com.tornotron.echno-ios://oauth/callback")!
         )
@@ -80,19 +143,32 @@ enum SmokeConfiguration {
         case .refresh(let token):
             // The real endpoint, not a stand-in: this is the only place the
             // refresh path is exercised against a live Keycloak.
-            let endpoint = URLSessionTokenEndpoint(configuration: keycloak)
+            let endpoint = URLSessionTokenEndpoint(configuration: try keycloak())
             return try await endpoint.refresh(refreshToken: token).accessToken
 
         case .password(let username, let password):
             return try await directGrant(username: username, password: password)
 
         case nil:
-            throw APIError(message: "No smoke credential configured", status: 0)
+            // Reached only when `isIntended` let the suite run, so something
+            // was set and it was not enough. Naming which is the difference
+            // between a two-second fix and a puzzled half hour.
+            let present = credentialKeys.filter { value($0) != nil }
+            throw APIError(
+                message: """
+                    Smoke credentials are incomplete. Set \(present.joined(separator: ", ")) \
+                    plus whatever it needs: a password grant needs both \
+                    ECHNO_SMOKE_USERNAME and ECHNO_SMOKE_PASSWORD, or use \
+                    ECHNO_SMOKE_REFRESH_TOKEN on its own.
+                    """,
+                status: 0
+            )
         }
     }
 
     /// Direct access grant, for a test-only Keycloak client.
     private static func directGrant(username: String, password: String) async throws -> String {
+        let keycloak = try keycloak()
         var request = URLRequest(url: keycloak.tokenEndpoint)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -144,14 +220,14 @@ private struct SmokeCredentials: APICredentialProvider {
 /// ```sh
 /// ECHNO_SMOKE_REFRESH_TOKEN=… swift test --filter LiveSmokeTests
 /// ```
-@Suite("Live backend smoke", .enabled(if: SmokeConfiguration.isConfigured), .serialized)
+@Suite("Live backend smoke", .enabled(if: SmokeConfiguration.isIntended), .serialized)
 struct LiveSmokeTests {
 
     @Test("The signed-in user round-trips from the backend into a domain value")
     func currentUserRoundTrips() async throws {
         let token = try await SmokeConfiguration.accessToken()
         let client = EchnoClient.make(
-            environment: SmokeConfiguration.server,
+            environment: try SmokeConfiguration.server(),
             credentials: SmokeCredentials(
                 token: token,
                 organizationID: SmokeConfiguration.organizationID
@@ -174,7 +250,7 @@ struct LiveSmokeTests {
     func timestampsAreCoherent() async throws {
         let token = try await SmokeConfiguration.accessToken()
         let client = EchnoClient.make(
-            environment: SmokeConfiguration.server,
+            environment: try SmokeConfiguration.server(),
             credentials: SmokeCredentials(
                 token: token,
                 organizationID: SmokeConfiguration.organizationID
@@ -189,12 +265,76 @@ struct LiveSmokeTests {
         // actually emits — so this checks the decoded values relate to each
         // other and to now, rather than checking them against a constant that
         // would itself be the thing most likely to be wrong.
-        if let created = user.createdAt {
-            #expect(created <= Date.now.addingTimeInterval(60))
-            if let updated = user.updatedAt {
-                #expect(created <= updated)
-            }
+        // Required, not optional-checked. createdAt is an audit column the
+        // backend always writes, so a nil is itself worth failing over — and an
+        // `if let` here would let the whole assertion evaporate, leaving a test
+        // that passes without checking the thing it exists to check.
+        let created = try #require(user.createdAt, "the backend sent no createdAt")
+        let tolerance = Date.now.addingTimeInterval(60)   // clock skew, not slack
+        #expect(created <= tolerance)
+        if let updated = user.updatedAt {
+            #expect(created <= updated)
+            // Bounding this too: an updatedAt in the future satisfies the
+            // ordering above while still being nonsense.
+            #expect(updated <= tolerance)
         }
     }
 
+}
+
+// MARK: - The harness's own guards
+
+/// Always runs, credentials or not.
+///
+/// These are the checks that stop the smoke suite doing harm or lying about
+/// its result, so they cannot themselves be gated behind the configuration
+/// they are protecting.
+@Suite("Smoke harness guards")
+struct SmokeHarnessTests {
+
+    @Test(
+        "An https endpoint is accepted",
+        arguments: ["https://backend.echno.in", "https://staging.echno.in/"]
+    )
+    func httpsAccepted(raw: String) throws {
+        let url = try #require(URL(string: raw))
+        #expect(try SmokeConfiguration.requireSecureTransport(url, "X") == url)
+    }
+
+    @Test(
+        "Cleartext is accepted for loopback, where nothing reaches the wire",
+        arguments: [
+            "http://localhost:8080",
+            "http://127.0.0.1:8080",
+            "http://127.1.2.3:8080",
+            "http://[::1]:8080"
+        ]
+    )
+    func loopbackAccepted(raw: String) throws {
+        let url = try #require(URL(string: raw))
+        #expect(throws: Never.self) {
+            try SmokeConfiguration.requireSecureTransport(url, "X")
+        }
+    }
+
+    @Test(
+        "Cleartext to anywhere else is refused before a credential is sent",
+        arguments: [
+            "http://backend.echno.in",
+            "http://192.168.1.10:8080",
+            // Hosts that merely begin like loopback and resolve anywhere at
+            // all. A prefix test on the host would wave these through.
+            "http://127.evil.com",
+            "http://127.0.0.1.evil.com",
+            "http://localhost.evil.com",
+            "ws://backend.echno.in",
+            "backend.echno.in"
+        ]
+    )
+    func cleartextRefused(raw: String) throws {
+        let url = try #require(URL(string: raw))
+        #expect(throws: APIError.self) {
+            try SmokeConfiguration.requireSecureTransport(url, "ECHNO_SMOKE_API_ORIGIN")
+        }
+    }
 }

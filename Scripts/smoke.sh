@@ -17,9 +17,27 @@ if [ -f .env.smoke ]; then
   set -a; . ./.env.smoke; set +a
 fi
 
-if [ -z "${ECHNO_SMOKE_ACCESS_TOKEN:-}" ] \
-  && [ -z "${ECHNO_SMOKE_REFRESH_TOKEN:-}" ] \
-  && [ -z "${ECHNO_SMOKE_USERNAME:-}" ]; then
+have_token=0
+if [ -n "${ECHNO_SMOKE_ACCESS_TOKEN:-}" ] || [ -n "${ECHNO_SMOKE_REFRESH_TOKEN:-}" ]; then
+  have_token=1
+fi
+
+# A username with no password, or the reverse, used to pass this check and then
+# leave the suite disabled — and a disabled suite still prints
+# "Test run with 2 tests in 1 suite passed". Half a password grant is a
+# configuration mistake, so it is named here rather than reported as success.
+if [ "$have_token" -eq 0 ]; then
+  if [ -n "${ECHNO_SMOKE_USERNAME:-}" ] && [ -z "${ECHNO_SMOKE_PASSWORD:-}" ]; then
+    echo "ECHNO_SMOKE_USERNAME is set but ECHNO_SMOKE_PASSWORD is not." >&2
+    exit 2
+  fi
+  if [ -n "${ECHNO_SMOKE_PASSWORD:-}" ] && [ -z "${ECHNO_SMOKE_USERNAME:-}" ]; then
+    echo "ECHNO_SMOKE_PASSWORD is set but ECHNO_SMOKE_USERNAME is not." >&2
+    exit 2
+  fi
+fi
+
+if [ "$have_token" -eq 0 ] && [ -z "${ECHNO_SMOKE_USERNAME:-}" ]; then
   cat >&2 <<'MSG'
 No credential configured, so the smoke suite would be skipped.
 
@@ -37,4 +55,20 @@ MSG
 fi
 
 # --filter matches the type name; the @Suite display name does not match here.
-exec swift test --filter LiveSmokeTests
+log=$(mktemp)
+trap 'rm -f "$log"' EXIT
+set +e
+swift test --filter LiveSmokeTests 2>&1 | tee "$log"
+status=${PIPESTATUS[0]}
+set -e
+
+# The belt to the suite's braces. swift-testing reports a skipped suite inside
+# a run it still calls passed, so a green summary line is not on its own
+# evidence that anything was exercised.
+if grep -q "Suite \"Live backend smoke\" skipped" "$log"; then
+  echo >&2
+  echo "The smoke suite was SKIPPED, not run. Nothing was verified." >&2
+  exit 1
+fi
+
+exit "$status"
