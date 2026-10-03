@@ -247,7 +247,13 @@ struct BrandBackground: View {
 
 /// The blueprint grid behind the panel — 60 pt cells, matching the web panel's
 /// `background-size: 60px 60px`.
-private struct BlueprintGrid: Shape {
+///
+/// `nonisolated` because the target builds with
+/// `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`, which would otherwise make
+/// `path(in:)` main-actor isolated — and `Shape` declares it nonisolated, since
+/// SwiftUI evaluates geometry off the main actor. Pure geometry over a `CGRect`
+/// touches no main-actor state, so there is nothing here to isolate.
+nonisolated private struct BlueprintGrid: Shape {
     var spacing: CGFloat = 60
 
     func path(in rect: CGRect) -> Path {
