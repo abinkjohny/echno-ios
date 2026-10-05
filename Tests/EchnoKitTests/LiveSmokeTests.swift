@@ -105,20 +105,45 @@ enum SmokeConfiguration {
         return numbers[0] == 127
     }
 
-    static func server() throws -> ServerEnvironment {
-        guard let raw = value("ECHNO_SMOKE_API_ORIGIN"), let url = URL(string: raw) else {
-            return .production
+    /// Resolves an endpoint override, or the default when none is set.
+    ///
+    /// Unset falls back. **Set-but-unusable throws**, and the distinction is
+    /// the whole point: a `guard let url = URL(string: raw) else { return
+    /// fallback }` reads as a sensible default and is not one. The default for
+    /// the API origin is production, so a space in a pasted URL — the commonest
+    /// paste error there is — silently pointed the run at the live backend
+    /// instead of the local one it was aimed at, and the issuer default would
+    /// have sent a refresh token to production Keycloak. A set override is a
+    /// statement of intent; failing to honour it quietly is not an option.
+    static func resolveURL(_ raw: String?, _ variable: String, default fallback: URL) throws -> URL {
+        guard let raw else { return fallback }
+        guard let url = URL(string: raw) else {
+            throw APIError(message: "\(variable) is not a URL: \(raw)", status: 0)
         }
-        return .custom(try requireSecureTransport(url, "ECHNO_SMOKE_API_ORIGIN"))
+        // `URL(string:)` is lenient: "https://" parses with no host at all, and
+        // "backend.echno.in" parses as a relative path. Both would fail later,
+        // somewhere less obvious than here.
+        guard let host = url.host, !host.isEmpty else {
+            throw APIError(message: "\(variable) has no host: \(raw)", status: 0)
+        }
+        return try requireSecureTransport(url, variable)
+    }
+
+    static func server() throws -> ServerEnvironment {
+        let url = try resolveURL(
+            value("ECHNO_SMOKE_API_ORIGIN"),
+            "ECHNO_SMOKE_API_ORIGIN",
+            default: ServerEnvironment.production.baseURL
+        )
+        return url == ServerEnvironment.production.baseURL ? .production : .custom(url)
     }
 
     static func keycloak() throws -> KeycloakConfiguration {
-        let issuer: URL
-        if let raw = value("ECHNO_SMOKE_ISSUER"), let url = URL(string: raw) {
-            issuer = try requireSecureTransport(url, "ECHNO_SMOKE_ISSUER")
-        } else {
-            issuer = URL(string: "https://auth.echno.in/realms/echno-realm")!
-        }
+        let issuer = try resolveURL(
+            value("ECHNO_SMOKE_ISSUER"),
+            "ECHNO_SMOKE_ISSUER",
+            default: URL(string: "https://auth.echno.in/realms/echno-realm")!
+        )
         return KeycloakConfiguration(
             issuer: issuer,
             clientID: value("ECHNO_SMOKE_CLIENT_ID") ?? "echno-ios-client",
@@ -291,6 +316,42 @@ struct LiveSmokeTests {
 /// they are protecting.
 @Suite("Smoke harness guards")
 struct SmokeHarnessTests {
+
+    private static let fallback = URL(string: "https://fallback.example.com")!
+
+    @Test("No override falls back to the default")
+    func unsetFallsBack() throws {
+        #expect(try SmokeConfiguration.resolveURL(nil, "X", default: Self.fallback) == Self.fallback)
+    }
+
+    @Test(
+        "A set but unusable override fails instead of falling back",
+        arguments: [
+            // A space in a pasted URL. URL(string:) returns nil, and the old
+            // `else { return fallback }` sent the run — and its credential —
+            // to production instead of the local backend it was aimed at.
+            "http://exa mple.com",
+            "ht!tp://localhost",
+            "http://[oops",
+            // Parses, but there is no host to connect to.
+            "https://",
+            // Parses as a relative path, not an origin.
+            "backend.echno.in",
+            "   "
+        ]
+    )
+    func setButUnusableThrows(raw: String) {
+        #expect(throws: APIError.self) {
+            try SmokeConfiguration.resolveURL(raw, "ECHNO_SMOKE_API_ORIGIN", default: Self.fallback)
+        }
+    }
+
+    @Test("A usable override is honoured, not quietly replaced")
+    func usableOverrideHonoured() throws {
+        let raw = "https://staging.echno.in"
+        let resolved = try SmokeConfiguration.resolveURL(raw, "X", default: Self.fallback)
+        #expect(resolved.absoluteString == raw)
+    }
 
     @Test(
         "An https endpoint is accepted",
