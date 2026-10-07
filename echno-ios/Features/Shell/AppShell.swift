@@ -160,6 +160,8 @@ private struct DestinationView: View {
         }
         .navigationTitle(destination.title)
         .navigationBarTitleDisplayMode(.inline)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Echno.background)
     }
 }
 
