@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The Echno lockup: the amber mark, then the wordmark.
+/// The Echno lockup: the mark, then the wordmark.
 ///
 /// One definition, two users — the auth panel and the splash. They have to be
 /// the same drawing at two sizes, because the splash hands straight over to the
@@ -19,10 +19,11 @@ struct EchnoWordmark: View {
         /// Alone on a launch screen, where it is the only thing on the field.
         case display
 
-        var glyph: CGFloat {
+        /// The mark is square, so this is both its width and its height.
+        var mark: CGFloat {
             switch self {
-            case .standard: 22
-            case .display: 40
+            case .standard: 26
+            case .display: 64
             }
         }
 
@@ -45,13 +46,21 @@ struct EchnoWordmark: View {
 
     var body: some View {
         HStack(spacing: size == .display ? Echno.Space.md : Echno.Space.sm) {
-            Image(systemName: "cube.transparent.fill")
-                .font(.system(size: size.glyph, weight: .bold))
-                .foregroundStyle(Echno.brand)
+            // From the asset catalogue, which carries a navy mark and a white
+            // one and picks between them by appearance. No tint is applied:
+            // the artwork is supplied in its own colours, and the rendering
+            // intent is `original` so nothing recolours it.
+            Image("EchnoMark")
+                .resizable()
+                .scaledToFit()
+                .frame(width: size.mark, height: size.mark)
             Text("ECHNO")
                 .font(.system(size: size.text, weight: .black))
                 .kerning(size.kerning)
-                .foregroundStyle(.white)
+                // Follows the appearance, as the mark does. Hardcoding white
+                // would be right on the brand field and invisible anywhere
+                // else, and the lockup is a shared component now.
+                .foregroundStyle(Echno.foreground)
         }
         // One element, not two: a screen reader should say the product name
         // once, not announce a decorative cube and then spell out five capitals.
