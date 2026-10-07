@@ -12,13 +12,10 @@ import EchnoAPI
 @MainActor
 final class AuthSession {
 
-    enum State: Equatable {
-        case signedOut
-        case signingIn
-        case signedIn
-    }
-
-    private(set) var state: State = .signedOut
+    /// The phase lives in ``EchnoKit`` as ``SessionPhase`` rather than here,
+    /// because what the root of the app shows for each one is a decision worth
+    /// testing and the app target has no test bundle.
+    private(set) var phase: SessionPhase = .initial
 
     /// The last failure worth showing. Cleared when a new attempt starts, and
     /// never set for a cancellation — dismissing the sheet is a decision, not
@@ -64,22 +61,26 @@ final class AuthSession {
     func restore() async {
         do {
             _ = try await authenticator.validAccessToken()
-            state = .signedIn
+            phase = .signedIn
         } catch {
-            state = .signedOut
+            phase = .signedOut
         }
     }
 
+    /// Whether a launch is still deciding. Read by the root so the splash
+    /// stands in for a screen rather than being layered over one.
+    var isRestoring: Bool { phase == .restoring }
+
     func signIn() async {
         error = nil
-        state = .signingIn
+        phase = .signingIn
         do {
             _ = try await authenticator.signIn()
-            state = .signedIn
+            phase = .signedIn
         } catch AuthError.cancelled {
-            state = .signedOut
+            phase = .signedOut
         } catch {
-            state = .signedOut
+            phase = .signedOut
             self.error = (error as? LocalizedError)?.errorDescription
                 ?? "Sign-in could not be completed."
         }
@@ -91,7 +92,7 @@ final class AuthSession {
         // Not housekeeping: without this the next sign-in screen renders with
         // the previous user's name and email still in the store behind it.
         users.clear()
-        state = .signedOut
+        phase = .signedOut
     }
 
     /// Registers an account, then hands straight to the hosted sign-in — the
