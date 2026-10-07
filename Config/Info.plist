@@ -17,6 +17,19 @@
 	automatically, and a target's own Info.plist being copied as a resource is
 	a "Multiple commands produce" build failure.
 	-->
+	<!--
+	The launch screen's background, so the first frame of a cold launch is the
+	brand's near-black rather than white. It is declared here, not as
+	INFOPLIST_KEY_UILaunchScreen_BackgroundColor: that setting resolves
+	correctly and the colour asset compiles into Assets.car, but the generated
+	UILaunchScreen dictionary still arrives empty when a partial plist is in
+	use. Verified by reading the built app's Info.plist, not assumed.
+	-->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
 	<key>ECHNO_API_BASE_URL</key>
 	<string>$(ECHNO_API_BASE_URL)</string>
 	<key>ECHNO_KEYCLOAK_ISSUER</key>
