@@ -96,17 +96,8 @@ struct BrandPanel: View {
         }
     }
 
-    private var wordmark: some View {
-        HStack(spacing: Echno.Space.sm) {
-            Image(systemName: "cube.transparent.fill")
-                .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(Echno.brand)
-            Text("ECHNO")
-                .font(.system(size: 20, weight: .black, design: .default))
-                .kerning(2)
-                .foregroundStyle(.white)
-        }
-    }
+    /// Shared with the splash — see ``EchnoWordmark``.
+    private var wordmark: some View { EchnoWordmark(size: .standard) }
 
     private var tagline: some View {
         HStack(spacing: Echno.Space.sm) {
