@@ -186,6 +186,10 @@ enum Echno {
         static let standard = 0.20
         /// Movement the eye has to follow, like scrolling to an error.
         static let deliberate = 0.25
+        /// A brand entrance — the splash lockup settling as the app starts.
+        /// Slower than anything interactive, because nothing is waiting on it
+        /// and a logo that snaps into place reads as a glitch.
+        static let entrance = 0.45
     }
 
     /// echno-web's `--radius: 0.625rem`.
