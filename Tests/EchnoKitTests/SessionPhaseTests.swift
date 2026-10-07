@@ -45,16 +45,17 @@ struct SessionPhaseTests {
         #expect(SessionPhase.allCases.count == 4)
     }
 
-    @Test("The splash carries the same dark treatment as the sign-in screen")
-    func splashMatchesSignIn() {
-        // Auth is a brand moment and is dark; the app follows the user's own
-        // setting. If the splash did not match the screen that follows it, a
-        // launch would flash between appearances before anything was tapped —
-        // which is the same defect as the flash this phase exists to remove,
-        // one layer down.
-        #expect(SessionPhase.restoring.prefersDarkAppearance)
-        #expect(SessionPhase.signedOut.prefersDarkAppearance)
-        #expect(SessionPhase.signingIn.prefersDarkAppearance)
-        #expect(!SessionPhase.signedIn.prefersDarkAppearance)
+    @Test("No phase carries an appearance of its own")
+    func noPhaseForcesAnAppearance() {
+        // There was a `prefersDarkAppearance` here, and the auth screens were
+        // dark in every appearance because of it. They follow the system now,
+        // so the property is gone rather than returning false everywhere —
+        // the phase has no opinion about appearance at all, and a property
+        // that always answers the same thing is a place for one to grow back.
+        //
+        // What is left is the screen mapping, and it is the only thing a phase
+        // decides.
+        #expect(SessionPhase.Screen.allCases.count == 3)
     }
+
 }
