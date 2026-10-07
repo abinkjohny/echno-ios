@@ -93,7 +93,20 @@ enum Echno {
     }
 
     /// The amber sweep on the brand headline, warm end first.
-    static let brandGradient = [Color(rgb: 0xF59E0B), Color(rgb: 0xEA580C)]
+    /// The headline's gradient, adaptive.
+    ///
+    /// The light stops are darker than the dark ones, which looks backwards
+    /// written down and is not: they have to carry text on a near-white field,
+    /// where the vivid pair measures 2.06:1. `PaletteContrastTests` holds both
+    /// stops past 4.5:1.
+    static let brandGradient = [
+        Color(light: Palette.brandGradientStartLight, dark: Palette.brandGradientStartDark),
+        Color(light: Palette.brandGradientEndLight, dark: Palette.brandGradientEndDark)
+    ]
+
+    /// The field the auth screens sit on. Follows the appearance; the brand
+    /// artwork column does not — see ``BrandPanel``.
+    static let authField = Color(light: Palette.authFieldLight, dark: Palette.near_black)
 
     /// The deeper amber behind the panel's lower glow.
     static let brandGlow = Color(rgb: 0xEA580C)

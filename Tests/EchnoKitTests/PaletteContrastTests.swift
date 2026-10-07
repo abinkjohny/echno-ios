@@ -85,3 +85,50 @@ struct PaletteContrastTests {
         }
     }
 }
+
+
+/// The light treatment of the auth screens.
+///
+/// These screens were dark in every appearance until the auth flow was made to
+/// follow the system, so every colour that lands on the light field is new and
+/// none of it had been measured against anything but near-black.
+@Suite("Auth field contrast")
+struct AuthFieldContrastTests {
+
+    private let field = Palette.authFieldLight
+
+    @Test("The headline's gradient clears normal-text contrast at both stops")
+    func gradientStopsPass() {
+        // Held to 4.5 rather than the 3:1 large text is allowed. A gradient
+        // interpolates between its stops, and pinning both ends above the
+        // stricter line is what keeps every colour in between above the looser
+        // one without having to reason about the middle.
+        #expect(Palette.contrastRatio(Palette.brandGradientStartLight, field) >= 4.5)
+        #expect(Palette.contrastRatio(Palette.brandGradientEndLight, field) >= 4.5)
+    }
+
+    @Test("The dark stops would have failed on the light field")
+    func darkStopsWouldFail() {
+        // The reason the light pair exists. Without this, reusing one gradient
+        // everywhere looks like a simplification rather than a regression.
+        #expect(Palette.contrastRatio(Palette.brandGradientStartDark, field) < 3)
+    }
+
+    @Test("Body and heading text clears 4.5:1 on the light field")
+    func textPasses() {
+        #expect(Palette.contrastRatio(Palette.near_black, field) >= 4.5)
+        #expect(Palette.contrastRatio(Palette.brandTextLight, field) >= 4.5)
+    }
+
+    @Test("The vivid brand is still a fill here, not a text colour")
+    func vividBrandIsNotText() {
+        // Same split as on white: good behind an icon, unreadable as a caption.
+        #expect(Palette.contrastRatio(Palette.brandLight, field) < 4.5)
+        #expect(Palette.contrastRatio(Palette.brandLight, field) >= 2.5)
+    }
+
+    @Test("The light field is distinguishable from the dark one")
+    func fieldsDiffer() {
+        #expect(Palette.contrastRatio(Palette.authFieldLight, Palette.near_black) >= 15)
+    }
+}

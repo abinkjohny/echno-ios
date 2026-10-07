@@ -54,6 +54,26 @@ public enum Palette {
 
     // MARK: On the always-dark brand panel
 
+    /// The field the auth form sits on.
+    ///
+    /// echno-web's auth pages use `stone-50` here rather than the app's pure
+    /// white `--background`, and `zinc-950` in dark — which is the same value
+    /// as ``near_black``. Kept as its own token because it is a different
+    /// decision from the app background, not a copy of it.
+    public static let authFieldLight: UInt32 = 0xFAFAF9
+
+    /// The two stops of the headline's gradient.
+    ///
+    /// The dark pair is amber-500 to orange-600, as on the dark panel. They
+    /// cannot be reused on the light field: amber-500 measures 2.06:1 against
+    /// it, which fails even the 3:1 that large text is held to. The light pair
+    /// is amber-700 to orange-700, both past 4.5:1, so the headline clears the
+    /// normal-text threshold rather than relying on being large.
+    public static let brandGradientStartLight: UInt32 = 0xB45309
+    public static let brandGradientStartDark: UInt32 = 0xF59E0B
+    public static let brandGradientEndLight: UInt32 = 0xC2410C
+    public static let brandGradientEndDark: UInt32 = 0xEA580C
+
     public static let onPanelPrimary: UInt32 = 0xF4F4F5
     public static let onPanelSecondary: UInt32 = 0xA1A1AA
     public static let onPanelTertiary: UInt32 = 0x8E8E96

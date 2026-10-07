@@ -46,16 +46,4 @@ public enum SessionPhase: String, CaseIterable, Equatable, Sendable {
         }
     }
 
-    /// Whether the brand's dark treatment applies.
-    ///
-    /// Auth is a brand moment and is dark; the app itself follows whatever the
-    /// user set. The splash has to match the screen that follows it, or a launch
-    /// flashes between appearances before anything is tapped — the same defect
-    /// as the screen flash ``initial`` removes, one layer down.
-    public var prefersDarkAppearance: Bool {
-        switch self {
-        case .restoring, .signedOut, .signingIn: true
-        case .signedIn: false
-        }
-    }
 }
