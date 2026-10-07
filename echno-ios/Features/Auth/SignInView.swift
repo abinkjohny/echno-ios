@@ -1,4 +1,5 @@
 import SwiftUI
+import EchnoKit
 
 /// The auth flow: sign-in, with registration presented over it.
 ///
@@ -17,17 +18,23 @@ struct AuthFlowView: View {
 
     var body: some View {
         Group {
-            switch session.state {
-            case .signedOut, .signingIn:
-                // Dark only while signed out. The preference travels with the
-                // view, so it lifts as soon as the shell replaces this — which
-                // is the intent: auth is a brand moment, the app itself follows
-                // whatever the user set.
-                SignInView().preferredColorScheme(.dark)
-            case .signedIn:
+            switch session.phase.screen {
+            case .splash:
+                // Stands in for the sign-in screen rather than covering it.
+                // Starting at .signedOut rendered the front door and then
+                // replaced it, so a returning user saw it flash past on every
+                // launch — see ``SessionPhase/initial``.
+                SplashView()
+            case .signIn:
+                SignInView()
+            case .app:
                 AppShell()
             }
         }
+        // Dark through the splash and the front door, the user's own setting
+        // once inside. Driven by the phase rather than written per branch, so
+        // the splash cannot drift out of step with the screen it hands over to.
+        .preferredColorScheme(session.phase.prefersDarkAppearance ? .dark : nil)
         .environment(session)
         .tint(Echno.primary)
         .task { await session.restore() }
@@ -50,7 +57,7 @@ struct SignInView: View {
     @Environment(AuthSession.self) private var session
     @State private var showRegister = false
 
-    private var isAuthenticating: Bool { session.state == .signingIn }
+    private var isAuthenticating: Bool { session.phase == .signingIn }
 
     private var isWide: Bool { sizeClass == .regular }
 
