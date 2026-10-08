@@ -106,7 +106,10 @@ struct BrandPanel: View {
             Text("Construction-First Platform")
                 .font(.footnote.weight(.medium))
         }
-        .foregroundStyle(Echno.brand)
+        // The text token, not the vivid fill: on the light field the fill is
+        // 2.64:1, which is fine behind the capsule and unreadable as the label
+        // inside it.
+        .foregroundStyle(Echno.Text.brand)
         .padding(.horizontal, Echno.Space.md)
         .padding(.vertical, Echno.Space.sm)
         .background(Echno.brand.opacity(Echno.Opacity.faint), in: Capsule())
@@ -117,7 +120,7 @@ struct BrandPanel: View {
         VStack(alignment: .leading, spacing: Echno.Space.md) {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Build Smarter,")
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Echno.foreground)
                 Text("Manage Better.")
                     .foregroundStyle(
                         LinearGradient(
@@ -224,15 +227,82 @@ private struct Highlight: Identifiable {
 /// the status bar while the panel's text stays inside it. Bleeding the *content*
 /// too is what put the wordmark on top of the clock.
 struct BrandBackground: View {
+
+    @Environment(\.colorScheme) private var scheme
+
+    private var isDark: Bool { scheme == .dark }
+
     var body: some View {
         ZStack {
-            Echno.panel
+            Echno.authField
+
             BlueprintGrid()
-                .stroke(Echno.brand.opacity(Echno.Opacity.medium), lineWidth: Echno.Size.hairline)
-                .opacity(Echno.Opacity.subtle)
+                .stroke(
+                    Echno.brand.opacity(Echno.Opacity.medium),
+                    lineWidth: Echno.Size.hairline
+                )
+                // The grid is drawn in amber either way, but a line that reads
+                // as a whisper on near-black is a smear on near-white. It is
+                // texture, not content, so it loses most of its weight rather
+                // than changing colour.
+                .opacity(isDark ? Echno.Opacity.subtle : Echno.Opacity.subtle * 0.45)
+
+            // Likewise the glows: two amber radials that give a dark field
+            // depth turn it dingy on a light one.
             BrandPanel.glows()
+                .opacity(isDark ? 1 : 0.35)
         }
         .ignoresSafeArea()
+    }
+}
+
+/// The dark half of a wide auth layout.
+///
+/// Two pieces, because they live at different depths. This is the paint: it
+/// sits behind the scrolling content in the root stack, which is the only place
+/// it can reach the screen edges. The content inside the scroll view is
+/// inset by the safe area, so a background attached there stops short of the
+/// home indicator and leaves a pale strip along the bottom — which is exactly
+/// what it did first.
+///
+/// It stays dark in every appearance. echno-web draws the same line: its panel
+/// is `bg-zinc-950` with no `dark:` variant, while the form beside it is
+/// `bg-stone-50 dark:bg-zinc-950`. The panel is artwork rather than chrome —
+/// the blueprint grid and the amber glows are a dark-field composition, and a
+/// light version of them is a different design, not the same one lightened.
+struct BrandArtworkField: View {
+
+    /// Matches the leading column of ``SignInView``'s wide layout.
+    var fraction: CGFloat = 0.5
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Echno.panel
+                BlueprintGrid()
+                    .stroke(
+                        Echno.brand.opacity(Echno.Opacity.medium),
+                        lineWidth: Echno.Size.hairline
+                    )
+                    .opacity(Echno.Opacity.subtle)
+                BrandPanel.glows()
+            }
+            .frame(width: proxy.size.width * fraction)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .ignoresSafeArea()
+    }
+}
+
+/// The content of that column.
+///
+/// Forcing the scheme rather than swapping tokens is what keeps the always-dark
+/// surface cheap: every adaptive colour inside resolves to its dark variant,
+/// the mark included, so nothing inside has to know it is on a fixed surface.
+struct BrandArtworkColumn: View {
+    var body: some View {
+        BrandPanel(layout: .full)
+            .environment(\.colorScheme, .dark)
     }
 }
 

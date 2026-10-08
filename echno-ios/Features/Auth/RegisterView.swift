@@ -361,7 +361,13 @@ private struct PasswordStrengthMeter: View {
     }
 }
 
-#Preview("iPhone") {
+#Preview("iPhone — light") {
+    RegisterView()
+        .environment(AuthSession())
+        .preferredColorScheme(.light)
+}
+
+#Preview("iPhone — dark") {
     RegisterView()
         .environment(AuthSession())
         .preferredColorScheme(.dark)

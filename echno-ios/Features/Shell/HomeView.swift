@@ -25,13 +25,17 @@ struct HomeView: View {
                 }
             }
 
+            .echnoRow()
+
             Section {
                 Button("Sign Out", role: .destructive) {
                     Task { await session.signOut() }
                 }
             }
+            .echnoRow()
         }
         .navigationTitle("Home")
+        .echnoScreen()
         .refreshable { await store.reload() }
         .task { await store.load() }
     }

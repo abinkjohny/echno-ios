@@ -3,16 +3,14 @@ import EchnoKit
 
 /// The auth flow: sign-in, with registration presented over it.
 ///
-/// The sign-in and registration screens sit on the dark brand field and run in
-/// dark appearance regardless of the system setting — the brand moment, the same
-/// one echno-web builds with its near-black register panel, and what keeps the
-/// status bar legible over the artwork.
+/// Nothing here forces an appearance. Every screen in the flow follows the
+/// system, as the rest of the app does, so someone in light mode is not handed
+/// a near-black front door on the way to a white app.
 ///
-/// The app shell does **not**. `preferredColorScheme` is applied to the
-/// signed-out branch alone, so it lifts the moment the shell replaces it and the
-/// app follows whatever the user set. Applied to the whole `Group` it would
-/// force the entire signed-in app dark, which is a different product decision
-/// and not one anybody made.
+/// The one exception is the brand artwork column on wide layouts, which stays
+/// dark in every appearance — see ``BrandArtworkColumn``. echno-web draws the
+/// same line: its panel is `bg-zinc-950` with no `dark:` variant while the form
+/// beside it is `bg-stone-50 dark:bg-zinc-950`.
 struct AuthFlowView: View {
     @State private var session = AuthSession()
 
@@ -31,10 +29,6 @@ struct AuthFlowView: View {
                 AppShell()
             }
         }
-        // Dark through the splash and the front door, the user's own setting
-        // once inside. Driven by the phase rather than written per branch, so
-        // the splash cannot drift out of step with the screen it hands over to.
-        .preferredColorScheme(session.phase.prefersDarkAppearance ? .dark : nil)
         .environment(session)
         .tint(Echno.primary)
         .task { await session.restore() }
@@ -65,6 +59,9 @@ struct SignInView: View {
         ZStack {
             BrandBackground()
 
+            // Behind the scroll view, so it can reach the screen edges.
+            if isWide { BrandArtworkField() }
+
             GeometryReader { proxy in
                 ScrollView {
                     Group {
@@ -78,7 +75,6 @@ struct SignInView: View {
         .sheet(isPresented: $showRegister) {
             RegisterView()
                 .environment(session)
-                .preferredColorScheme(.dark)
                 .tint(Echno.primary)
                 // A default sheet on iPad is a form sheet: ~540pt wide, which
                 // carries the *compact* size class. The registration form would
@@ -107,7 +103,7 @@ struct SignInView: View {
     /// iPad and iPhone landscape: brand column beside the card, as on the web.
     private var wideLayout: some View {
         HStack(alignment: .center, spacing: 0) {
-            BrandPanel(layout: .full)
+            BrandArtworkColumn()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             VStack(spacing: Echno.Space.section) {
