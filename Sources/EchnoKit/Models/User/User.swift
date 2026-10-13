@@ -82,26 +82,9 @@ extension User {
 
     /// One or two letters standing in for a profile picture.
     ///
-    /// First and last word rather than the first two: middle names are common,
-    /// and the surname is the part people recognise — "Ravi Kumar Sharma" reads
-    /// as RS, not RK.
-    ///
-    /// Empty when the name has no letters to take. Callers should show a person
-    /// glyph then; punctuation in the avatar reads as a rendering fault rather
-    /// than as "no name on file".
-    ///
-    /// Only words that *begin* with a letter count. Registration permits
-    /// hyphens, dots and apostrophes so "Mary-Jane O'Neill" validates, which
-    /// also lets "---" through — and `Character.isLetter` is true for a whole
-    /// grapheme cluster, so `കു` still qualifies.
-    public var initials: String {
-        let words = name
-            .split(whereSeparator: \.isWhitespace)
-            .filter { $0.first?.isLetter == true }
-        guard let first = words.first else { return "" }
-        let chosen = words.count > 1 ? [first, words[words.index(before: words.endIndex)]] : [first]
-        return chosen.compactMap(\.first).map(String.init).joined().uppercased()
-    }
+    /// Shared with ``Organization`` — see ``initials(of:)`` for the rule and
+    /// why it is one rule.
+    public var initials: String { EchnoKit.initials(of: name) }
 
     /// The DTO's name, used in mapping errors so a failure says which contract
     /// broke.

@@ -28,9 +28,22 @@ enum EchnoConfiguration {
         return .custom(url)
     }
 
+    /// Where organizations are created.
+    ///
+    /// Creating one is `organization:admin`, so it is web-console only and the
+    /// empty state links here rather than offering a button that cannot work.
+    /// Joining is not: that happens in the app, through
+    /// ``EchnoKit/InvitationService``.
+    static var webConsole: URL {
+        url(for: "ECHNO_WEB_CONSOLE_URL", default: defaultWebConsole)
+    }
+
     // MARK: Defaults
 
     private static let defaultIssuer = URL(string: "https://auth.echno.in/realms/echno-realm")!
+
+    /// `echno.in` redirects here — confirmed by following it, not assumed.
+    private static let defaultWebConsole = URL(string: "https://ui.echno.in")!
 
     /// The scheme is the app's **bundle identifier**, not its Keycloak client id
     /// — the two look alike and are unrelated. It must match the redirect URI

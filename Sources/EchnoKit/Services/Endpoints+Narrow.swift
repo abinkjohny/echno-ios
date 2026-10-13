@@ -46,4 +46,39 @@ public protocol UserEndpoint: Sendable {
     ) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output
 }
 
-extension Client: RegistrationEndpoint, UserEndpoint {}
+/// What ``OrganizationService`` calls.
+///
+/// The operation lives on the *user* controller — `GET
+/// /api/v1/user/web/{userId}/organizations` — because it is the multi-org
+/// bootstrap: the client cannot send `X-Organization-Id` until it knows which
+/// organizations exist, so the call has to be answerable without one.
+/// `TenantFilter` exempts `/api/v1/user/web` for exactly that reason, and the
+/// mobile twin at `/api/v1/user/{userId}/organizations` is not exempt.
+///
+/// It gets its own protocol rather than borrowing ``UserEndpoint`` so the
+/// organization service depends on the one operation it calls, and a later
+/// addition to the user module cannot break its test doubles.
+public protocol OrganizationEndpoint: Sendable {
+    func readAllOrganizationsForCurrentUser_1(
+        _ input: Operations.readAllOrganizationsForCurrentUser_1.Input
+    ) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output
+}
+
+/// What ``InvitationService`` calls.
+///
+/// Redemption only. Issuing and managing codes are `system-admin`/`hr-admin`
+/// surfaces that stay in the web console, and naming them here would let a
+/// later change call one by accident.
+///
+/// `/web` is not a choice: there is no mobile invitation controller. It works
+/// for a user who belongs nowhere because `validateInviteCode` is authorized
+/// with `isSelfUser(#userId)`, and `TenantFilter` runs a caller holding no
+/// `ORG_MEMBER_` authority unscoped — the comment there names invite-code
+/// redemption as one of the calls that has to work in that state.
+public protocol InvitationEndpoint: Sendable {
+    func validateInviteCode(
+        _ input: Operations.validateInviteCode.Input
+    ) async throws -> Operations.validateInviteCode.Output
+}
+
+extension Client: RegistrationEndpoint, UserEndpoint, OrganizationEndpoint, InvitationEndpoint {}

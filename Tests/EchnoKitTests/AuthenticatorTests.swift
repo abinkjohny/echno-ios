@@ -140,6 +140,74 @@ struct AccessTokenTests {
         #expect(try await store.load()?.accessToken == "refreshed")
     }
 
+    // MARK: Forced renewal
+
+    // Joining an organization is the case these cover. Membership is granted by
+    // adding the user to a Keycloak group, and the `ORG_MEMBER_` authority
+    // `TenantFilter` checks rides in the access token. The token in hand was
+    // issued before the join, so it cannot carry the new membership and every
+    // scoped request would be refused until it is reissued.
+    @Test("Renewal reissues a token that has not expired yet")
+    func renewalIgnoresRemainingLifetime() async throws {
+        let endpoint = StubTokenEndpoint()
+        let store = EphemeralTokenStore(tokens: .stub(accessToken: "issued-before-the-join"))
+        let auth = makeAuthenticator(endpoint: endpoint, store: store)
+
+        // The distinguishing case: `validAccessToken` would hand this one back
+        // untouched, which is exactly the bug.
+        #expect(try await auth.validAccessToken() == "issued-before-the-join")
+        #expect(await endpoint.refreshCount == 0)
+
+        #expect(try await auth.renewAccessToken() == "refreshed")
+        #expect(await endpoint.refreshCount == 1)
+    }
+
+    @Test("A renewed token is persisted and used from then on")
+    func renewalPersists() async throws {
+        let endpoint = StubTokenEndpoint()
+        let store = EphemeralTokenStore(tokens: .stub(accessToken: "issued-before-the-join"))
+        let auth = makeAuthenticator(endpoint: endpoint, store: store)
+
+        _ = try await auth.renewAccessToken()
+
+        #expect(try await store.load()?.accessToken == "refreshed")
+        // Not refreshed twice: the renewal replaced what the session holds,
+        // rather than being a one-off token handed to a single caller.
+        #expect(try await auth.validAccessToken() == "refreshed")
+        #expect(await endpoint.refreshCount == 1)
+    }
+
+    @Test("Concurrent renewals trigger exactly one refresh")
+    func renewalIsSingleFlight() async throws {
+        // Same rotation hazard as the ordinary refresh path, and reachable here
+        // because a renewal runs while the rest of the app is still making
+        // requests. A renewal that bypassed the single-flight task would
+        // present a spent refresh token and end the session.
+        let endpoint = StubTokenEndpoint()
+        await endpoint.setRefreshDelay(.milliseconds(50))
+        let auth = makeAuthenticator(
+            endpoint: endpoint,
+            store: EphemeralTokenStore(tokens: .stub(accessToken: "issued-before-the-join"))
+        )
+
+        let tokens = try await withThrowingTaskGroup(of: String.self) { group in
+            for _ in 0..<10 { group.addTask { try await auth.renewAccessToken() } }
+            return try await group.reduce(into: [String]()) { $0.append($1) }
+        }
+
+        #expect(tokens.allSatisfy { $0 == "refreshed" })
+        #expect(await endpoint.refreshCount == 1)
+    }
+
+    @Test("Renewal with nothing to refresh from ends the session")
+    func renewalWithoutRefreshTokenFails() async throws {
+        let store = EphemeralTokenStore(tokens: .stub(refreshToken: nil))
+        let auth = makeAuthenticator(store: store)
+
+        await #expect(throws: AuthError.sessionExpired) { try await auth.renewAccessToken() }
+        #expect(try await store.load() == nil)
+    }
+
     @Test("Concurrent callers trigger exactly one refresh")
     func singleFlight() async throws {
         // Keycloak rotates refresh tokens. A second concurrent refresh would

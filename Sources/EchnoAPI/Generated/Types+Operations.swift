@@ -542,6 +542,2236 @@ public enum Operations {
             }
         }
     }
+    /// Generate an invite code
+    ///
+    /// Generates a new invite code for the organization named in the path, which must be the organization the caller's session is scoped to.
+    ///
+    /// - Remark: HTTP `POST /api/v1/invitation/web/generateCode/organizationId/{organizationId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)`.
+    public enum createInviteCode {
+        public static let id: Swift.String = "createInviteCode"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/path`.
+            public struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/path/organizationId`.
+                public var organizationId: Swift.Int64
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - organizationId:
+                public init(organizationId: Swift.Int64) {
+                    self.organizationId = organizationId
+                }
+            }
+            public var path: Operations.createInviteCode.Input.Path
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createInviteCode.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createInviteCode.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.createInviteCode.Input.Headers
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.InviteCodeGenerationDto)
+            }
+            public var body: Operations.createInviteCode.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            ///   - body:
+            public init(
+                path: Operations.createInviteCode.Input.Path,
+                headers: Operations.createInviteCode.Input.Headers = .init(),
+                body: Operations.createInviteCode.Input.Body
+            ) {
+                self.path = path
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Created: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/201/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/201/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.Created.Body
+                /// Creates a new `Created`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.Created.Body) {
+                    self.body = body
+                }
+            }
+            /// Invite code created
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/201`.
+            ///
+            /// HTTP response code: `201 created`.
+            case created(Operations.createInviteCode.Output.Created)
+            /// The associated value of the enum case if `self` is `.created`.
+            ///
+            /// - Throws: An error if `self` is not `.created`.
+            /// - SeeAlso: `.created`.
+            public var created: Operations.createInviteCode.Output.Created {
+                get throws {
+                    switch self {
+                    case let .created(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "created",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadRequest: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/400/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/400/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.BadRequest.Body
+                /// Creates a new `BadRequest`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.BadRequest.Body) {
+                    self.body = body
+                }
+            }
+            /// A field failed validation
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Operations.createInviteCode.Output.BadRequest)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            public var badRequest: Operations.createInviteCode.Output.BadRequest {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Code402: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/402/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/402/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.Code402.Body
+                /// Creates a new `Code402`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.Code402.Body) {
+                    self.body = body
+                }
+            }
+            /// Payment Required
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/402`.
+            ///
+            /// HTTP response code: `402 code402`.
+            case code402(Operations.createInviteCode.Output.Code402)
+            /// The associated value of the enum case if `self` is `.code402`.
+            ///
+            /// - Throws: An error if `self` is not `.code402`.
+            /// - SeeAlso: `.code402`.
+            public var code402: Operations.createInviteCode.Output.Code402 {
+                get throws {
+                    switch self {
+                    case let .code402(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "code402",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Forbidden: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/403/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/403/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.Forbidden.Body
+                /// Creates a new `Forbidden`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.Forbidden.Body) {
+                    self.body = body
+                }
+            }
+            /// Caller lacks the required role in the current tenant, or named an organization that is not it
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Operations.createInviteCode.Output.Forbidden)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            public var forbidden: Operations.createInviteCode.Output.Forbidden {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct NotFound: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/404/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/404/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.NotFound.Body
+                /// Creates a new `NotFound`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.NotFound.Body) {
+                    self.body = body
+                }
+            }
+            /// No organization with the given id
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Operations.createInviteCode.Output.NotFound)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            public var notFound: Operations.createInviteCode.Output.NotFound {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Conflict: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/409/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/409/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.Conflict.Body
+                /// Creates a new `Conflict`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.Conflict.Body) {
+                    self.body = body
+                }
+            }
+            /// Conflict
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/409`.
+            ///
+            /// HTTP response code: `409 conflict`.
+            case conflict(Operations.createInviteCode.Output.Conflict)
+            /// The associated value of the enum case if `self` is `.conflict`.
+            ///
+            /// - Throws: An error if `self` is not `.conflict`.
+            /// - SeeAlso: `.conflict`.
+            public var conflict: Operations.createInviteCode.Output.Conflict {
+                get throws {
+                    switch self {
+                    case let .conflict(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "conflict",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct UnprocessableContent: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/422/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/422/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.UnprocessableContent.Body
+                /// Creates a new `UnprocessableContent`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.UnprocessableContent.Body) {
+                    self.body = body
+                }
+            }
+            /// Unprocessable Entity
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/422`.
+            ///
+            /// HTTP response code: `422 unprocessableContent`.
+            case unprocessableContent(Operations.createInviteCode.Output.UnprocessableContent)
+            /// The associated value of the enum case if `self` is `.unprocessableContent`.
+            ///
+            /// - Throws: An error if `self` is not `.unprocessableContent`.
+            /// - SeeAlso: `.unprocessableContent`.
+            public var unprocessableContent: Operations.createInviteCode.Output.UnprocessableContent {
+                get throws {
+                    switch self {
+                    case let .unprocessableContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unprocessableContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct InternalServerError: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/500/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/500/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.InternalServerError.Body
+                /// Creates a new `InternalServerError`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.InternalServerError.Body) {
+                    self.body = body
+                }
+            }
+            /// Internal Server Error
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/500`.
+            ///
+            /// HTTP response code: `500 internalServerError`.
+            case internalServerError(Operations.createInviteCode.Output.InternalServerError)
+            /// The associated value of the enum case if `self` is `.internalServerError`.
+            ///
+            /// - Throws: An error if `self` is not `.internalServerError`.
+            /// - SeeAlso: `.internalServerError`.
+            public var internalServerError: Operations.createInviteCode.Output.InternalServerError {
+                get throws {
+                    switch self {
+                    case let .internalServerError(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "internalServerError",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadGateway: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/502/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/generateCode/organizationId/{organizationId}/POST/responses/502/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createInviteCode.Output.BadGateway.Body
+                /// Creates a new `BadGateway`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createInviteCode.Output.BadGateway.Body) {
+                    self.body = body
+                }
+            }
+            /// Bad Gateway
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)/responses/502`.
+            ///
+            /// HTTP response code: `502 badGateway`.
+            case badGateway(Operations.createInviteCode.Output.BadGateway)
+            /// The associated value of the enum case if `self` is `.badGateway`.
+            ///
+            /// - Throws: An error if `self` is not `.badGateway`.
+            /// - SeeAlso: `.badGateway`.
+            public var badGateway: Operations.createInviteCode.Output.BadGateway {
+                get throws {
+                    switch self {
+                    case let .badGateway(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badGateway",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case any
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "*/*":
+                    self = .any
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .any:
+                    return "*/*"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .any
+                ]
+            }
+        }
+    }
+    /// List invite codes for an organization
+    ///
+    /// Returns every invite code generated for the organization named in the path, which must be the organization the caller's session is scoped to.
+    ///
+    /// - Remark: HTTP `GET /api/v1/invitation/web/organizationId/{organizationId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)`.
+    public enum readAllInviteCodes {
+        public static let id: Swift.String = "readAllInviteCodes"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/path`.
+            public struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/path/organizationId`.
+                public var organizationId: Swift.Int64
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - organizationId:
+                public init(organizationId: Swift.Int64) {
+                    self.organizationId = organizationId
+                }
+            }
+            public var path: Operations.readAllInviteCodes.Input.Path
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.readAllInviteCodes.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.readAllInviteCodes.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.readAllInviteCodes.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            public init(
+                path: Operations.readAllInviteCodes.Input.Path,
+                headers: Operations.readAllInviteCodes.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/200/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Invite codes returned
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.readAllInviteCodes.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.readAllInviteCodes.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadRequest: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/400/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/400/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.BadRequest.Body
+                /// Creates a new `BadRequest`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.BadRequest.Body) {
+                    self.body = body
+                }
+            }
+            /// Bad Request
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Operations.readAllInviteCodes.Output.BadRequest)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            public var badRequest: Operations.readAllInviteCodes.Output.BadRequest {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Code402: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/402/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/402/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.Code402.Body
+                /// Creates a new `Code402`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.Code402.Body) {
+                    self.body = body
+                }
+            }
+            /// Payment Required
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/402`.
+            ///
+            /// HTTP response code: `402 code402`.
+            case code402(Operations.readAllInviteCodes.Output.Code402)
+            /// The associated value of the enum case if `self` is `.code402`.
+            ///
+            /// - Throws: An error if `self` is not `.code402`.
+            /// - SeeAlso: `.code402`.
+            public var code402: Operations.readAllInviteCodes.Output.Code402 {
+                get throws {
+                    switch self {
+                    case let .code402(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "code402",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Forbidden: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/403/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/403/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.Forbidden.Body
+                /// Creates a new `Forbidden`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.Forbidden.Body) {
+                    self.body = body
+                }
+            }
+            /// Caller lacks the required role in the current tenant, or named an organization that is not it
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Operations.readAllInviteCodes.Output.Forbidden)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            public var forbidden: Operations.readAllInviteCodes.Output.Forbidden {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct NotFound: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/404/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/404/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.NotFound.Body
+                /// Creates a new `NotFound`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.NotFound.Body) {
+                    self.body = body
+                }
+            }
+            /// Not Found
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Operations.readAllInviteCodes.Output.NotFound)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            public var notFound: Operations.readAllInviteCodes.Output.NotFound {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Conflict: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/409/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/409/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.Conflict.Body
+                /// Creates a new `Conflict`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.Conflict.Body) {
+                    self.body = body
+                }
+            }
+            /// Conflict
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/409`.
+            ///
+            /// HTTP response code: `409 conflict`.
+            case conflict(Operations.readAllInviteCodes.Output.Conflict)
+            /// The associated value of the enum case if `self` is `.conflict`.
+            ///
+            /// - Throws: An error if `self` is not `.conflict`.
+            /// - SeeAlso: `.conflict`.
+            public var conflict: Operations.readAllInviteCodes.Output.Conflict {
+                get throws {
+                    switch self {
+                    case let .conflict(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "conflict",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct UnprocessableContent: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/422/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/422/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.UnprocessableContent.Body
+                /// Creates a new `UnprocessableContent`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.UnprocessableContent.Body) {
+                    self.body = body
+                }
+            }
+            /// Unprocessable Entity
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/422`.
+            ///
+            /// HTTP response code: `422 unprocessableContent`.
+            case unprocessableContent(Operations.readAllInviteCodes.Output.UnprocessableContent)
+            /// The associated value of the enum case if `self` is `.unprocessableContent`.
+            ///
+            /// - Throws: An error if `self` is not `.unprocessableContent`.
+            /// - SeeAlso: `.unprocessableContent`.
+            public var unprocessableContent: Operations.readAllInviteCodes.Output.UnprocessableContent {
+                get throws {
+                    switch self {
+                    case let .unprocessableContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unprocessableContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct InternalServerError: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/500/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/500/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.InternalServerError.Body
+                /// Creates a new `InternalServerError`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.InternalServerError.Body) {
+                    self.body = body
+                }
+            }
+            /// Internal Server Error
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/500`.
+            ///
+            /// HTTP response code: `500 internalServerError`.
+            case internalServerError(Operations.readAllInviteCodes.Output.InternalServerError)
+            /// The associated value of the enum case if `self` is `.internalServerError`.
+            ///
+            /// - Throws: An error if `self` is not `.internalServerError`.
+            /// - SeeAlso: `.internalServerError`.
+            public var internalServerError: Operations.readAllInviteCodes.Output.InternalServerError {
+                get throws {
+                    switch self {
+                    case let .internalServerError(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "internalServerError",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadGateway: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/502/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/organizationId/{organizationId}/GET/responses/502/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.readAllInviteCodes.Output.BadGateway.Body
+                /// Creates a new `BadGateway`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.readAllInviteCodes.Output.BadGateway.Body) {
+                    self.body = body
+                }
+            }
+            /// Bad Gateway
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)/responses/502`.
+            ///
+            /// HTTP response code: `502 badGateway`.
+            case badGateway(Operations.readAllInviteCodes.Output.BadGateway)
+            /// The associated value of the enum case if `self` is `.badGateway`.
+            ///
+            /// - Throws: An error if `self` is not `.badGateway`.
+            /// - SeeAlso: `.badGateway`.
+            public var badGateway: Operations.readAllInviteCodes.Output.BadGateway {
+                get throws {
+                    switch self {
+                    case let .badGateway(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badGateway",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case any
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "*/*":
+                    self = .any
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .any:
+                    return "*/*"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .any
+                ]
+            }
+        }
+    }
+    /// Validate and use an invite code
+    ///
+    /// Validates the supplied invite code and joins the user to the organization it grants access to. Attempts are limited: one is charged before the code is looked up and given back when the code is accepted, so a successful redemption costs nothing and repeated wrong codes are answered with 429 and a Retry-After header.
+    ///
+    /// - Remark: HTTP `POST /api/v1/invitation/web/validate/userId/{userId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)`.
+    public enum validateInviteCode {
+        public static let id: Swift.String = "validateInviteCode"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/path`.
+            public struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/path/userId`.
+                public var userId: Swift.Int64
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - userId:
+                public init(userId: Swift.Int64) {
+                    self.userId = userId
+                }
+            }
+            public var path: Operations.validateInviteCode.Input.Path
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.validateInviteCode.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.validateInviteCode.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.validateInviteCode.Input.Headers
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.InviteCodeValidationDto)
+            }
+            public var body: Operations.validateInviteCode.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            ///   - body:
+            public init(
+                path: Operations.validateInviteCode.Input.Path,
+                headers: Operations.validateInviteCode.Input.Headers = .init(),
+                body: Operations.validateInviteCode.Input.Body
+            ) {
+                self.path = path
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/200/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Invite code accepted and organization joined
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.validateInviteCode.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.validateInviteCode.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadRequest: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/400/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/400/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.BadRequest.Body
+                /// Creates a new `BadRequest`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.BadRequest.Body) {
+                    self.body = body
+                }
+            }
+            /// A field failed validation or the code is invalid or expired
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Operations.validateInviteCode.Output.BadRequest)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            public var badRequest: Operations.validateInviteCode.Output.BadRequest {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Code402: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/402/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/402/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.Code402.Body
+                /// Creates a new `Code402`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.Code402.Body) {
+                    self.body = body
+                }
+            }
+            /// Payment Required
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/402`.
+            ///
+            /// HTTP response code: `402 code402`.
+            case code402(Operations.validateInviteCode.Output.Code402)
+            /// The associated value of the enum case if `self` is `.code402`.
+            ///
+            /// - Throws: An error if `self` is not `.code402`.
+            /// - SeeAlso: `.code402`.
+            public var code402: Operations.validateInviteCode.Output.Code402 {
+                get throws {
+                    switch self {
+                    case let .code402(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "code402",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Forbidden: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/403/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/403/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.Forbidden.Body
+                /// Creates a new `Forbidden`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.Forbidden.Body) {
+                    self.body = body
+                }
+            }
+            /// Caller is neither the target user nor a role holder in the current tenant
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Operations.validateInviteCode.Output.Forbidden)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            public var forbidden: Operations.validateInviteCode.Output.Forbidden {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct NotFound: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/404/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/404/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.NotFound.Body
+                /// Creates a new `NotFound`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.NotFound.Body) {
+                    self.body = body
+                }
+            }
+            /// No user with the given id
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Operations.validateInviteCode.Output.NotFound)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            public var notFound: Operations.validateInviteCode.Output.NotFound {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Conflict: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/409/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/409/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.Conflict.Body
+                /// Creates a new `Conflict`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.Conflict.Body) {
+                    self.body = body
+                }
+            }
+            /// Conflict
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/409`.
+            ///
+            /// HTTP response code: `409 conflict`.
+            case conflict(Operations.validateInviteCode.Output.Conflict)
+            /// The associated value of the enum case if `self` is `.conflict`.
+            ///
+            /// - Throws: An error if `self` is not `.conflict`.
+            /// - SeeAlso: `.conflict`.
+            public var conflict: Operations.validateInviteCode.Output.Conflict {
+                get throws {
+                    switch self {
+                    case let .conflict(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "conflict",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct UnprocessableContent: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/422/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/422/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.UnprocessableContent.Body
+                /// Creates a new `UnprocessableContent`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.UnprocessableContent.Body) {
+                    self.body = body
+                }
+            }
+            /// Unprocessable Entity
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/422`.
+            ///
+            /// HTTP response code: `422 unprocessableContent`.
+            case unprocessableContent(Operations.validateInviteCode.Output.UnprocessableContent)
+            /// The associated value of the enum case if `self` is `.unprocessableContent`.
+            ///
+            /// - Throws: An error if `self` is not `.unprocessableContent`.
+            /// - SeeAlso: `.unprocessableContent`.
+            public var unprocessableContent: Operations.validateInviteCode.Output.UnprocessableContent {
+                get throws {
+                    switch self {
+                    case let .unprocessableContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unprocessableContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct TooManyRequests: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/429/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/429/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.TooManyRequests.Body
+                /// Creates a new `TooManyRequests`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.TooManyRequests.Body) {
+                    self.body = body
+                }
+            }
+            /// The attempt allowance is spent; Retry-After says when it refills
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/429`.
+            ///
+            /// HTTP response code: `429 tooManyRequests`.
+            case tooManyRequests(Operations.validateInviteCode.Output.TooManyRequests)
+            /// The associated value of the enum case if `self` is `.tooManyRequests`.
+            ///
+            /// - Throws: An error if `self` is not `.tooManyRequests`.
+            /// - SeeAlso: `.tooManyRequests`.
+            public var tooManyRequests: Operations.validateInviteCode.Output.TooManyRequests {
+                get throws {
+                    switch self {
+                    case let .tooManyRequests(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "tooManyRequests",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct InternalServerError: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/500/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/500/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.InternalServerError.Body
+                /// Creates a new `InternalServerError`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.InternalServerError.Body) {
+                    self.body = body
+                }
+            }
+            /// Internal Server Error
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/500`.
+            ///
+            /// HTTP response code: `500 internalServerError`.
+            case internalServerError(Operations.validateInviteCode.Output.InternalServerError)
+            /// The associated value of the enum case if `self` is `.internalServerError`.
+            ///
+            /// - Throws: An error if `self` is not `.internalServerError`.
+            /// - SeeAlso: `.internalServerError`.
+            public var internalServerError: Operations.validateInviteCode.Output.InternalServerError {
+                get throws {
+                    switch self {
+                    case let .internalServerError(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "internalServerError",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadGateway: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/502/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/validate/userId/{userId}/POST/responses/502/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.validateInviteCode.Output.BadGateway.Body
+                /// Creates a new `BadGateway`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.validateInviteCode.Output.BadGateway.Body) {
+                    self.body = body
+                }
+            }
+            /// Bad Gateway
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)/responses/502`.
+            ///
+            /// HTTP response code: `502 badGateway`.
+            case badGateway(Operations.validateInviteCode.Output.BadGateway)
+            /// The associated value of the enum case if `self` is `.badGateway`.
+            ///
+            /// - Throws: An error if `self` is not `.badGateway`.
+            /// - SeeAlso: `.badGateway`.
+            public var badGateway: Operations.validateInviteCode.Output.BadGateway {
+                get throws {
+                    switch self {
+                    case let .badGateway(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badGateway",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case any
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "*/*":
+                    self = .any
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .any:
+                    return "*/*"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .any
+                ]
+            }
+        }
+    }
+    /// Update an invite code
+    ///
+    /// Applies a partial update to an invite code, adjusting its usage limit, current usage count or active state.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/invitation/web/{inviteCodeId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)`.
+    public enum patchInviteCode {
+        public static let id: Swift.String = "patchInviteCode"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/path`.
+            public struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/path/inviteCodeId`.
+                public var inviteCodeId: Swift.Int64
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - inviteCodeId:
+                public init(inviteCodeId: Swift.Int64) {
+                    self.inviteCodeId = inviteCodeId
+                }
+            }
+            public var path: Operations.patchInviteCode.Input.Path
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.patchInviteCode.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.patchInviteCode.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.patchInviteCode.Input.Headers
+            /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/requestBody/content/application\/json`.
+                case json(Components.Schemas.InviteCodePatchDto)
+            }
+            public var body: Operations.patchInviteCode.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            ///   - body:
+            public init(
+                path: Operations.patchInviteCode.Input.Path,
+                headers: Operations.patchInviteCode.Input.Headers = .init(),
+                body: Operations.patchInviteCode.Input.Body
+            ) {
+                self.path = path
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/200/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Invite code updated
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.patchInviteCode.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.patchInviteCode.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadRequest: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/400/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/400/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.BadRequest.Body
+                /// Creates a new `BadRequest`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.BadRequest.Body) {
+                    self.body = body
+                }
+            }
+            /// A field failed validation
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Operations.patchInviteCode.Output.BadRequest)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            public var badRequest: Operations.patchInviteCode.Output.BadRequest {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Code402: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/402/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/402/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.Code402.Body
+                /// Creates a new `Code402`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.Code402.Body) {
+                    self.body = body
+                }
+            }
+            /// Payment Required
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/402`.
+            ///
+            /// HTTP response code: `402 code402`.
+            case code402(Operations.patchInviteCode.Output.Code402)
+            /// The associated value of the enum case if `self` is `.code402`.
+            ///
+            /// - Throws: An error if `self` is not `.code402`.
+            /// - SeeAlso: `.code402`.
+            public var code402: Operations.patchInviteCode.Output.Code402 {
+                get throws {
+                    switch self {
+                    case let .code402(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "code402",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Forbidden: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/403/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/403/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.Forbidden.Body
+                /// Creates a new `Forbidden`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.Forbidden.Body) {
+                    self.body = body
+                }
+            }
+            /// Caller lacks the required role in the current tenant
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Operations.patchInviteCode.Output.Forbidden)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            public var forbidden: Operations.patchInviteCode.Output.Forbidden {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct NotFound: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/404/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/404/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.NotFound.Body
+                /// Creates a new `NotFound`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.NotFound.Body) {
+                    self.body = body
+                }
+            }
+            /// No invite code with the given id
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Operations.patchInviteCode.Output.NotFound)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            public var notFound: Operations.patchInviteCode.Output.NotFound {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Conflict: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/409/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/409/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.Conflict.Body
+                /// Creates a new `Conflict`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.Conflict.Body) {
+                    self.body = body
+                }
+            }
+            /// Conflict
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/409`.
+            ///
+            /// HTTP response code: `409 conflict`.
+            case conflict(Operations.patchInviteCode.Output.Conflict)
+            /// The associated value of the enum case if `self` is `.conflict`.
+            ///
+            /// - Throws: An error if `self` is not `.conflict`.
+            /// - SeeAlso: `.conflict`.
+            public var conflict: Operations.patchInviteCode.Output.Conflict {
+                get throws {
+                    switch self {
+                    case let .conflict(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "conflict",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct UnprocessableContent: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/422/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/422/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.UnprocessableContent.Body
+                /// Creates a new `UnprocessableContent`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.UnprocessableContent.Body) {
+                    self.body = body
+                }
+            }
+            /// Unprocessable Entity
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/422`.
+            ///
+            /// HTTP response code: `422 unprocessableContent`.
+            case unprocessableContent(Operations.patchInviteCode.Output.UnprocessableContent)
+            /// The associated value of the enum case if `self` is `.unprocessableContent`.
+            ///
+            /// - Throws: An error if `self` is not `.unprocessableContent`.
+            /// - SeeAlso: `.unprocessableContent`.
+            public var unprocessableContent: Operations.patchInviteCode.Output.UnprocessableContent {
+                get throws {
+                    switch self {
+                    case let .unprocessableContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unprocessableContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct InternalServerError: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/500/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/500/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.InternalServerError.Body
+                /// Creates a new `InternalServerError`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.InternalServerError.Body) {
+                    self.body = body
+                }
+            }
+            /// Internal Server Error
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/500`.
+            ///
+            /// HTTP response code: `500 internalServerError`.
+            case internalServerError(Operations.patchInviteCode.Output.InternalServerError)
+            /// The associated value of the enum case if `self` is `.internalServerError`.
+            ///
+            /// - Throws: An error if `self` is not `.internalServerError`.
+            /// - SeeAlso: `.internalServerError`.
+            public var internalServerError: Operations.patchInviteCode.Output.InternalServerError {
+                get throws {
+                    switch self {
+                    case let .internalServerError(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "internalServerError",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadGateway: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/502/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/api/v1/invitation/web/{inviteCodeId}/PATCH/responses/502/content/*\/*`.
+                    case any(OpenAPIRuntime.HTTPBody)
+                    /// The associated value of the enum case if `self` is `.any`.
+                    ///
+                    /// - Throws: An error if `self` is not `.any`.
+                    /// - SeeAlso: `.any`.
+                    public var any: OpenAPIRuntime.HTTPBody {
+                        get throws {
+                            switch self {
+                            case let .any(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.patchInviteCode.Output.BadGateway.Body
+                /// Creates a new `BadGateway`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.patchInviteCode.Output.BadGateway.Body) {
+                    self.body = body
+                }
+            }
+            /// Bad Gateway
+            ///
+            /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)/responses/502`.
+            ///
+            /// HTTP response code: `502 badGateway`.
+            case badGateway(Operations.patchInviteCode.Output.BadGateway)
+            /// The associated value of the enum case if `self` is `.badGateway`.
+            ///
+            /// - Throws: An error if `self` is not `.badGateway`.
+            /// - SeeAlso: `.badGateway`.
+            public var badGateway: Operations.patchInviteCode.Output.BadGateway {
+                get throws {
+                    switch self {
+                    case let .badGateway(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badGateway",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case any
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "*/*":
+                    self = .any
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .any:
+                    return "*/*"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .any
+                ]
+            }
+        }
+    }
     /// Get the current user
     ///
     /// Resolves the caller's user record from the subject claim of their access token.

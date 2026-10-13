@@ -18,6 +18,34 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /api/v1/auth/register`.
     /// - Remark: Generated from `#/paths//api/v1/auth/register/post(registerUser)`.
     func registerUser(_ input: Operations.registerUser.Input) async throws -> Operations.registerUser.Output
+    /// Generate an invite code
+    ///
+    /// Generates a new invite code for the organization named in the path, which must be the organization the caller's session is scoped to.
+    ///
+    /// - Remark: HTTP `POST /api/v1/invitation/web/generateCode/organizationId/{organizationId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)`.
+    func createInviteCode(_ input: Operations.createInviteCode.Input) async throws -> Operations.createInviteCode.Output
+    /// List invite codes for an organization
+    ///
+    /// Returns every invite code generated for the organization named in the path, which must be the organization the caller's session is scoped to.
+    ///
+    /// - Remark: HTTP `GET /api/v1/invitation/web/organizationId/{organizationId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)`.
+    func readAllInviteCodes(_ input: Operations.readAllInviteCodes.Input) async throws -> Operations.readAllInviteCodes.Output
+    /// Validate and use an invite code
+    ///
+    /// Validates the supplied invite code and joins the user to the organization it grants access to. Attempts are limited: one is charged before the code is looked up and given back when the code is accepted, so a successful redemption costs nothing and repeated wrong codes are answered with 429 and a Retry-After header.
+    ///
+    /// - Remark: HTTP `POST /api/v1/invitation/web/validate/userId/{userId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)`.
+    func validateInviteCode(_ input: Operations.validateInviteCode.Input) async throws -> Operations.validateInviteCode.Output
+    /// Update an invite code
+    ///
+    /// Applies a partial update to an invite code, adjusting its usage limit, current usage count or active state.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/invitation/web/{inviteCodeId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)`.
+    func patchInviteCode(_ input: Operations.patchInviteCode.Input) async throws -> Operations.patchInviteCode.Output
     /// Get the current user
     ///
     /// Resolves the caller's user record from the subject claim of their access token.
@@ -124,6 +152,72 @@ extension APIProtocol {
         body: Operations.registerUser.Input.Body
     ) async throws -> Operations.registerUser.Output {
         try await registerUser(Operations.registerUser.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Generate an invite code
+    ///
+    /// Generates a new invite code for the organization named in the path, which must be the organization the caller's session is scoped to.
+    ///
+    /// - Remark: HTTP `POST /api/v1/invitation/web/generateCode/organizationId/{organizationId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/generateCode/organizationId/{organizationId}/post(createInviteCode)`.
+    public func createInviteCode(
+        path: Operations.createInviteCode.Input.Path,
+        headers: Operations.createInviteCode.Input.Headers = .init(),
+        body: Operations.createInviteCode.Input.Body
+    ) async throws -> Operations.createInviteCode.Output {
+        try await createInviteCode(Operations.createInviteCode.Input(
+            path: path,
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List invite codes for an organization
+    ///
+    /// Returns every invite code generated for the organization named in the path, which must be the organization the caller's session is scoped to.
+    ///
+    /// - Remark: HTTP `GET /api/v1/invitation/web/organizationId/{organizationId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/organizationId/{organizationId}/get(readAllInviteCodes)`.
+    public func readAllInviteCodes(
+        path: Operations.readAllInviteCodes.Input.Path,
+        headers: Operations.readAllInviteCodes.Input.Headers = .init()
+    ) async throws -> Operations.readAllInviteCodes.Output {
+        try await readAllInviteCodes(Operations.readAllInviteCodes.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Validate and use an invite code
+    ///
+    /// Validates the supplied invite code and joins the user to the organization it grants access to. Attempts are limited: one is charged before the code is looked up and given back when the code is accepted, so a successful redemption costs nothing and repeated wrong codes are answered with 429 and a Retry-After header.
+    ///
+    /// - Remark: HTTP `POST /api/v1/invitation/web/validate/userId/{userId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/validate/userId/{userId}/post(validateInviteCode)`.
+    public func validateInviteCode(
+        path: Operations.validateInviteCode.Input.Path,
+        headers: Operations.validateInviteCode.Input.Headers = .init(),
+        body: Operations.validateInviteCode.Input.Body
+    ) async throws -> Operations.validateInviteCode.Output {
+        try await validateInviteCode(Operations.validateInviteCode.Input(
+            path: path,
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Update an invite code
+    ///
+    /// Applies a partial update to an invite code, adjusting its usage limit, current usage count or active state.
+    ///
+    /// - Remark: HTTP `PATCH /api/v1/invitation/web/{inviteCodeId}`.
+    /// - Remark: Generated from `#/paths//api/v1/invitation/web/{inviteCodeId}/patch(patchInviteCode)`.
+    public func patchInviteCode(
+        path: Operations.patchInviteCode.Input.Path,
+        headers: Operations.patchInviteCode.Input.Headers = .init(),
+        body: Operations.patchInviteCode.Input.Body
+    ) async throws -> Operations.patchInviteCode.Output {
+        try await patchInviteCode(Operations.patchInviteCode.Input(
+            path: path,
             headers: headers,
             body: body
         ))

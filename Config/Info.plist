@@ -38,5 +38,7 @@
 	<string>$(ECHNO_KEYCLOAK_CLIENT_ID)</string>
 	<key>ECHNO_OAUTH_REDIRECT_URI</key>
 	<string>$(ECHNO_OAUTH_REDIRECT_URI)</string>
+	<key>ECHNO_WEB_CONSOLE_URL</key>
+	<string>$(ECHNO_WEB_CONSOLE_URL)</string>
 </dict>
 </plist>

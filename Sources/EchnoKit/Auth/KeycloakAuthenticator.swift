@@ -87,6 +87,31 @@ public actor KeycloakAuthenticator: AuthenticationService {
         return try await refresh(using: tokens).accessToken
     }
 
+    /// A newly issued access token, whatever lifetime the held one has left.
+    ///
+    /// For the case where the token is still valid and has become *wrong*.
+    /// Membership of an organization is granted by adding the user to a
+    /// Keycloak group, and the `ORG_MEMBER_<id>` authority `TenantFilter`
+    /// checks is a claim in the access token. A token issued before the user
+    /// joined cannot carry the new membership, so every request scoped to that
+    /// organization is refused until the token is reissued — and because the
+    /// token has not expired, ``validAccessToken()`` would keep handing back
+    /// the stale one indefinitely.
+    ///
+    /// Goes through the same single-flight task as an ordinary refresh. A
+    /// renewal runs while the rest of the app is still making requests, and
+    /// Keycloak rotates refresh tokens, so a second concurrent attempt would
+    /// present a spent one and end the session.
+    ///
+    /// - Throws: ``AuthError/sessionExpired`` if there is nothing to refresh
+    ///   from, exactly as a lapsed refresh does.
+    public func renewAccessToken() async throws -> String {
+        guard let tokens = try await store.load() else {
+            throw AuthError.sessionExpired
+        }
+        return try await refresh(using: tokens).accessToken
+    }
+
     /// Refreshes, joining the in-flight attempt when there is one.
     private func refresh(using tokens: TokenSet) async throws -> TokenSet {
         if let existing = refreshInFlight {

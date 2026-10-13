@@ -27,6 +27,7 @@ struct AppShell: View {
         // The session owns the store; the shell publishes it so screens depend
         // on the data they need rather than reaching through the session.
         .environment(session.users)
+        .environment(session.organizations)
     }
 }
 
