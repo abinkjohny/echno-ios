@@ -3,29 +3,33 @@ import EchnoKit
 
 /// The signed-in landing screen.
 ///
-/// Deliberately thin for now: it identifies who is signed in, which tenant they
-/// are acting in, and offers a way out. Attendance summaries and project
-/// activity arrive with their modules — putting placeholders here would make the
-/// screen look finished when it is not.
+/// Built on what the app actually knows: who is signed in, and which
+/// organizations they belong to. Attendance, project and task summaries arrive
+/// with their modules — echno-web's dashboard fills those tiles from
+/// `mock-data`, and copying that here would make the screen look finished while
+/// telling the user nothing true. A section appears when its module can feed it.
 struct HomeView: View {
 
     @Environment(AuthSession.self) private var session
     @Environment(UserStore.self) private var store
+    @Environment(OrganizationStore.self) private var organizations
 
     var body: some View {
         List {
-            Section {
+            Section { greeting }
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+
+            Section("Profile") {
                 switch (store.currentUser, store.error) {
-                case (let user?, _):
-                    profile(user)
-                case (nil, let error?):
-                    failure(error)
-                case (nil, nil):
-                    placeholder
+                case (let user?, _): profile(user)
+                case (nil, let error?): failure(error)
+                case (nil, nil): placeholder
                 }
             }
-
             .echnoRow()
+
+            organizationSection
 
             Section {
                 Button("Sign Out", role: .destructive) {
@@ -35,17 +39,111 @@ struct HomeView: View {
             .echnoRow()
         }
         .navigationTitle("Home")
+        // Inline, because the greeting below is this screen's header. Left
+        // large, the two stack and the eye has to pick which one is the title —
+        // and "Home" is the weaker of the pair: the tab bar already says it.
+        .navigationBarTitleDisplayMode(.inline)
         .echnoScreen()
-        .refreshable { await store.reload() }
-        .task { await store.load() }
+        .refreshable { await reload() }
+        .task { await load() }
+    }
+
+    // MARK: Loading
+
+    /// The user first, then the organizations: the memberships endpoint is
+    /// keyed by user id, so there is nothing to ask for until the profile has
+    /// arrived. Sequential by necessity, not by preference.
+    private func load() async {
+        await store.load()
+        await session.loadOrganizations()
+    }
+
+    private func reload() async {
+        await store.reload()
+        await session.loadOrganizations()
+    }
+
+    // MARK: Content
+
+    @ViewBuilder
+    private var greeting: some View {
+        VStack(alignment: .leading, spacing: Echno.Space.xs) {
+            Text(Greeting.line(for: store.currentUser?.name ?? ""))
+                .font(.echnoScreenTitle)
+                .foregroundStyle(Echno.foreground)
+            if let organization = organizations.selected {
+                Text(organization.name)
+                    .font(.subheadline)
+                    .foregroundStyle(Echno.mutedForeground)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, Echno.Space.md)
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var organizationSection: some View {
+        Section {
+            if organizations.isLoading && organizations.organizations.isEmpty {
+                Text("Loading your organizations…")
+                    .font(.subheadline)
+                    .foregroundStyle(Echno.mutedForeground)
+            } else if let error = organizations.error {
+                failure(error)
+            } else if organizations.organizations.isEmpty {
+                Text("You are not a member of any organization yet.")
+                    .font(.subheadline)
+                    .foregroundStyle(Echno.mutedForeground)
+            } else {
+                ForEach(organizations.organizations) { organization in
+                    organizationRow(organization)
+                }
+            }
+        } header: {
+            Text("Organizations")
+        } footer: {
+            // Shown only when it is true and actionable: several memberships,
+            // none chosen. The app cannot scope a request until one is.
+            if organizations.selected == nil && organizations.organizations.count > 1 {
+                Text("Choose an organization to start working in.")
+            }
+        }
+        .echnoRow()
+    }
+
+    private func organizationRow(_ organization: Organization) -> some View {
+        Button {
+            Task { await session.select(organization: organization.id) }
+        } label: {
+            HStack(spacing: Echno.Space.lg) {
+                EchnoAvatar(initials: organization.initials)
+                VStack(alignment: .leading, spacing: Echno.Space.hairline) {
+                    Text(organization.name)
+                        .font(.body)
+                        .foregroundStyle(Echno.foreground)
+                    if !organization.isActive {
+                        Text("Inactive")
+                            .font(.caption)
+                            .foregroundStyle(Echno.Text.warning)
+                    }
+                }
+                Spacer()
+                if organizations.selected?.id == organization.id {
+                    Image(systemName: "checkmark")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Echno.Text.brand)
+                }
+            }
+        }
+        .accessibilityAddTraits(organizations.selected?.id == organization.id ? [.isSelected] : [])
     }
 
     private func profile(_ user: User) -> some View {
         HStack(spacing: Echno.Space.lg) {
             EchnoAvatar(initials: user.initials)
             VStack(alignment: .leading, spacing: Echno.Space.xs) {
-                Text(user.name)
-                    .font(.headline)
+                Text(user.name).font(.headline)
                 Text(user.email)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -72,7 +170,7 @@ struct HomeView: View {
             .font(.subheadline)
             .foregroundStyle(Echno.destructive)
 
-            Button("Try Again") { Task { await store.reload() } }
+            Button("Try Again") { Task { await reload() } }
                 .font(.subheadline.weight(.semibold))
         }
         .padding(.vertical, Echno.Space.xs)
@@ -98,9 +196,9 @@ struct HomeView: View {
 
 // MARK: - Previews
 //
-// HomeView takes the store from the environment rather than reaching through
-// the session, so every state it can be in is reachable here. Without that, the
-// loaded state could only be seen by signing in against a live Keycloak.
+// HomeView takes both stores from the environment rather than reaching through
+// the session, so every state it can be in is reachable here. Without that, a
+// multi-organization account could only be seen by signing in as one.
 
 private struct PreviewLoader: UserLoading {
     var result: Result<User, any Error>
@@ -110,8 +208,9 @@ private struct PreviewLoader: UserLoading {
     }
 }
 
-private func previewStore(_ result: Result<User, any Error>) -> UserStore {
-    UserStore(loader: PreviewLoader(result: result))
+private struct PreviewOrganizations: OrganizationLoading {
+    var result: Result<[Organization], any Error>
+    func organizations(forUser id: Int64) async throws -> [Organization] { try result.get() }
 }
 
 private let previewUser = User(
@@ -122,14 +221,30 @@ private let previewUser = User(
     role: .employee
 )
 
-#Preview("Loaded") {
-    NavigationStack { HomeView() }
+@MainActor
+private func homePreview(
+    user: Result<User, any Error> = .success(previewUser),
+    organizations: Result<[Organization], any Error> = .success([
+        Organization(id: 7, name: "Tornotron Constructions"),
+        Organization(id: 8, name: "Harbour Works", isActive: false)
+    ])
+) -> some View {
+    let store = OrganizationStore(loader: PreviewOrganizations(result: organizations))
+    return NavigationStack { HomeView() }
         .environment(AuthSession())
-        .environment(previewStore(.success(previewUser)))
+        .environment(UserStore(loader: PreviewLoader(result: user)))
+        .environment(store)
+        .task { await store.load(forUser: 42, preferring: nil) }
 }
 
-#Preview("Failed") {
-    NavigationStack { HomeView() }
-        .environment(AuthSession())
-        .environment(previewStore(.failure(APIError(message: "Could not reach the server.", status: 0))))
+#Preview("Several organizations, none chosen") { homePreview() }
+
+#Preview("One organization, chosen automatically") {
+    homePreview(organizations: .success([Organization(id: 7, name: "Tornotron Constructions")]))
+}
+
+#Preview("No organizations") { homePreview(organizations: .success([])) }
+
+#Preview("Profile failed") {
+    homePreview(user: .failure(APIError(message: "Could not reach the server.", status: 0)))
 }
