@@ -102,3 +102,32 @@ extension Organization {
         )
     }
 }
+
+extension Organization {
+
+    /// Which organization the app should act in, given what the user belongs to
+    /// and what their profile says they prefer.
+    ///
+    /// Returns `nil` when it cannot be decided, and that is the important case.
+    /// `X-Organization-Id` is a tenant boundary: choosing one on the user's
+    /// behalf means they may file an attendance record or an indent against the
+    /// wrong site without ever having been asked. So ambiguity is reported, not
+    /// resolved, and the UI asks.
+    ///
+    /// - Parameters:
+    ///   - organizations: Everything the user is a member of.
+    ///   - preferred: `User.defaultOrganizationID`, which may be stale — it
+    ///     survives being removed from an organization, and honouring it then
+    ///     would send a header for a tenant the caller has no membership in.
+    ///     Only honoured when it matches a current membership.
+    public static func selection(
+        from organizations: [Organization],
+        preferring preferred: Int64?
+    ) -> Organization? {
+        if let preferred, let match = organizations.first(where: { $0.id == preferred }) {
+            return match
+        }
+        // Nobody should be made to pick from a list of one.
+        return organizations.count == 1 ? organizations.first : nil
+    }
+}
