@@ -113,6 +113,12 @@ public enum Palette {
         return result
     }
 
+    /// Relative luminance per WCAG 2.1, from 0 for black to 1 for white.
+    ///
+    /// The gamma expansion is the part worth not inventing: sRGB channel values
+    /// are not proportional to the light they emit, so averaging them raw gives
+    /// a number that looks plausible and ranks colours wrongly. `contrastRatio`
+    /// has a self-check against known WCAG values for exactly that reason.
     public static func relativeLuminance(_ colour: UInt32) -> Double {
         let channels = [16, 8, 0].map { Double((colour >> UInt32($0)) & 0xFF) / 255 }
         let linear = channels.map { $0 <= 0.04045 ? $0 / 12.92 : pow(($0 + 0.055) / 1.055, 2.4) }
