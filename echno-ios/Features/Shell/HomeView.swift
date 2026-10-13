@@ -13,6 +13,10 @@ struct HomeView: View {
     @Environment(AuthSession.self) private var session
     @Environment(UserStore.self) private var store
     @Environment(OrganizationStore.self) private var organizations
+    @Environment(\.openURL) private var openURL
+
+    /// Whether the invite-code sheet is up.
+    @State private var isJoining = false
 
     var body: some View {
         List {
@@ -46,6 +50,10 @@ struct HomeView: View {
         .echnoScreen()
         .refreshable { await reload() }
         .task { await load() }
+        // Nothing to do on dismissal: a successful join adopts the organization
+        // into the store, and the section is driven by that rather than by
+        // anything this screen has to be told.
+        .sheet(isPresented: $isJoining) { JoinOrganizationSheet() }
     }
 
     // MARK: Loading
@@ -124,21 +132,25 @@ struct HomeView: View {
     /// get them out of this state. Creating is `organization:admin` only, so it
     /// stays in the web console.
     ///
-    /// Redemption is not built in the app yet (Wave 1 follow-up), so this offers
-    /// no code field it cannot honour and names the code as what joining takes.
+    /// Two actions, because the two capabilities are not the same. Joining is
+    /// primary: it is the one the app can finish, and the one a user who was
+    /// sent a code is here to do. Opening the console is secondary and exists
+    /// because creating an organization cannot be done anywhere else.
     private var noMemberships: some View {
         VStack(alignment: .leading, spacing: Echno.Space.md) {
             Text("You are not a member of any organization yet.")
                 .font(.subheadline)
                 .foregroundStyle(Echno.mutedForeground)
-            Text("To join an existing organization, ask its administrator for an invite code. New organizations are created in the Echno web console.")
+            Text("Join one with an invite code from its administrator, or create a new organization in the Echno web console.")
                 .font(.footnote)
                 .foregroundStyle(Echno.mutedForeground)
-            Link(destination: EchnoConfiguration.webConsole) {
-                Label("Open the Web Console", systemImage: "arrow.up.forward.square")
-                    .font(.subheadline.weight(.semibold))
+
+            EchnoPrimaryButton(title: "Enter Invite Code") { isJoining = true }
+
+            EchnoSecondaryButton(title: "Open the Web Console", systemImage: "arrow.up.forward.square") {
+                openURL(EchnoConfiguration.webConsole)
             }
-            .accessibilityHint("Opens the Echno web console in your browser")
+            .accessibilityHint("Opens the Echno web console in your browser, where organizations are created")
         }
         .padding(.vertical, Echno.Space.xs)
         .fixedSize(horizontal: false, vertical: true)
