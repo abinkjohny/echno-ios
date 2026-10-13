@@ -286,6 +286,8 @@ extension Components {
                 case QA_ENGINEER = "QA_ENGINEER"
                 case SAFETY_OFFICER = "SAFETY_OFFICER"
                 case SITE_ENGINEER = "SITE_ENGINEER"
+                case STORE_KEEPER = "STORE_KEEPER"
+                case OBSERVATION_PRODUCER = "OBSERVATION_PRODUCER"
             }
             /// Organization roles granted to the employee.
             ///
@@ -331,7 +333,7 @@ extension Components {
             ///
             /// - Remark: Generated from `#/components/schemas/EmployeeDto/role`.
             public var role: Components.Schemas.EmployeeDto.rolePayload?
-            /// Salary of the employee.
+            /// Salary of the employee. Written only for a caller who administers personnel in this tenant (system-admin or hr-admin) and on the caller's own record; absent from the response otherwise.
             ///
             /// - Remark: Generated from `#/components/schemas/EmployeeDto/salary`.
             public var salary: Swift.Double?
@@ -392,7 +394,7 @@ extension Components {
             ///   - profilePictureUrl: URL of the employee's profile picture.
             ///   - qualification: Highest qualification held.
             ///   - role: Platform-level user role.
-            ///   - salary: Salary of the employee.
+            ///   - salary: Salary of the employee. Written only for a caller who administers personnel in this tenant (system-admin or hr-admin) and on the caller's own record; absent from the response otherwise.
             ///   - shiftTimingId: Id of the structured shift timing assigned to the employee.
             ///   - skills: Skills of the employee.
             ///   - status: Employment status.
@@ -496,6 +498,133 @@ extension Components {
                 case updatedAt
             }
         }
+        /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto`.
+        public struct InviteCodeGenerationDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/department`.
+            public var department: Swift.String
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/designation`.
+            public var designation: Swift.String
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/email`.
+            public var email: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/employeeId`.
+            public var employeeId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/employeeName`.
+            public var employeeName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/managerId`.
+            public var managerId: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/maxUses`.
+            public var maxUses: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/phone`.
+            public var phone: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/salary`.
+            public var salary: Swift.Double?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/shiftTimingId`.
+            public var shiftTimingId: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/status`.
+            public var status: Swift.String
+            /// - Remark: Generated from `#/components/schemas/InviteCodeGenerationDto/validityDays`.
+            public var validityDays: Swift.Int32?
+            /// Creates a new `InviteCodeGenerationDto`.
+            ///
+            /// - Parameters:
+            ///   - department:
+            ///   - designation:
+            ///   - email:
+            ///   - employeeId:
+            ///   - employeeName:
+            ///   - managerId:
+            ///   - maxUses:
+            ///   - phone:
+            ///   - salary:
+            ///   - shiftTimingId:
+            ///   - status:
+            ///   - validityDays:
+            public init(
+                department: Swift.String,
+                designation: Swift.String,
+                email: Swift.String? = nil,
+                employeeId: Swift.String? = nil,
+                employeeName: Swift.String? = nil,
+                managerId: Swift.Int64? = nil,
+                maxUses: Swift.Int32? = nil,
+                phone: Swift.String? = nil,
+                salary: Swift.Double? = nil,
+                shiftTimingId: Swift.Int64? = nil,
+                status: Swift.String,
+                validityDays: Swift.Int32? = nil
+            ) {
+                self.department = department
+                self.designation = designation
+                self.email = email
+                self.employeeId = employeeId
+                self.employeeName = employeeName
+                self.managerId = managerId
+                self.maxUses = maxUses
+                self.phone = phone
+                self.salary = salary
+                self.shiftTimingId = shiftTimingId
+                self.status = status
+                self.validityDays = validityDays
+            }
+            public enum CodingKeys: String, CodingKey {
+                case department
+                case designation
+                case email
+                case employeeId
+                case employeeName
+                case managerId
+                case maxUses
+                case phone
+                case salary
+                case shiftTimingId
+                case status
+                case validityDays
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/InviteCodePatchDto`.
+        public struct InviteCodePatchDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/InviteCodePatchDto/currentUses`.
+            public var currentUses: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/InviteCodePatchDto/isActive`.
+            public var isActive: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/InviteCodePatchDto/maxUses`.
+            public var maxUses: Swift.Int32?
+            /// Creates a new `InviteCodePatchDto`.
+            ///
+            /// - Parameters:
+            ///   - currentUses:
+            ///   - isActive:
+            ///   - maxUses:
+            public init(
+                currentUses: Swift.Int32? = nil,
+                isActive: Swift.Bool? = nil,
+                maxUses: Swift.Int32? = nil
+            ) {
+                self.currentUses = currentUses
+                self.isActive = isActive
+                self.maxUses = maxUses
+            }
+            public enum CodingKeys: String, CodingKey {
+                case currentUses
+                case isActive
+                case maxUses
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/InviteCodeValidationDto`.
+        public struct InviteCodeValidationDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/InviteCodeValidationDto/code`.
+            public var code: Swift.String
+            /// Creates a new `InviteCodeValidationDto`.
+            ///
+            /// - Parameters:
+            ///   - code:
+            public init(code: Swift.String) {
+                self.code = code
+            }
+            public enum CodingKeys: String, CodingKey {
+                case code
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/IssueCommentDto`.
         public struct IssueCommentDto: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/IssueCommentDto/authorId`.
@@ -504,6 +633,10 @@ extension Components {
             public var comment: Swift.String?
             /// - Remark: Generated from `#/components/schemas/IssueCommentDto/createdAt`.
             public var createdAt: Foundation.Date?
+            /// - Remark: Generated from `#/components/schemas/IssueCommentDto/edited`.
+            public var edited: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/IssueCommentDto/editedAt`.
+            public var editedAt: Foundation.Date?
             /// - Remark: Generated from `#/components/schemas/IssueCommentDto/id`.
             public var id: Swift.Int64?
             /// Creates a new `IssueCommentDto`.
@@ -512,22 +645,30 @@ extension Components {
             ///   - authorId:
             ///   - comment:
             ///   - createdAt:
+            ///   - edited:
+            ///   - editedAt:
             ///   - id:
             public init(
                 authorId: Swift.Int64? = nil,
                 comment: Swift.String? = nil,
                 createdAt: Foundation.Date? = nil,
+                edited: Swift.Bool? = nil,
+                editedAt: Foundation.Date? = nil,
                 id: Swift.Int64? = nil
             ) {
                 self.authorId = authorId
                 self.comment = comment
                 self.createdAt = createdAt
+                self.edited = edited
+                self.editedAt = editedAt
                 self.id = id
             }
             public enum CodingKeys: String, CodingKey {
                 case authorId
                 case comment
                 case createdAt
+                case edited
+                case editedAt
                 case id
             }
         }
@@ -551,6 +692,15 @@ extension Components {
             public var id: Swift.Int64?
             /// - Remark: Generated from `#/components/schemas/IssueDto/issueComments`.
             public var issueComments: [Components.Schemas.IssueCommentDto]?
+            /// - Remark: Generated from `#/components/schemas/IssueDto/priority`.
+            @frozen public enum priorityPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case low = "low"
+                case medium = "medium"
+                case high = "high"
+                case critical = "critical"
+            }
+            /// - Remark: Generated from `#/components/schemas/IssueDto/priority`.
+            public var priority: Components.Schemas.IssueDto.priorityPayload?
             /// - Remark: Generated from `#/components/schemas/IssueDto/status`.
             @frozen public enum statusPayload: String, Codable, Hashable, Sendable, CaseIterable {
                 case open = "open"
@@ -600,6 +750,7 @@ extension Components {
             ///   - description:
             ///   - id:
             ///   - issueComments:
+            ///   - priority:
             ///   - status:
             ///   - taskId:
             ///   - taskName:
@@ -616,6 +767,7 @@ extension Components {
                 description: Swift.String? = nil,
                 id: Swift.Int64? = nil,
                 issueComments: [Components.Schemas.IssueCommentDto]? = nil,
+                priority: Components.Schemas.IssueDto.priorityPayload? = nil,
                 status: Components.Schemas.IssueDto.statusPayload? = nil,
                 taskId: Swift.Int64? = nil,
                 taskName: Swift.String? = nil,
@@ -632,6 +784,7 @@ extension Components {
                 self.description = description
                 self.id = id
                 self.issueComments = issueComments
+                self.priority = priority
                 self.status = status
                 self.taskId = taskId
                 self.taskName = taskName
@@ -649,6 +802,7 @@ extension Components {
                 case description
                 case id
                 case issueComments
+                case priority
                 case status
                 case taskId
                 case taskName
@@ -665,6 +819,8 @@ extension Components {
             public var createdAt: Foundation.Date?
             /// - Remark: Generated from `#/components/schemas/OrganizationDto/creatorId`.
             public var creatorId: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/OrganizationDto/datasetConsent`.
+            public var datasetConsent: Swift.Bool?
             /// - Remark: Generated from `#/components/schemas/OrganizationDto/employees`.
             public var employees: [Components.Schemas.EmployeeDto]?
             /// - Remark: Generated from `#/components/schemas/OrganizationDto/id`.
@@ -691,6 +847,7 @@ extension Components {
             ///   - attachments:
             ///   - createdAt:
             ///   - creatorId:
+            ///   - datasetConsent:
             ///   - employees:
             ///   - id:
             ///   - isActive:
@@ -705,6 +862,7 @@ extension Components {
                 attachments: [Components.Schemas.AttachmentDto]? = nil,
                 createdAt: Foundation.Date? = nil,
                 creatorId: Swift.Int32? = nil,
+                datasetConsent: Swift.Bool? = nil,
                 employees: [Components.Schemas.EmployeeDto]? = nil,
                 id: Swift.Int64? = nil,
                 isActive: Swift.Bool? = nil,
@@ -719,6 +877,7 @@ extension Components {
                 self.attachments = attachments
                 self.createdAt = createdAt
                 self.creatorId = creatorId
+                self.datasetConsent = datasetConsent
                 self.employees = employees
                 self.id = id
                 self.isActive = isActive
@@ -734,6 +893,7 @@ extension Components {
                 case attachments
                 case createdAt
                 case creatorId
+                case datasetConsent
                 case employees
                 case id
                 case isActive
@@ -1023,6 +1183,77 @@ extension Components {
                 case tasks
                 case updatedAt
                 case updatedBy
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto`.
+        public struct ProjectInviteCodeDto: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/active`.
+            public var active: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/code`.
+            public var code: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/currentUses`.
+            public var currentUses: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/employeeDetails`.
+            public struct employeeDetailsPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: OpenAPIRuntime.OpenAPIObjectContainer]
+                /// Creates a new `employeeDetailsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: OpenAPIRuntime.OpenAPIObjectContainer] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Swift.Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Swift.Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/employeeDetails`.
+            public var employeeDetails: Components.Schemas.ProjectInviteCodeDto.employeeDetailsPayload?
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/expiryDate`.
+            public var expiryDate: Foundation.Date?
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/id`.
+            public var id: Swift.Int64?
+            /// - Remark: Generated from `#/components/schemas/ProjectInviteCodeDto/maxUses`.
+            public var maxUses: Swift.Int32?
+            /// Creates a new `ProjectInviteCodeDto`.
+            ///
+            /// - Parameters:
+            ///   - active:
+            ///   - code:
+            ///   - currentUses:
+            ///   - employeeDetails:
+            ///   - expiryDate:
+            ///   - id:
+            ///   - maxUses:
+            public init(
+                active: Swift.Bool? = nil,
+                code: Swift.Int32? = nil,
+                currentUses: Swift.Int32? = nil,
+                employeeDetails: Components.Schemas.ProjectInviteCodeDto.employeeDetailsPayload? = nil,
+                expiryDate: Foundation.Date? = nil,
+                id: Swift.Int64? = nil,
+                maxUses: Swift.Int32? = nil
+            ) {
+                self.active = active
+                self.code = code
+                self.currentUses = currentUses
+                self.employeeDetails = employeeDetails
+                self.expiryDate = expiryDate
+                self.id = id
+                self.maxUses = maxUses
+            }
+            public enum CodingKeys: String, CodingKey {
+                case active
+                case code
+                case currentUses
+                case employeeDetails
+                case expiryDate
+                case id
+                case maxUses
             }
         }
         /// A named work shift with its timing windows and work-hour thresholds.

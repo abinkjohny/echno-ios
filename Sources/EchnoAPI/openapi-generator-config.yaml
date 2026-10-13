@@ -24,3 +24,9 @@ filter:
     # (ask #16), so this pulls both families in until the backend suffixes the
     # web one.
     - Users
+    # Wave 1 — invite-code redemption, the only way a user joins an
+    # organization. Creating one is `organization:admin`, so without this a
+    # user who belongs nowhere has no route out of the empty state. Only
+    # `validateInviteCode` is called; issuing and managing codes are admin
+    # surfaces that stay in the web console (Wave 5).
+    - Project Invite Codes
