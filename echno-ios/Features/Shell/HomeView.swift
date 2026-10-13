@@ -114,12 +114,24 @@ struct HomeView: View {
     /// where to go instead of offering a button that cannot work. An empty
     /// state that names no next step is a dead end, and the one thing someone
     /// in it needs is the next step.
+    /// The state a user is in between registering and belonging anywhere.
+    ///
+    /// Joining and creating are not the same capability, and the copy must not
+    /// merge them. A user can join from the app: `validateInviteCode`
+    /// (`POST /api/v1/invitation/web/validate/userId/{userId}`) is authorized
+    /// with `isSelfUser(#userId)`, and `TenantFilter` runs a caller holding no
+    /// `ORG_MEMBER_` authority unscoped precisely so invite-code redemption can
+    /// get them out of this state. Creating is `organization:admin` only, so it
+    /// stays in the web console.
+    ///
+    /// Redemption is not built in the app yet (Wave 1 follow-up), so this offers
+    /// no code field it cannot honour and names the code as what joining takes.
     private var noMemberships: some View {
         VStack(alignment: .leading, spacing: Echno.Space.md) {
             Text("You are not a member of any organization yet.")
                 .font(.subheadline)
                 .foregroundStyle(Echno.mutedForeground)
-            Text("Organizations are created and joined in the Echno web console.")
+            Text("To join an existing organization, ask its administrator for an invite code. New organizations are created in the Echno web console.")
                 .font(.footnote)
                 .foregroundStyle(Echno.mutedForeground)
             Link(destination: EchnoConfiguration.webConsole) {
