@@ -128,34 +128,15 @@ public actor UserService {
         return APIError(message: message, status: status)
     }
 
-    /// Collects a raw response body and decodes it into a generated schema.
+    /// Reads a raw response body — see ``ResponseBody/decode(_:as:)``.
     ///
-    /// Uses ``JSONDecoder/echno``, so the four date shapes the backend emits are
-    /// handled the same way here as everywhere else.
+    /// Kept as a shim so the call sites in this file read unchanged; the
+    /// implementation moved out when a second service needed it.
     static func decode<T: Decodable>(
         _ body: HTTPBody,
         as type: T.Type = T.self
     ) async throws -> T {
-        let data: Data
-        do {
-            data = try await Data(collecting: body, upTo: 8 << 20)
-        } catch {
-            Log.network.error(
-                "Could not read the response body: \(String(describing: error), privacy: .public)"
-            )
-            throw APIError.decoding()
-        }
-        do {
-            return try JSONDecoder.echno.decode(T.self, from: data)
-        } catch {
-            // The DecodingError carries the coding path and, for a date, the
-            // value that would not parse. That is exactly what is needed to
-            // diagnose the fault and exactly what must not reach the screen, so
-            // it goes to the log intact and the thrown error carries none of it
-            // — never the body itself either, which holds profile data.
-            Log.network.error("Could not decode \(String(describing: T.self), privacy: .public): \(String(describing: error), privacy: .public)")
-            throw APIError.decoding()
-        }
+        try await ResponseBody.decode(body, as: type)
     }
 }
 
