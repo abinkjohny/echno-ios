@@ -28,10 +28,12 @@ enum EchnoConfiguration {
         return .custom(url)
     }
 
-    /// Where organizations are created and joined.
+    /// Where organizations are created.
     ///
-    /// Neither action exists on mobile — both are web-console only — so the
+    /// Creating one is `organization:admin`, so it is web-console only and the
     /// empty state links here rather than offering a button that cannot work.
+    /// Joining is not: that happens in the app, through
+    /// ``EchnoKit/InvitationService``.
     static var webConsole: URL {
         url(for: "ECHNO_WEB_CONSOLE_URL", default: defaultWebConsole)
     }
