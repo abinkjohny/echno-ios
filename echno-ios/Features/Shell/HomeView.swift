@@ -36,16 +36,31 @@ struct HomeView: View {
             organizationSection
 
             Section {
-                Button("Sign Out", role: .destructive) {
+                Button(role: .destructive) {
                     Task { await session.signOut() }
+                } label: {
+                    // Centred, and stretched to the full row. A leading label
+                    // reads as a row that opens something; this one ends the
+                    // session, and the width is also what makes the whole row
+                    // the target rather than the width of the two words.
+                    Text("Sign Out")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .contentShape(.rect)
                 }
             }
             .echnoRow()
         }
+        // A grouped list reserves room above its first section for a header
+        // this one does not have, which left a band of empty screen between the
+        // bar and the greeting. Removed rather than filled: the greeting is
+        // this screen's header, and it should start where the bar ends.
+        .contentMargins(.top, 0, for: .scrollContent)
         .navigationTitle("Home")
         // Inline, because the greeting below is this screen's header. Left
         // large, the two stack and the eye has to pick which one is the title —
         // and "Home" is the weaker of the pair: the tab bar already says it.
+        // The bar itself stays: it carries the organization switcher, which has
+        // to be visible on every screen.
         .navigationBarTitleDisplayMode(.inline)
         .echnoScreen()
         .refreshable { await reload() }
@@ -86,7 +101,11 @@ struct HomeView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, Echno.Space.md)
+        // Asymmetric on purpose. The top is the gap to the navigation bar, now
+        // that the list reserves none; the bottom is the gap to the first
+        // section, which needs to stay a section's worth.
+        .padding(.top, Echno.Space.md)
+        .padding(.bottom, Echno.Space.lg)
         .accessibilityElement(children: .combine)
     }
 
