@@ -49,6 +49,19 @@ public enum Palette {
     public static let warningTextDark: UInt32 = 0xFBBF24
     public static let infoTextLight: UInt32 = 0x0369A1
     public static let infoTextDark: UInt32 = 0x38BDF8
+    /// Brand colour for text sitting on a brand-*tinted* surface.
+    ///
+    /// The avatar: amber initials inside a circle filled with the same amber at
+    /// 15%. The tint lifts the ground towards the ink, so neither the vivid
+    /// fill (2.38:1 there) nor ``brandTextLight``, which is measured against
+    /// white (4.33:1 there), is enough. Amber-800 clears it at 6.11:1 while
+    /// staying recognisably amber rather than going brown.
+    ///
+    /// Dark needs nothing extra: on a dark tint the bright brand is already
+    /// past 6:1.
+    public static let brandOnTintLight: UInt32 = 0x92400E
+    public static let brandOnTintDark: UInt32 = 0xFE9A00
+
     public static let destructiveLight: UInt32 = 0xE7000B
     public static let destructiveDark: UInt32 = 0xFF6467
 
@@ -82,6 +95,24 @@ public enum Palette {
     // MARK: Contrast
 
     /// WCAG 2.1 relative luminance.
+    /// Composites `colour` over `background` at `alpha`, as a view does when it
+    /// fills a shape with a translucent colour.
+    ///
+    /// Exists so a test can derive the ground a label actually sits on. Writing
+    /// `0xFBECD9` into an assertion would pin the wrong thing: it would keep
+    /// passing after someone changed the tint or the card beneath it, which are
+    /// the two inputs most likely to move.
+    public static func blend(_ colour: UInt32, over background: UInt32, alpha: Double) -> UInt32 {
+        var result: UInt32 = 0
+        for shift in stride(from: 16, through: 0, by: -8) {
+            let f = Double((colour >> UInt32(shift)) & 0xFF)
+            let b = Double((background >> UInt32(shift)) & 0xFF)
+            let mixed = UInt32((f * alpha + b * (1 - alpha)).rounded())
+            result |= mixed << UInt32(shift)
+        }
+        return result
+    }
+
     public static func relativeLuminance(_ colour: UInt32) -> Double {
         let channels = [16, 8, 0].map { Double((colour >> UInt32($0)) & 0xFF) / 255 }
         let linear = channels.map { $0 <= 0.04045 ? $0 / 12.92 : pow(($0 + 0.055) / 1.055, 2.4) }
