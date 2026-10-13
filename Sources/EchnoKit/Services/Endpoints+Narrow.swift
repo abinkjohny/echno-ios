@@ -46,4 +46,22 @@ public protocol UserEndpoint: Sendable {
     ) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output
 }
 
-extension Client: RegistrationEndpoint, UserEndpoint {}
+/// What ``OrganizationService`` calls.
+///
+/// The operation lives on the *user* controller — `GET
+/// /api/v1/user/web/{userId}/organizations` — because it is the multi-org
+/// bootstrap: the client cannot send `X-Organization-Id` until it knows which
+/// organizations exist, so the call has to be answerable without one.
+/// `TenantFilter` exempts `/api/v1/user/web` for exactly that reason, and the
+/// mobile twin at `/api/v1/user/{userId}/organizations` is not exempt.
+///
+/// It gets its own protocol rather than borrowing ``UserEndpoint`` so the
+/// organization service depends on the one operation it calls, and a later
+/// addition to the user module cannot break its test doubles.
+public protocol OrganizationEndpoint: Sendable {
+    func readAllOrganizationsForCurrentUser_1(
+        _ input: Operations.readAllOrganizationsForCurrentUser_1.Input
+    ) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output
+}
+
+extension Client: RegistrationEndpoint, UserEndpoint, OrganizationEndpoint {}
