@@ -85,6 +85,33 @@ public final class OrganizationStore {
         selected = match
     }
 
+    /// Takes on an organization the user has just joined, and acts in it.
+    ///
+    /// Adding and selecting are one operation on purpose. ``select(id:)``
+    /// ignores an id that is not in ``organizations``, which is what keeps the
+    /// tenant boundary honest, so a caller that appended and then selected
+    /// would work only by accident of ordering. This is the one case where a
+    /// membership is known to be real without having been loaded: the server
+    /// granted it in the same response.
+    ///
+    /// Selecting is not presumption. The user chose this organization by
+    /// redeeming a code for it; asking them to pick it again afterwards would
+    /// be asking twice.
+    ///
+    /// - Note: Idempotent. A reload may have already brought the organization
+    ///   in, and both paths want it present exactly once.
+    public func adopt(_ organization: Organization) {
+        if let index = organizations.firstIndex(where: { $0.id == organization.id }) {
+            organizations[index] = organization
+        } else {
+            organizations.append(organization)
+        }
+        selected = organization
+        // A load that failed before the join should not leave its message on
+        // screen underneath a membership that is now present.
+        error = nil
+    }
+
     /// Drops everything, and invalidates any load still in flight.
     ///
     /// Called on sign-out. Without the generation bump, a response that arrived

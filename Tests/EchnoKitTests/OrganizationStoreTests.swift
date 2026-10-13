@@ -93,6 +93,59 @@ struct OrganizationStoreTests {
         #expect(store.selected?.id == 2)
     }
 
+    // MARK: Adopting a newly joined organization
+
+    @Test("A newly joined organization is added and becomes the selection")
+    func adoptAddsAndSelects() async {
+        let store = OrganizationStore(loader: StubLoader(result: .success([org(1)])))
+        await store.load(forUser: 42, preferring: nil)
+
+        store.adopt(org(2))
+
+        #expect(store.organizations.map(\.id) == [1, 2])
+        // Selected, not merely added: the user just chose this organization by
+        // redeeming a code for it, and asking them to pick it again afterwards
+        // would be asking twice.
+        #expect(store.selected?.id == 2)
+    }
+
+    /// The reason `adopt` exists rather than a plain reload: `select(id:)`
+    /// ignores an id that is not in the list, so adding and selecting have to
+    /// happen together or the selection is silently dropped.
+    @Test("Adopting into an empty store selects the only membership")
+    func adoptIntoEmptyStore() {
+        let store = OrganizationStore(loader: StubLoader(result: .success([])))
+        store.adopt(org(3))
+        #expect(store.organizations.map(\.id) == [3])
+        #expect(store.selected?.id == 3)
+    }
+
+    @Test("Adopting an organization already held does not duplicate it")
+    func adoptIsIdempotent() async {
+        // Reachable: the join succeeds, the list is reloaded for other reasons,
+        // and both paths want the same organization present exactly once.
+        let store = OrganizationStore(loader: StubLoader(result: .success([org(1), org(2)])))
+        await store.load(forUser: 42, preferring: nil)
+
+        store.adopt(org(2))
+
+        #expect(store.organizations.map(\.id) == [1, 2])
+        #expect(store.selected?.id == 2)
+    }
+
+    @Test("Adopting clears a stale error")
+    func adoptClearsError() async {
+        // A failed load followed by a successful join should not leave the
+        // previous failure on screen underneath the new membership.
+        let store = OrganizationStore(loader: StubLoader(result: .failure(APIError(message: "no", status: 500))))
+        await store.load(forUser: 42, preferring: nil)
+        #expect(store.error != nil)
+
+        store.adopt(org(1))
+
+        #expect(store.error == nil)
+    }
+
     @Test("Clearing drops the list and the selection together")
     func clearDropsEverything() async {
         let store = OrganizationStore(loader: StubLoader(result: .success([org(1)])))

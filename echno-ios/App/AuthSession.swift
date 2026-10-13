@@ -130,6 +130,67 @@ final class AuthSession {
         await credentials.select(organization: organizations.selected?.id)
     }
 
+    /// Redeems an invite code and starts acting in the organization it granted.
+    ///
+    /// The order here is the whole substance of this method, and getting it
+    /// wrong produces a join that appears to work and then refuses every
+    /// request:
+    ///
+    /// 1. Redeem. Until this succeeds nothing has happened, so a failure is
+    ///    safe for the user to retry with another code.
+    /// 2. **Renew the access token.** Membership is granted by adding the user
+    ///    to a Keycloak group, and the `ORG_MEMBER_<id>` authority
+    ///    `TenantFilter` checks is a claim in the token. The token in hand was
+    ///    issued before the join, so it cannot carry the new membership, and
+    ///    because it has not expired nothing would otherwise replace it. Every
+    ///    request scoped to the new organization would be answered 403 until
+    ///    the next genuine expiry.
+    /// 3. Adopt and scope. Only now is the credential good for the tenant
+    ///    header that adopting sets.
+    ///
+    /// A renewal that fails is reported separately rather than as a failed
+    /// join, because the membership is real by then. Telling the user it failed
+    /// would invite them to redeem the code again, which the backend answers
+    /// with a 500 for an existing membership (ask #22) — a confusing end to an
+    /// operation that actually succeeded.
+    ///
+    /// - Returns: The organization that was joined.
+    /// - Throws: ``APIError`` from redemption, or one describing a join that
+    ///   succeeded while the session could not be refreshed.
+    func join(using code: InviteCode) async throws -> Organization {
+        guard let user = users.currentUser else {
+            throw APIError(
+                message: "Your profile is still loading. Try again in a moment.",
+                status: 0
+            )
+        }
+
+        let organization = try await InvitationService(client: client)
+            .join(using: code, asUser: user.id)
+
+        do {
+            _ = try await authenticator.renewAccessToken()
+        } catch {
+            // Adopted anyway: the membership exists on the server, and a store
+            // that denied it would disagree with the next successful load.
+            await adopt(organization)
+            throw APIError(
+                message: """
+                    You have joined \(organization.name), but your access could not be                     refreshed. Sign out and sign in again to start working in it.
+                    """,
+                status: 0
+            )
+        }
+
+        await adopt(organization)
+        return organization
+    }
+
+    private func adopt(_ organization: Organization) async {
+        organizations.adopt(organization)
+        await syncSelectedOrganization()
+    }
+
     /// Registers an account, then hands straight to the hosted sign-in — the
     /// same sequence echno-web uses, so a new user is not left at a form
     /// wondering whether it worked.
