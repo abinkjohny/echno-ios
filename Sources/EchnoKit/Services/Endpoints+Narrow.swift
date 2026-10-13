@@ -64,4 +64,21 @@ public protocol OrganizationEndpoint: Sendable {
     ) async throws -> Operations.readAllOrganizationsForCurrentUser_1.Output
 }
 
-extension Client: RegistrationEndpoint, UserEndpoint, OrganizationEndpoint {}
+/// What ``InvitationService`` calls.
+///
+/// Redemption only. Issuing and managing codes are `system-admin`/`hr-admin`
+/// surfaces that stay in the web console, and naming them here would let a
+/// later change call one by accident.
+///
+/// `/web` is not a choice: there is no mobile invitation controller. It works
+/// for a user who belongs nowhere because `validateInviteCode` is authorized
+/// with `isSelfUser(#userId)`, and `TenantFilter` runs a caller holding no
+/// `ORG_MEMBER_` authority unscoped — the comment there names invite-code
+/// redemption as one of the calls that has to work in that state.
+public protocol InvitationEndpoint: Sendable {
+    func validateInviteCode(
+        _ input: Operations.validateInviteCode.Input
+    ) async throws -> Operations.validateInviteCode.Output
+}
+
+extension Client: RegistrationEndpoint, UserEndpoint, OrganizationEndpoint, InvitationEndpoint {}
