@@ -132,3 +132,66 @@ struct AuthFieldContrastTests {
         #expect(Palette.contrastRatio(Palette.authFieldLight, Palette.near_black) >= 15)
     }
 }
+
+
+/// Brand colour used as text on a brand-tinted surface.
+///
+/// The avatar is the case: amber initials inside a circle filled with the same
+/// amber at 15%. Both move together between appearances, so neither the plain
+/// fill nor the on-white text token is measured against the right backdrop —
+/// the ground here is the blend, not the card under it.
+@Suite("Brand on a brand tint")
+struct BrandOnTintContrastTests {
+
+    /// The avatar's circle, derived rather than written down: the same blend
+    /// the view performs, so a change to either input moves the test with it.
+    private func circle(light: Bool) -> UInt32 {
+        Palette.blend(
+            light ? Palette.brandLight : Palette.brandDark,
+            over: light ? Palette.white : Palette.cardDark,
+            alpha: 0.15
+        )
+    }
+
+    @Test("The blend is a blend")
+    func blendIsCorrect() {
+        // The suite derives its ground from this, so a wrong blend would let
+        // every assertion below pass against the wrong colour. The endpoints
+        // and the midpoint are the whole of the arithmetic.
+        #expect(Palette.blend(0xFF0000, over: 0x0000FF, alpha: 0) == 0x0000FF)
+        #expect(Palette.blend(0xFF0000, over: 0x0000FF, alpha: 1) == 0xFF0000)
+        #expect(Palette.blend(0xFFFFFF, over: 0x000000, alpha: 0.5) == 0x808080)
+        // Each channel is mixed on its own, not the packed integer.
+        #expect(Palette.blend(0xFF0000, over: 0x00FF00, alpha: 0.5) == 0x808000)
+    }
+
+    @Test("Initials clear normal-text contrast on the tint")
+    func initialsPass() {
+        // ~16pt semibold is not large text, so 4.5 applies, not 3.
+        #expect(Palette.contrastRatio(Palette.brandOnTintLight, circle(light: true)) >= 4.5)
+        #expect(Palette.contrastRatio(Palette.brandOnTintDark, circle(light: false)) >= 4.5)
+    }
+
+    @Test("The plain fill fails there, which is why the token exists")
+    func fillFails() {
+        #expect(Palette.contrastRatio(Palette.brandLight, circle(light: true)) < 3)
+    }
+
+    @Test("The on-white text token is not enough either")
+    func onWhiteTokenIsInsufficient() {
+        // 4.33:1 — close, and still short. Worth pinning: the obvious fix for
+        // the sibling defect on the register screen does not carry over here,
+        // and nothing but a measurement says so.
+        #expect(Palette.contrastRatio(Palette.brandTextLight, circle(light: true)) < 4.5)
+    }
+
+    @Test("It still reads as the brand, not as brown")
+    func stillAmber() {
+        // Red dominant, green above blue: the hue is kept, only the lightness
+        // moves. A token dark enough to pass but neutral in hue would meet the
+        // letter of the rule and lose the thing it was protecting.
+        let c = Palette.brandOnTintLight
+        let (r, g, b) = ((c >> 16) & 255, (c >> 8) & 255, c & 255)
+        #expect(r > g && g > b)
+    }
+}

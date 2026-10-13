@@ -57,6 +57,14 @@ enum Echno {
     /// `PaletteContrastTests` holds every value here to 4.5:1.
     enum Text {
         static let brand = Color(light: Palette.brandTextLight, dark: Palette.brandTextDark)
+
+        /// For text on a brand-*tinted* surface, where the ground is lifted
+        /// towards the ink and ``brand`` above is no longer enough — it is
+        /// measured against white, and 4.33:1 on the avatar's circle.
+        static let brandOnTint = Color(
+            light: Palette.brandOnTintLight,
+            dark: Palette.brandOnTintDark
+        )
         static let success = Color(light: Palette.successTextLight, dark: Palette.successTextDark)
         static let warning = Color(light: Palette.warningTextLight, dark: Palette.warningTextDark)
         static let info = Color(light: Palette.infoTextLight, dark: Palette.infoTextDark)

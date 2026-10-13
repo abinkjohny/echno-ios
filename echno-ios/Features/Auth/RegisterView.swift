@@ -220,7 +220,9 @@ struct RegisterView: View {
                 Text("Already have an account?")
                     .foregroundStyle(Echno.mutedForeground)
                 Button("Sign In") { dismiss() }
-                    .foregroundStyle(Echno.brand)
+                    // The text token, not the fill: the fill is 2.64:1 on the
+                    // light field, and this is a footnote-sized link.
+                    .foregroundStyle(Echno.Text.brand)
                     .fontWeight(.semibold)
             }
             .font(.footnote)
