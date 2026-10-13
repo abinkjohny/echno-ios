@@ -38,6 +38,11 @@ public enum SessionPhase: String, CaseIterable, Equatable, Sendable {
         case app
     }
 
+    /// Which of those the root should show for this phase.
+    ///
+    /// The only decision a phase makes. Exhaustive over the cases rather than
+    /// defaulting, so adding a phase is a compile error here instead of a
+    /// screen that silently inherits whatever the last case happened to be.
     public var screen: Screen {
         switch self {
         case .restoring: .splash
