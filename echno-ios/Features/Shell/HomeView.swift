@@ -92,9 +92,7 @@ struct HomeView: View {
             } else if let error = organizations.error {
                 failure(error)
             } else if organizations.organizations.isEmpty {
-                Text("You are not a member of any organization yet.")
-                    .font(.subheadline)
-                    .foregroundStyle(Echno.mutedForeground)
+                noMemberships
             } else {
                 ForEach(organizations.organizations) { organization in
                     organizationRow(organization)
@@ -110,6 +108,28 @@ struct HomeView: View {
             }
         }
         .echnoRow()
+    }
+
+    /// Creating and joining an organization are web-console only, so this says
+    /// where to go instead of offering a button that cannot work. An empty
+    /// state that names no next step is a dead end, and the one thing someone
+    /// in it needs is the next step.
+    private var noMemberships: some View {
+        VStack(alignment: .leading, spacing: Echno.Space.md) {
+            Text("You are not a member of any organization yet.")
+                .font(.subheadline)
+                .foregroundStyle(Echno.mutedForeground)
+            Text("Organizations are created and joined in the Echno web console.")
+                .font(.footnote)
+                .foregroundStyle(Echno.mutedForeground)
+            Link(destination: EchnoConfiguration.webConsole) {
+                Label("Open the Web Console", systemImage: "arrow.up.forward.square")
+                    .font(.subheadline.weight(.semibold))
+            }
+            .accessibilityHint("Opens the Echno web console in your browser")
+        }
+        .padding(.vertical, Echno.Space.xs)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func organizationRow(_ organization: Organization) -> some View {
